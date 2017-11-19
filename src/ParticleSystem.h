@@ -8,15 +8,17 @@ using glm::vec3;
 using std::vector;
 using std::pair;
 
+#define FLOAT_EPSILON 0.00000001
+
 struct ParticleSystem{
-    static const float FLOAT_EPSILON;
     float width, height;
-    ParticleSystem():width(500.0), height(500.0){}
-    ParticleSystem(float _w, float _h):width(_w), height(_h){}
+    
+    ParticleSystem() : width(500.0), height(500.0) {}
+    ParticleSystem(float _w, float _h) : width(_w), height(_h) {}
+    
     bool virtual sendData(vector<vec3>&  points){return false;};
     bool virtual step()=0;
 };
-const float ParticleSystem::FLOAT_EPSILON=0.00000001;
 
 class GravitySystem : ParticleSystem{
     vector<VerletParticle> particles;

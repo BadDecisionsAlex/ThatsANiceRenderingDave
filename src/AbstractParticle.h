@@ -1,13 +1,17 @@
 #ifndef ABSTRACT_PARTICLE_H
 #define ABSTRACT_PARTICLE_H
 #include <glm/glm.hpp> // vec2, vec3
+
 using glm::vec2;
 using glm::vec3;
+
 struct AbstractParticle{
     vec3 p;
-    AbstractParticle(float _x, float _y):p(vec3(_x,_y,1.0)){}
-    AbstractParticle(vec2 _p):p(vec3(_p,1.0)){}
-    AbstractParticle(vec3 _p):p(_p){}
+    
+    AbstractParticle(float _x, float _y) : p(vec3(_x, _y, 1.0)) {}
+    AbstractParticle(vec2 _p) : p(vec3(_p, 1.0)) {}
+    AbstractParticle(vec3 _p) : p(_p) {}
+    
     virtual ~AbstractParticle()=default;
     virtual vec2 pos(){return vec2(p);}
     virtual vec2 pos(vec2){return pos();}

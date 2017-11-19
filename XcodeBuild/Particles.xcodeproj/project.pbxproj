@@ -1,0 +1,1140 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		3417E565872F4C97B079CC63 /* ALL_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = ECDCE515087B479C88AE6418 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				19A5A65952494C4BB725215E /* CMake Rules */,
+			);
+			dependencies = (
+				C448BDA7301D4BF8A6EFFF5E /* PBXTargetDependency */,
+				04184F09CBC247638F5F4A73 /* PBXTargetDependency */,
+				E75AF41C1F484EBC819BFF4F /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
+		E8CFE7A71CF444B68CCFA873 /* ZERO_CHECK */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = C9A256B7464F46CC8804BC97 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildPhases = (
+				21D3F44F1981467CA93C360D /* CMake Rules */,
+			);
+			dependencies = (
+			);
+			name = ZERO_CHECK;
+			productName = ZERO_CHECK;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		3880D6D34A324AF68B916646 /* mmdadapter.cc in Sources */ = {isa = PBXBuildFile; fileRef = F471A9F5A46541CFAD4B059B /* mmdadapter.cc */; };
+		3C85FA6B75814D079D660E4D /* debuggl.cc in Sources */ = {isa = PBXBuildFile; fileRef = A79F915215E64448A66153BF /* debuggl.cc */; };
+		4109BA32D178428AADD1D46A /* ParticleSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3413C116190C4A239F991446 /* ParticleSystem.cpp */; };
+		4AE82280125D4484A3425E46 /* jpegio.cc in Sources */ = {isa = PBXBuildFile; fileRef = BE1643CC0F884C01B9FCB427 /* jpegio.cc */; };
+		54CDDCD59B364FC487786E12 /* main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 32953368C2C24126B2245751 /* main.cc */; };
+		8C569AC5543C4B698BCB2767 /* render_pass.cc in Sources */ = {isa = PBXBuildFile; fileRef = 532CC45C83564C0D98D268CC /* render_pass.cc */; };
+		9976AC57CCD34C5C9DDA5E80 /* bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DD2E21B087D843509D86C860 /* bitmap.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		0CBC76920C054674B554A2CE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E8593C7D23FE433E9A28F7DF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D755C46AF2084196AE7B9196;
+			remoteInfo = utgraphicsutil;
+		};
+		6178E658255D45DABB4FFA5E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E8593C7D23FE433E9A28F7DF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E8CFE7A71CF444B68CCFA873;
+			remoteInfo = ZERO_CHECK;
+		};
+		6798263E5C7140BDBFD57C25 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E8593C7D23FE433E9A28F7DF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D755C46AF2084196AE7B9196;
+			remoteInfo = utgraphicsutil;
+		};
+		7D85E9AA24414D379DDC6FC0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E8593C7D23FE433E9A28F7DF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E8CFE7A71CF444B68CCFA873;
+			remoteInfo = ZERO_CHECK;
+		};
+		9A4D06998D0E4F4691EDEAC5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E8593C7D23FE433E9A28F7DF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E8CFE7A71CF444B68CCFA873;
+			remoteInfo = ZERO_CHECK;
+		};
+		9F4D1324F2C34EFEB9BE9A1D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E8593C7D23FE433E9A28F7DF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DB7745933D1E4484985E7173;
+			remoteInfo = particles;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		2227A538901E40EB89D52C41 /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		32953368C2C24126B2245751 /* main.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = main.cc; path = src/main.cc; sourceTree = SOURCE_ROOT; };
+		3413C116190C4A239F991446 /* ParticleSystem.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = ParticleSystem.cpp; path = src/ParticleSystem.cpp; sourceTree = SOURCE_ROOT; };
+		4268CFB789AF48A5BA3BCB24 /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		532CC45C83564C0D98D268CC /* render_pass.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = render_pass.cc; path = src/render_pass.cc; sourceTree = SOURCE_ROOT; };
+		758141E487D14CBF814379D0 /* libutgraphicsutil.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libutgraphicsutil.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		A79F915215E64448A66153BF /* debuggl.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = debuggl.cc; path = lib/debuggl.cc; sourceTree = SOURCE_ROOT; };
+		B84B83E1E1B449F7928034B6 /* particles */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; path = particles; sourceTree = BUILT_PRODUCTS_DIR; };
+		BE1643CC0F884C01B9FCB427 /* jpegio.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = jpegio.cc; path = lib/jpegio.cc; sourceTree = SOURCE_ROOT; };
+		C99E23001FC20476009E6258 /* ParticleSystem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ParticleSystem.h; path = src/ParticleSystem.h; sourceTree = "<group>"; };
+		C99E23011FC20476009E6258 /* render_pass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = render_pass.h; path = src/render_pass.h; sourceTree = "<group>"; };
+		C99E23021FC20477009E6258 /* Scene.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Scene.h; path = src/Scene.h; sourceTree = "<group>"; };
+		C99E23031FC20477009E6258 /* AbstractParticle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AbstractParticle.h; path = src/AbstractParticle.h; sourceTree = "<group>"; };
+		DD2E21B087D843509D86C860 /* bitmap.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = bitmap.cpp; path = lib/bitmap.cpp; sourceTree = SOURCE_ROOT; };
+		EA4CB70E6A6E47CE924868C6 /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; name = CMakeLists.txt; path = src/CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		F05DC40A57004BC0B8F0A56C /* CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		F471A9F5A46541CFAD4B059B /* mmdadapter.cc */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 4; name = mmdadapter.cc; path = lib/mmdadapter.cc; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0B0B0ACD24094E89BDB58F5B /* particles */ = {
+			isa = PBXGroup;
+			children = (
+				1974E337C50F4ED6A0D6E18A /* Source Files */,
+				EA4CB70E6A6E47CE924868C6 /* CMakeLists.txt */,
+			);
+			name = particles;
+			sourceTree = "<group>";
+		};
+		1974E337C50F4ED6A0D6E18A /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				3413C116190C4A239F991446 /* ParticleSystem.cpp */,
+				32953368C2C24126B2245751 /* main.cc */,
+				532CC45C83564C0D98D268CC /* render_pass.cc */,
+				C99E23031FC20477009E6258 /* AbstractParticle.h */,
+				C99E23001FC20476009E6258 /* ParticleSystem.h */,
+				C99E23011FC20476009E6258 /* render_pass.h */,
+				C99E23021FC20477009E6258 /* Scene.h */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+		20E354F8313B4C4C8A39DDE3 /* utgraphicsutil */ = {
+			isa = PBXGroup;
+			children = (
+				F8D34AEA54B64D87B9A898F8 /* Source Files */,
+				2227A538901E40EB89D52C41 /* CMakeLists.txt */,
+			);
+			name = utgraphicsutil;
+			sourceTree = "<group>";
+		};
+		3D94B4D3213C421B9A9A191A /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		5642ECC8BD594094B3DEA787 /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				63E2AF1321A9438382581A11 /* CMake Rules */,
+				F05DC40A57004BC0B8F0A56C /* CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		63E2AF1321A9438382581A11 /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		847BA161FC9943969BD8E78F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				758141E487D14CBF814379D0 /* libutgraphicsutil.a */,
+				B84B83E1E1B449F7928034B6 /* particles */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		9EF35859620946A5B656140E = {
+			isa = PBXGroup;
+			children = (
+				20E354F8313B4C4C8A39DDE3 /* utgraphicsutil */,
+				5642ECC8BD594094B3DEA787 /* ALL_BUILD */,
+				9F12129D76FA4D01AC96C3E9 /* ZERO_CHECK */,
+				0B0B0ACD24094E89BDB58F5B /* particles */,
+				847BA161FC9943969BD8E78F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		9F12129D76FA4D01AC96C3E9 /* ZERO_CHECK */ = {
+			isa = PBXGroup;
+			children = (
+				3D94B4D3213C421B9A9A191A /* CMake Rules */,
+				4268CFB789AF48A5BA3BCB24 /* CMakeLists.txt */,
+			);
+			name = ZERO_CHECK;
+			sourceTree = "<group>";
+		};
+		F8D34AEA54B64D87B9A898F8 /* Source Files */ = {
+			isa = PBXGroup;
+			children = (
+				DD2E21B087D843509D86C860 /* bitmap.cpp */,
+				A79F915215E64448A66153BF /* debuggl.cc */,
+				BE1643CC0F884C01B9FCB427 /* jpegio.cc */,
+				F471A9F5A46541CFAD4B059B /* mmdadapter.cc */,
+			);
+			name = "Source Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D755C46AF2084196AE7B9196 /* utgraphicsutil */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9DC3902196C34C8493149DB9 /* Build configuration list for PBXNativeTarget "utgraphicsutil" */;
+			buildPhases = (
+				CDB158BA795A4F7DA46F2CA3 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AB0F5D77B9B54BA5ABD4947D /* PBXTargetDependency */,
+			);
+			name = utgraphicsutil;
+			productName = utgraphicsutil;
+			productReference = 758141E487D14CBF814379D0 /* libutgraphicsutil.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		DB7745933D1E4484985E7173 /* particles */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5FEBA83F8E5945D1A09B95B3 /* Build configuration list for PBXNativeTarget "particles" */;
+			buildPhases = (
+				E3CD6E52276A45A9833CF288 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				278824C0F9794D438F6EBD6C /* PBXTargetDependency */,
+				739FDF1A51DF4FE09FFCEA83 /* PBXTargetDependency */,
+			);
+			name = particles;
+			productName = particles;
+			productReference = B84B83E1E1B449F7928034B6 /* particles */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E8593C7D23FE433E9A28F7DF /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 0910;
+			};
+			buildConfigurationList = B9621AC865384CF7AE1B2FA0 /* Build configuration list for PBXProject "Particles" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 9EF35859620946A5B656140E;
+			projectDirPath = ../;
+			projectRoot = "";
+			targets = (
+				3417E565872F4C97B079CC63 /* ALL_BUILD */,
+				E8CFE7A71CF444B68CCFA873 /* ZERO_CHECK */,
+				D755C46AF2084196AE7B9196 /* utgraphicsutil */,
+				DB7745933D1E4484985E7173 /* particles */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		19A5A65952494C4BB725215E /* CMake Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake Rules";
+			outputPaths = (
+				/Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild/CMakeFiles/ALL_BUILD,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild -f /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild/CMakeScripts/ALL_BUILD_cmakeRulesBuildPhase.make$CONFIGURATION all";
+			showEnvVarsInLog = 0;
+		};
+		21D3F44F1981467CA93C360D /* CMake Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake Rules";
+			outputPaths = (
+				/Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild/CMakeFiles/ZERO_CHECK,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild -f /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild/CMakeScripts/ZERO_CHECK_cmakeRulesBuildPhase.make$CONFIGURATION all";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CDB158BA795A4F7DA46F2CA3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9976AC57CCD34C5C9DDA5E80 /* bitmap.cpp in Sources */,
+				3C85FA6B75814D079D660E4D /* debuggl.cc in Sources */,
+				4AE82280125D4484A3425E46 /* jpegio.cc in Sources */,
+				3880D6D34A324AF68B916646 /* mmdadapter.cc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E3CD6E52276A45A9833CF288 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4109BA32D178428AADD1D46A /* ParticleSystem.cpp in Sources */,
+				54CDDCD59B364FC487786E12 /* main.cc in Sources */,
+				8C569AC5543C4B698BCB2767 /* render_pass.cc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		04184F09CBC247638F5F4A73 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DB7745933D1E4484985E7173 /* particles */;
+			targetProxy = 9F4D1324F2C34EFEB9BE9A1D /* PBXContainerItemProxy */;
+		};
+		278824C0F9794D438F6EBD6C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D755C46AF2084196AE7B9196 /* utgraphicsutil */;
+			targetProxy = 0CBC76920C054674B554A2CE /* PBXContainerItemProxy */;
+		};
+		739FDF1A51DF4FE09FFCEA83 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E8CFE7A71CF444B68CCFA873 /* ZERO_CHECK */;
+			targetProxy = 9A4D06998D0E4F4691EDEAC5 /* PBXContainerItemProxy */;
+		};
+		AB0F5D77B9B54BA5ABD4947D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E8CFE7A71CF444B68CCFA873 /* ZERO_CHECK */;
+			targetProxy = 6178E658255D45DABB4FFA5E /* PBXContainerItemProxy */;
+		};
+		C448BDA7301D4BF8A6EFFF5E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D755C46AF2084196AE7B9196 /* utgraphicsutil */;
+			targetProxy = 6798263E5C7140BDBFD57C25 /* PBXContainerItemProxy */;
+		};
+		E75AF41C1F484EBC819BFF4F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E8CFE7A71CF444B68CCFA873 /* ZERO_CHECK */;
+			targetProxy = 7D85E9AA24414D379DDC6FC0 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0C226327FBCC41C89BAF08C0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/opt/local/include,
+					/Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/lib,
+					/usr/local/Cellar/glfw/3.2.1/include,
+				);
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = Release;
+		};
+		19C0B3694CE641898AF60B32 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/opt/local/include,
+					/Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/lib,
+					/usr/local/Cellar/glfw/3.2.1/include,
+				);
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CPLUSPLUSFLAGS = (
+					"--std=c++14",
+					"-DGLM_FORCE_SIZE_FUNC=1",
+					"-DGLM_FORCE_RADIANS=1",
+					"-Wall",
+					"-Wno-reorder",
+					"-Wno-unknown-pragmas",
+					"-Wno-unused-variable",
+					"-Wno-unused-but-set-variable",
+					"-DNDEBUG",
+				);
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = utgraphicsutil;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = MinSizeRel;
+		};
+		1E867A6497A2426993A205EB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/opt/local/include,
+					/Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/lib,
+					/usr/local/Cellar/glfw/3.2.1/include,
+				);
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = Debug;
+		};
+		242669795069459F89980019 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/opt/local/include,
+					/Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/lib,
+					/usr/local/Cellar/glfw/3.2.1/include,
+				);
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CPLUSPLUSFLAGS = (
+					"--std=c++14",
+					"-DGLM_FORCE_SIZE_FUNC=1",
+					"-DGLM_FORCE_RADIANS=1",
+					"-Wall",
+					"-Wno-reorder",
+					"-Wno-unknown-pragmas",
+					"-Wno-unused-variable",
+					"-Wno-unused-but-set-variable",
+				);
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = utgraphicsutil;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = Debug;
+		};
+		2846DF58AD2C49F7B4C1EC57 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/opt/local/include,
+					/Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/lib,
+					/usr/local/Cellar/glfw/3.2.1/include,
+				);
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = RelWithDebInfo;
+		};
+		29DAB43E57E745F682A711C4 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk;
+				SYMROOT = /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild/build;
+			};
+			name = RelWithDebInfo;
+		};
+		2B235629888B4B67A63E9CC8 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/opt/local/include,
+					/Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/lib,
+					/usr/local/Cellar/glfw/3.2.1/include,
+				);
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CPLUSPLUSFLAGS = (
+					"--std=c++14",
+					"-DGLM_FORCE_SIZE_FUNC=1",
+					"-DGLM_FORCE_RADIANS=1",
+					"-Wall",
+					"-Wno-reorder",
+					"-Wno-unknown-pragmas",
+					"-Wno-unused-variable",
+					"-Wno-unused-but-set-variable",
+					"-DNDEBUG",
+				);
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = utgraphicsutil;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = RelWithDebInfo;
+		};
+		4C07CB204C0E41FEAA032FE8 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild/bin/MinSizeRel;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/opt/local/include,
+					/Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/lib,
+					/usr/local/Cellar/glfw/3.2.1/include,
+				);
+				INSTALL_PATH = "";
+				LD_RUNPATH_SEARCH_PATHS = "/usr/local/lib /opt/local/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"/usr/local/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/usr/local/lib,
+					"/opt/local/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/opt/local/lib,
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"--std=c++14",
+					"-DGLM_FORCE_SIZE_FUNC=1",
+					"-DGLM_FORCE_RADIANS=1",
+					"-Wall",
+					"-Wno-reorder",
+					"-Wno-unknown-pragmas",
+					"-Wno-unused-variable",
+					"-Wno-unused-but-set-variable",
+					"-DNDEBUG",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-Wl,-headerpad_max_install_names",
+					/usr/local/lib/libGLEW.dylib,
+					"-framework",
+					OpenGL,
+					"-lglfw",
+					/usr/local/lib/libGLEW.dylib,
+					/Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild/MinSizeRel/libutgraphicsutil.a,
+					"-liconv",
+					/usr/local/lib/libGLEW.dylib,
+				);
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = particles;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild/src;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = MinSizeRel;
+		};
+		4DC277ACB7E44B8586FC5C05 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk;
+				SYMROOT = /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild/build;
+			};
+			name = MinSizeRel;
+		};
+		738C9AE8FB454EF0BEBB2C21 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk;
+				SYMROOT = /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild/build;
+			};
+			name = Release;
+		};
+		92ECB50A1898441CB8F578DB /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/opt/local/include,
+					/Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/lib,
+					/usr/local/Cellar/glfw/3.2.1/include,
+				);
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = RelWithDebInfo;
+		};
+		A2831006654C4C97B676CEEF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/opt/local/include,
+					/Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/lib,
+					/usr/local/Cellar/glfw/3.2.1/include,
+				);
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = Debug;
+		};
+		B0452992539549B0990556C4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk;
+				SYMROOT = /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild/build;
+			};
+			name = Debug;
+		};
+		BA5CA2D416094335B4415C9C /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/opt/local/include,
+					/Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/lib,
+					/usr/local/Cellar/glfw/3.2.1/include,
+				);
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = MinSizeRel;
+		};
+		C0C00D86A02D4EC394B64C49 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild/bin/Release;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/opt/local/include,
+					/Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/lib,
+					/usr/local/Cellar/glfw/3.2.1/include,
+				);
+				INSTALL_PATH = "";
+				LD_RUNPATH_SEARCH_PATHS = "/usr/local/lib /opt/local/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"/usr/local/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/usr/local/lib,
+					"/opt/local/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/opt/local/lib,
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"--std=c++14",
+					"-DGLM_FORCE_SIZE_FUNC=1",
+					"-DGLM_FORCE_RADIANS=1",
+					"-Wall",
+					"-Wno-reorder",
+					"-Wno-unknown-pragmas",
+					"-Wno-unused-variable",
+					"-Wno-unused-but-set-variable",
+					"-DNDEBUG",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-Wl,-headerpad_max_install_names",
+					/usr/local/lib/libGLEW.dylib,
+					"-framework",
+					OpenGL,
+					"-lglfw",
+					/usr/local/lib/libGLEW.dylib,
+					/Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild/Release/libutgraphicsutil.a,
+					"-liconv",
+					/usr/local/lib/libGLEW.dylib,
+				);
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = particles;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild/src;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = Release;
+		};
+		C317F4268C8846CF89C3FE58 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild/bin/Debug;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/opt/local/include,
+					/Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/lib,
+					/usr/local/Cellar/glfw/3.2.1/include,
+				);
+				INSTALL_PATH = "";
+				LD_RUNPATH_SEARCH_PATHS = "/usr/local/lib /opt/local/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"/usr/local/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/usr/local/lib,
+					"/opt/local/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/opt/local/lib,
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"--std=c++14",
+					"-DGLM_FORCE_SIZE_FUNC=1",
+					"-DGLM_FORCE_RADIANS=1",
+					"-Wall",
+					"-Wno-reorder",
+					"-Wno-unknown-pragmas",
+					"-Wno-unused-variable",
+					"-Wno-unused-but-set-variable",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-Wl,-headerpad_max_install_names",
+					/usr/local/lib/libGLEW.dylib,
+					"-framework",
+					OpenGL,
+					"-lglfw",
+					/usr/local/lib/libGLEW.dylib,
+					/Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild/Debug/libutgraphicsutil.a,
+					"-liconv",
+					/usr/local/lib/libGLEW.dylib,
+				);
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = particles;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild/src;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = Debug;
+		};
+		C473A72884BB42D4A8C0D7FF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_SUFFIX = .a;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/opt/local/include,
+					/Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/lib,
+					/usr/local/Cellar/glfw/3.2.1/include,
+				);
+				INSTALL_PATH = "";
+				LIBRARY_STYLE = STATIC;
+				OTHER_CPLUSPLUSFLAGS = (
+					"--std=c++14",
+					"-DGLM_FORCE_SIZE_FUNC=1",
+					"-DGLM_FORCE_RADIANS=1",
+					"-Wall",
+					"-Wno-reorder",
+					"-Wno-unknown-pragmas",
+					"-Wno-unused-variable",
+					"-Wno-unused-but-set-variable",
+					"-DNDEBUG",
+				);
+				OTHER_LIBTOOLFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = utgraphicsutil;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = Release;
+		};
+		CB5D979F97AA4B6092DDBE6A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/opt/local/include,
+					/Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/lib,
+					/usr/local/Cellar/glfw/3.2.1/include,
+				);
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = Release;
+		};
+		D0275B0382AE402EA26B912C /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_BUILD_DIR = /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild/bin/RelWithDebInfo;
+				EXECUTABLE_PREFIX = "";
+				EXECUTABLE_SUFFIX = "";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/opt/local/include,
+					/Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/lib,
+					/usr/local/Cellar/glfw/3.2.1/include,
+				);
+				INSTALL_PATH = "";
+				LD_RUNPATH_SEARCH_PATHS = "/usr/local/lib /opt/local/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"/usr/local/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/usr/local/lib,
+					"/opt/local/lib/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)",
+					/opt/local/lib,
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"--std=c++14",
+					"-DGLM_FORCE_SIZE_FUNC=1",
+					"-DGLM_FORCE_RADIANS=1",
+					"-Wall",
+					"-Wno-reorder",
+					"-Wno-unknown-pragmas",
+					"-Wno-unused-variable",
+					"-Wno-unused-but-set-variable",
+					"-DNDEBUG",
+				);
+				OTHER_LDFLAGS = (
+					"-Wl,-search_paths_first",
+					"-Wl,-headerpad_max_install_names",
+					/usr/local/lib/libGLEW.dylib,
+					"-framework",
+					OpenGL,
+					"-lglfw",
+					/usr/local/lib/libGLEW.dylib,
+					/Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild/RelWithDebInfo/libutgraphicsutil.a,
+					"-liconv",
+					/usr/local/lib/libGLEW.dylib,
+				);
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = particles;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild/src;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = RelWithDebInfo;
+		};
+		D7FB94A35A69433885DC9675 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'";
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = (
+					/usr/local/include,
+					/opt/local/include,
+					/Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/lib,
+					/usr/local/Cellar/glfw/3.2.1/include,
+				);
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = /Users/Matt/Desktop/Graphics/ThatsANiceRenderingDave/XcodeBuild;
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+					"$(inherited)",
+				);
+			};
+			name = MinSizeRel;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5FEBA83F8E5945D1A09B95B3 /* Build configuration list for PBXNativeTarget "particles" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C317F4268C8846CF89C3FE58 /* Debug */,
+				C0C00D86A02D4EC394B64C49 /* Release */,
+				4C07CB204C0E41FEAA032FE8 /* MinSizeRel */,
+				D0275B0382AE402EA26B912C /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		9DC3902196C34C8493149DB9 /* Build configuration list for PBXNativeTarget "utgraphicsutil" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				242669795069459F89980019 /* Debug */,
+				C473A72884BB42D4A8C0D7FF /* Release */,
+				19C0B3694CE641898AF60B32 /* MinSizeRel */,
+				2B235629888B4B67A63E9CC8 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		B9621AC865384CF7AE1B2FA0 /* Build configuration list for PBXProject "Particles" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B0452992539549B0990556C4 /* Debug */,
+				738C9AE8FB454EF0BEBB2C21 /* Release */,
+				4DC277ACB7E44B8586FC5C05 /* MinSizeRel */,
+				29DAB43E57E745F682A711C4 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C9A256B7464F46CC8804BC97 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1E867A6497A2426993A205EB /* Debug */,
+				CB5D979F97AA4B6092DDBE6A /* Release */,
+				D7FB94A35A69433885DC9675 /* MinSizeRel */,
+				92ECB50A1898441CB8F578DB /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		ECDCE515087B479C88AE6418 /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A2831006654C4C97B676CEEF /* Debug */,
+				0C226327FBCC41C89BAF08C0 /* Release */,
+				BA5CA2D416094335B4415C9C /* MinSizeRel */,
+				2846DF58AD2C49F7B4C1EC57 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E8593C7D23FE433E9A28F7DF /* Project object */;
+}

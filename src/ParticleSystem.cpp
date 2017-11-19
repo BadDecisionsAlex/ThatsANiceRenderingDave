@@ -1,12 +1,14 @@
 #ifndef PARTICLE_SYSTEM_CPP
 #define PARTICLE_SYSTEM_CPP
 #include "ParticleSystem.h"
+
 using glm::vec2;
 using glm::vec3;
 using std::vector;
-using std::makepair;
+using std::make_pair;
 
-{using namespace GravitySystem;
+{
+    using namespace GravitySystem
 
     GravitySystem(float _g, const vector<vec2>& _in){
         for(vec2 _p : _in)
@@ -19,11 +21,12 @@ using std::makepair;
             ponts.push_back(vec3(vp.pos(),vp.radius));
     }
 
-    step(){
+    void step() {
         flaggedForBounds.clear();
         flaggedForCollides.clear();
+        
         // Apply velocity and gravity
-        for(int a=0;a<particles.size();++a){
+        for(int a = 0; a < particles.size(); ++a) {
             VerletParticle& vp = particles[a]; 
             vp.p0+=vp.velocity();
             vp.p0+=gForce;
