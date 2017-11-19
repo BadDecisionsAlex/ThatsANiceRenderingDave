@@ -88,11 +88,13 @@ int main(int argc, char* argv[])
 //    ShaderUniform selected_b = { "selected_b", vector_binder, selected_b_data };
     
     std::vector<glm::vec4> points;
-    points.push_back(glm::vec4(10, 10, 0, 0));
+    std::vector<glm::uvec1> point_numbers;
+    points.push_back(glm::vec4(10, 10, 10, 10));
+    point_numbers.push_back(glm::vec1(0));
     
     RenderDataInput particle_pass_input;
     particle_pass_input.assign(0, "vertex_position", nullptr, points.size(), 4, GL_FLOAT);
-    particle_pass_input.assign_index(points.data(), points.size(), 4);
+    particle_pass_input.assign_index(point_numbers.data(), point_numbers.size(), 1);
     RenderPass particle_pass(-1,
                            particle_pass_input,
                            {
@@ -108,7 +110,7 @@ int main(int argc, char* argv[])
 		// Setup some basic window stuff.
 		glfwGetFramebufferSize(window, &window_width, &window_height);
 		glViewport(0, 0, window_width, window_height);
-		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_MULTISAMPLE);
 		glEnable(GL_BLEND);
@@ -122,7 +124,7 @@ int main(int argc, char* argv[])
         particle_pass.updateVBO(0, points.data(), points.size());
         
         particle_pass.setup();
-        CHECK_GL_ERROR(glDrawElements(GL_POINTS, points.size(), GL_UNSIGNED_INT, 0));
+        CHECK_GL_ERROR(glDrawElements(GL_POINTS, point_numbers.size(), GL_UNSIGNED_INT, 0));
         
 		// Poll and swap.
 		glfwPollEvents();
