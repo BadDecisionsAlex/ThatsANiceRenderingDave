@@ -2,6 +2,8 @@
 #define PARTICLE_SYSTEM_CPP
 #include "ParticleSystem.h"
 
+#define STEP_TIME 1.0f / 60.0f
+
 using glm::vec2;
 using glm::vec3;
 using std::vector;
