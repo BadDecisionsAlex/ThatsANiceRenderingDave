@@ -37,4 +37,5 @@
 XcodeBuild/
 build/
 .idea
-
+third-party/
+cmake-build-debug/
