@@ -16,6 +16,15 @@
 #include <glm/gtx/io.hpp>
 #include <debuggl.h>
 
+#include "ParticleSystem.h"
+#include "Scene.h"
+
+using std::vector;
+using glm::vec2;
+using glm::vec3;
+using glm::vec4;
+using glm::uvec1;
+
 int window_width = 800, window_height = 600;
 const std::string window_title = "Particles";
 
@@ -87,10 +96,18 @@ int main(int argc, char* argv[])
     //Uniforms:
 //    ShaderUniform selected_b = { "selected_b", vector_binder, selected_b_data };
     
-    std::vector<glm::vec4> points;
-    std::vector<glm::uvec1> point_numbers;
-    points.push_back(glm::vec4(-0.99, 0, 0, 1));
-    point_numbers.push_back(glm::vec1(0));
+    vector<vec4> points;
+    vector<uvec1> point_numbers;
+
+    // Load Initial Particle Positions in ParticleSystem's coord space
+    vector<vec2> particle_inits;
+    particle_inits.push_back( vec2( 250.0, 250.0) );
+    point_numbers.push_back( uvec1( 0 ) );
+    // Initialize a Gravity System and Scene
+    GravitySystem* rootSystem = new GravitySystem( particle_inits );
+    Scene scene = Scene( rootSystem );
+    scene.retrieveData();
+    scene.updateBuffers(points);
     
     RenderDataInput particle_pass_input;
     particle_pass_input.assign(0, "vertex_position", points.data(), points.size(), 4, GL_FLOAT);
@@ -105,6 +122,10 @@ int main(int argc, char* argv[])
                            { /* uniforms */ },
                            { "fragment_color" }
                            );
+    //
+    // ANIMATION LOOP
+    //
+    // **************
 
 	while (!glfwWindowShouldClose(window)) {
 		// Setup some basic window stuff.
@@ -120,6 +141,11 @@ int main(int argc, char* argv[])
         glDepthFunc(GL_LESS);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glCullFace(GL_BACK);
+        
+        // Make our updates to physics and scene.
+        rootSystem->step();
+        scene.retrieveData();
+        scene.updateBuffers(points);
 
         //TODO: Draw here
         particle_pass.updateVBO(0, points.data(), points.size());
