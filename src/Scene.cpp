@@ -5,10 +5,15 @@ using glm::vec2;
 using glm::vec3;
 using glm::vec4;
 
-bool Scene::updateBuffers(vector<vec4>& pointsNDC){
+bool Scene::updateBuffers(vector<vec4>& pointsNDC, vector<uvec1>& pointsNumbers){
 	pointsNDC.clear();
-	for(vec3 _p : points)
-		pointsNDC.push_back(vec4(toScreen(_p),0.0,1.0));
+	pointsNumbers.clear();
+	int pointCounter = 0;
+	for(vec3 _p : points) {
+		pointsNDC.push_back(vec4(toScreen(_p), 0.0, 1.0));
+		pointsNumbers.push_back(uvec1(pointCounter));
+		pointCounter += 1;
+	}
     return true;
 }
 

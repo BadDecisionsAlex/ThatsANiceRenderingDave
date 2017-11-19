@@ -74,40 +74,17 @@ GLFWwindow* init_glefw()
 int main(int argc, char* argv[])
 {
 	GLFWwindow *window = init_glefw();
-    
-
-    //Binders:
-//    auto float_binder = [](int loc, const void* data) {
-//        glUniform1fv(loc, 1, (const GLfloat*)data);
-//    };
-    
-    /*
-     * These lambda functions below are used to retrieve data
-     */
-//    auto selected_b_data = [&gui]() -> const void* {
-//        static const glm::vec4 zero = glm::vec4(0, 0, 0, 0);
-//        if (gui.getCurrentBone() >= 0) {
-//            glm::vec4& n = gui.getCurrentRotation()[2];
-//            return &n;
-//        }
-//        return &zero;
-//    };
-    
-    //Uniforms:
-//    ShaderUniform selected_b = { "selected_b", vector_binder, selected_b_data };
-    
     vector<vec4> points;
     vector<uvec1> point_numbers;
 
     // Load Initial Particle Positions in ParticleSystem's coord space
     vector<vec2> particle_inits;
     particle_inits.push_back( vec2( 250.0, 250.0) );
-    point_numbers.push_back( uvec1( 0 ) );
     // Initialize a Gravity System and Scene
     GravitySystem* rootSystem = new GravitySystem( particle_inits );
     Scene scene = Scene( rootSystem );
     scene.retrieveData();
-    scene.updateBuffers(points);
+    scene.updateBuffers(points, point_numbers);
     
     RenderDataInput particle_pass_input;
     particle_pass_input.assign(0, "vertex_position", points.data(), points.size(), 4, GL_FLOAT);
@@ -145,7 +122,7 @@ int main(int argc, char* argv[])
         // Make our updates to physics and scene.
         rootSystem->step();
         scene.retrieveData();
-        scene.updateBuffers(points);
+        scene.updateBuffers(points, point_numbers);
 
         //TODO: Draw here
         particle_pass.updateVBO(0, points.data(), points.size());
