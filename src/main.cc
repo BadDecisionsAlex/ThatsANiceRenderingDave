@@ -19,16 +19,16 @@
 int window_width = 800, window_height = 600;
 const std::string window_title = "Particles";
 
-const char* line_vertex_shader =
-#include "shaders/line.vert"
+const char* particle_vertex_shader =
+#include "shaders/particle.vert"
 ;
 
-const char* line_geometry_shader =
-#include "shaders/line.geom"
+const char* particle_geometry_shader =
+#include "shaders/particle.geom"
 ;
 
-const char* line_fragment_shader =
-#include "shaders/line.frag"
+const char* particle_fragment_shader =
+#include "shaders/particle.frag"
 ;
 
 // FIXME: Add more shaders here.
@@ -65,6 +65,44 @@ GLFWwindow* init_glefw()
 int main(int argc, char* argv[])
 {
 	GLFWwindow *window = init_glefw();
+    
+
+    //Binders:
+//    auto float_binder = [](int loc, const void* data) {
+//        glUniform1fv(loc, 1, (const GLfloat*)data);
+//    };
+    
+    /*
+     * These lambda functions below are used to retrieve data
+     */
+//    auto selected_b_data = [&gui]() -> const void* {
+//        static const glm::vec4 zero = glm::vec4(0, 0, 0, 0);
+//        if (gui.getCurrentBone() >= 0) {
+//            glm::vec4& n = gui.getCurrentRotation()[2];
+//            return &n;
+//        }
+//        return &zero;
+//    };
+    
+    //Uniforms:
+//    ShaderUniform selected_b = { "selected_b", vector_binder, selected_b_data };
+    
+    std::vector<glm::vec4> points;
+    points.push_back(glm::vec4(10, 10, 0, 0));
+    
+    RenderDataInput particle_pass_input;
+    particle_pass_input.assign(0, "vertex_position", nullptr, points.size(), 4, GL_FLOAT);
+    particle_pass_input.assign_index(points.data(), points.size(), 4);
+    RenderPass particle_pass(-1,
+                           particle_pass_input,
+                           {
+                               particle_vertex_shader,
+                               particle_geometry_shader,
+                               particle_fragment_shader
+                           },
+                           { /* uniforms */ },
+                           { "fragment_color" }
+                           );
 
 	while (!glfwWindowShouldClose(window)) {
 		// Setup some basic window stuff.
@@ -81,6 +119,10 @@ int main(int argc, char* argv[])
 		glCullFace(GL_BACK);
 
         //TODO: Draw here
+        particle_pass.updateVBO(0, points.data(), points.size());
+        
+        particle_pass.setup();
+        CHECK_GL_ERROR(glDrawElements(GL_POINTS, points.size(), GL_UNSIGNED_INT, 0));
         
 		// Poll and swap.
 		glfwPollEvents();
