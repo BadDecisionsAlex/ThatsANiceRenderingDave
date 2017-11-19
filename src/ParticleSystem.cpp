@@ -31,19 +31,20 @@ bool GravitySystem::step() {
         vp.p0 += gForce;
         if(!inBounds(vp))
             flaggedForBounds.push_back(a);
-        for (int b = a + 1; b < particles.size(); ++b) {
+        /*for (int b = a + 1; b < particles.size(); ++b) {
             if (collides(vp,particles[b]))
                 flaggedForCollides.push_back(make_pair(a,b));
-        }
+        }*/
     }
     
     // Collision and Bounds corrections
-    while (!correctCollides() || !correctBounds());
-    
+    //while (!correctCollides() || !correctBounds());
+    correctBounds();
+
     // Update Particle Data
     for (VerletParticle vp : particles) {
-//        vp.p1 = p;
-//        vp.p = p0;
+        vp.p1 = p;
+        vp.p = p0;
     }
     
     return true;
@@ -90,15 +91,35 @@ void GravitySystem::fixCollides(VerletParticle& lsh, VerletParticle& rhs) {
 }
 
 bool GravitySystem::correctBounds() {
+    for(int i : flaggedForBounds){
+        fixBounds(particles[flaggedForBounds[i]]);
+    }
+    flaggedForBounds.clear();
     return true;
 }
 
 bool GravitySystem::inBounds(const VerletParticle& _p) {
-    return true;
+  if(_p.p0.x-_p.radius<FLOAT_EPSILON)
+      return false;
+  if(_p.p0.y-_p.radius<FLOAT_EPSILON)
+      return false;
+  if(_p.p0.x+_p.radius>width-FLOAT_EPSILON)
+      return false;
+  if(_p.p0.y+_p.radius>height-FLOAT_EPSILON)
+      return false;
+
+  return true;
 }
 
 void GravitySystem::fixBounds(VerletParticle& _p) {
-    
+  if(_p.p0.x-_p.radius<FLOAT_EPSILON)
+      p.p0.x = _p.radius;
+  if(_p.p0.y-_p.radius<FLOAT_EPSILON)
+      p.p0.y = _p.radius;
+  if(_p.p0.x+_p.radius>width-FLOAT_EPSILON)
+      p.p0.x = width - _p.radius;
+  if(_p.p0.y+_p.radius>height-FLOAT_EPSILON)
+      p.p0.y = height - _p.radius;
 }
 
 #endif
