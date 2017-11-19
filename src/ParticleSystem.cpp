@@ -29,18 +29,9 @@ bool GravitySystem::step() {
         VerletParticle& vp = particles[a];
         vp.p0 += vp.velocity();
         vp.p0 += gForce;
-        if(!inBounds(vp))
-            flaggedForBounds.push_back(a);
-        /*for (int b = a + 1; b < particles.size(); ++b) {
-            if (collides(vp,particles[b]))
-                flaggedForCollides.push_back(make_pair(a,b));
-        }*/
+        fixBounds(vp);
     }
     
-    // Collision and Bounds corrections
-    //while (!correctCollides() || !correctBounds());
-    correctBounds();
-
     // Update Particle Data
     for (VerletParticle vp : particles) {
         vp.p1 = vp.p;
@@ -65,21 +56,7 @@ vector<int> GravitySystem::flagCollidesFor(const VerletParticle& _p) {
 bool GravitySystem::correctCollides() {
     if (flaggedForCollides.size() == 0)
         return true;
-    
-    for (pair<int, int>& p : flaggedForCollides) {
-        VerletParticle& a = particles[p.first];
-        VerletParticle& b = particles[p.second];
-        
-        vector<int> cA = flagCollidesFor(a);
-        vector<int> cB = flagCollidesFor(b);
-        float wA = cA.size();
-        float wB = cB.size();
-        vec3 fA = wA*a.acceleration();
-        vec3 fB = wB*b.acceleration();
-        // FIXME add weight to particles. Weight = 999 if it's touching the bounds.
-    }
-    
-    return true;
+    return false;
 }
 
 bool GravitySystem::collides(const VerletParticle& lhs, const VerletParticle& rhs) {
