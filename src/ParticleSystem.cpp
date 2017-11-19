@@ -23,6 +23,7 @@ bool GravitySystem::sendData(vector<vec3>& points) {
 }
 
 bool GravitySystem::step() {
+    clock_t start_time = clock();
     flaggedForBounds.clear();
     flaggedForCollides.clear();
     
@@ -39,7 +40,9 @@ bool GravitySystem::step() {
         vp.p1 = vp.p;
         vp.p = vp.p0;
     }
-    
+
+    // Wait till a frame should be updated
+    clock_t end_time = clock();
     return true;
 }
 
