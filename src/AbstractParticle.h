@@ -12,13 +12,13 @@ struct AbstractParticle{
     AbstractParticle(vec2 _p) : p(vec3(_p, 1.0)) {}
     AbstractParticle(vec3 _p) : p(_p) {}
     
-    virtual ~AbstractParticle()=default;
-    virtual vec2 pos(){return vec2(p);}
-    virtual vec2 pos(vec2){return pos();}
-    virtual vec3 pos(vec3){return p;}
-    virtual float x(){return p.x;}
-    virtual float y(){return p.y;}
-    virtual inline bool operator==(const AbstractParticle& rhs){return p==rhs.p;}
+    virtual ~AbstractParticle() = default;
+    virtual vec2 pos() { return vec2(p); }
+    virtual vec2 pos(vec2) { return pos(); }
+    virtual vec3 pos(vec3) { return p; }
+    virtual float x() { return p.x; }
+    virtual float y() { return p.y; }
+    virtual inline bool operator==(const AbstractParticle& rhs) { return p==rhs.p; }
 };
 
 struct VerletParticle : AbstractParticle{

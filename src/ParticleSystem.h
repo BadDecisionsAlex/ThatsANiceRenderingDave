@@ -10,7 +10,7 @@ using std::pair;
 
 #define FLOAT_EPSILON 0.00000001
 
-struct ParticleSystem{
+struct ParticleSystem {
     float width, height;
     
     ParticleSystem() : width(500.0), height(500.0) {}
@@ -20,18 +20,20 @@ struct ParticleSystem{
     bool virtual step()=0;
 };
 
-class GravitySystem : ParticleSystem{
+class GravitySystem : ParticleSystem {
     vector<VerletParticle> particles;
     vector<int> flaggedForBounds;
     vector<pair<int,int>> flaggedForCollides;
     vec3 gForce;
     public:
         static const vec3 DEFAULT_GRAVITY;
+    
         GravitySystem():particles(), gForce(DEFAULT_GRAVITY){}
         GravitySystem(float _g):particles(), gForce(vec3(0.0,_g,0.0)){}
         GravitySystem(vec3 _g):particles(), gForce(_g){}
         GravitySystem(float _g, const vector<vec2>& _in);
         GravitySystem(float _g, const vector<VerletParticle>& _in):particles(_in), gForce(_g){}
+    
         bool sendData(vector<vec3>& points);
         bool step();
     private:
