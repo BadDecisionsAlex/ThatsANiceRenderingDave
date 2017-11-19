@@ -8,7 +8,9 @@ using glm::vec3;
 using std::vector;
 using std::pair;
 
+#ifndef FLOAT_EPSILON
 #define FLOAT_EPSILON 0.00000001
+#endif
 
 struct ParticleSystem {
     float width, height;
@@ -45,5 +47,4 @@ class GravitySystem : ParticleSystem {
         bool inBounds(const VerletParticle& _p);
         void fixBounds(VerletParticle& _p);
 };
-const vec3 GravitySystem::DEFAULT_GRAVITY  =  vec3(0.0,-9.807,0.0);
 #endif
