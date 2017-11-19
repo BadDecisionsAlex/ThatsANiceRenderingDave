@@ -24,7 +24,7 @@ struct ParticleSystem {
     bool virtual step()=0;
 };
 
-class GravitySystem : ParticleSystem {
+class GravitySystem : public ParticleSystem {
     vector<VerletParticle> particles;
     vector<int> flaggedForBounds;
     vector<pair<int,int>> flaggedForCollides;
@@ -35,8 +35,10 @@ class GravitySystem : ParticleSystem {
         GravitySystem():particles(), gForce(DEFAULT_GRAVITY){}
         GravitySystem(float _g):particles(), gForce(vec3(0.0,_g,0.0)){}
         GravitySystem(vec3 _g):particles(), gForce(_g){}
-        GravitySystem(float _g, const vector<vec2>& _in);
-        GravitySystem(float _g, const vector<VerletParticle>& _in):particles(_in), gForce(_g){}
+        GravitySystem(vec3 _g, const vector<vec2>& _in );
+        GravitySystem(float _g, const vector<vec2>& _in):GravitySystem( vec3(0.0,_g,0.0), _in ){}
+        GravitySystem(const vector<vec2>& _in):GravitySystem(DEFAULT_GRAVITY, _in){}
+        GravitySystem(float _g, const vector<VerletParticle>& _in):particles(_in), gForce( vec3( 0.0, _g, 0.0 ) ){}
     
         bool sendData(vector<vec3>& points);
         bool step();

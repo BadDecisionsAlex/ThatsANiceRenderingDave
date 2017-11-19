@@ -1,6 +1,8 @@
 #ifndef PARTICLE_SYSTEM_CPP
 #define PARTICLE_SYSTEM_CPP
 #include "ParticleSystem.h"
+#include <iostream>                 // std::cout
+#include <glm/gtx/string_cast.hpp>  // glm::to_string
 
 #define STEP_TIME 1.0f / 60.0f
 
@@ -9,16 +11,17 @@ using glm::vec3;
 using std::vector;
 using std::make_pair;
 
-
-GravitySystem::GravitySystem(float _g, const vector<vec2>& _in) {
+GravitySystem::GravitySystem(vec3  _g, const vector<vec2>& _in) : gForce(_g) {
     for (vec2 _p : _in)
         particles.push_back(VerletParticle(_p));
 }
 
 bool GravitySystem::sendData(vector<vec3>& points) {
     points.clear();
-    for (VerletParticle& vp : particles)
+    for (VerletParticle& vp : particles){
         points.push_back(vec3(vp.pos(),vp.radius));
+        // std::cout << "pre : " << glm::to_string(vp.p) << " post : " << glm::to_string( ( vec3(vp.pos(),vp.radius) ) ) << '\n';
+    }
     return true;
 }
 
@@ -26,17 +29,17 @@ bool GravitySystem::step() {
     clock_t start_time = clock();
     flaggedForBounds.clear();
     flaggedForCollides.clear();
-    
+    float t = 1.0/60.0; // 60 FPS    
     // Apply velocity and gravity
     for (int a = 0; a < particles.size(); ++a) {
         VerletParticle& vp = particles[a];
-        vp.p0 += vp.velocity();
-        vp.p0 += gForce;
+        vp.p0 += t * vp.velocity();
+        vp.p0 += t * gForce;
         fixBounds(vp);
     }
     
     // Update Particle Data
-    for (VerletParticle vp : particles) {
+    for (VerletParticle& vp : particles) {
         vp.p1 = vp.p;
         vp.p = vp.p0;
     }
