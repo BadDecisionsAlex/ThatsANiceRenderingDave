@@ -4,6 +4,8 @@
 #include <iostream>                 // std::cout
 #include <glm/gtx/string_cast.hpp>  // glm::to_string
 
+#define STEP_TIME 1.0f / 60.0f
+
 using glm::vec2;
 using glm::vec3;
 using std::vector;
@@ -24,6 +26,7 @@ bool GravitySystem::sendData(vector<vec3>& points) {
 }
 
 bool GravitySystem::step() {
+    clock_t start_time = clock();
     flaggedForBounds.clear();
     flaggedForCollides.clear();
     float t = 1.0/60.0; // 60 FPS    
@@ -41,7 +44,9 @@ bool GravitySystem::step() {
         vp.p = vp.p0;
         std::cout << vp.p.y << '\n';
     }
-    
+
+    // Wait till a frame should be updated
+    clock_t end_time = clock();
     return true;
 }
 

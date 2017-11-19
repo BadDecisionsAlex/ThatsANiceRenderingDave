@@ -3,6 +3,8 @@
 #include "AbstractParticle.h"   // AbstractParticle, VerletParticle
 #include <glm/glm.hpp>          // vec2, vec3
 #include <vector>               // vector
+#include <time.h>               // needed for timing the step
+
 using glm::vec2;
 using glm::vec3;
 using std::vector;
