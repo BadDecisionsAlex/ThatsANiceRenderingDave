@@ -6,7 +6,7 @@ void main() {
     
     gl_Position = gl_in[0].gl_Position;
     EmitVertex();
-    point[0] += 20;
+    point[0] += 0.5;
     gl_Position = point;
     EmitVertex();
     EndPrimitive();
