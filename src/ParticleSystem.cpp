@@ -39,6 +39,7 @@ bool GravitySystem::step() {
     for (VerletParticle& vp : particles) {
         vp.p1 = vp.p;
         vp.p = vp.p0;
+        std::cout << vp.p.y << '\n';
     }
     
     return true;

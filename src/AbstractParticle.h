@@ -22,7 +22,7 @@ struct AbstractParticle{
 };
 
 struct VerletParticle : AbstractParticle{
-    constexpr static float DEFAULT_RADIUS = 0.5;
+    constexpr static float DEFAULT_RADIUS = 2.0;
     // Instance Variables
     vec3 p0,p1;
     float radius;
