@@ -43,8 +43,8 @@ bool GravitySystem::step() {
 
     // Update Particle Data
     for (VerletParticle vp : particles) {
-        vp.p1 = p;
-        vp.p = p0;
+        vp.p1 = vp.p;
+        vp.p = vp.p0;
     }
     
     return true;
@@ -113,13 +113,13 @@ bool GravitySystem::inBounds(const VerletParticle& _p) {
 
 void GravitySystem::fixBounds(VerletParticle& _p) {
   if(_p.p0.x-_p.radius<FLOAT_EPSILON)
-      p.p0.x = _p.radius;
+      _p.p0.x = _p.radius;
   if(_p.p0.y-_p.radius<FLOAT_EPSILON)
-      p.p0.y = _p.radius;
+      _p.p0.y = _p.radius;
   if(_p.p0.x+_p.radius>width-FLOAT_EPSILON)
-      p.p0.x = width - _p.radius;
+      _p.p0.x = width - _p.radius;
   if(_p.p0.y+_p.radius>height-FLOAT_EPSILON)
-      p.p0.y = height - _p.radius;
+      _p.p0.y = height - _p.radius;
 }
 
 #endif
