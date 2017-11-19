@@ -99,4 +99,6 @@ void GravitySystem::fixBounds(VerletParticle& _p) {
       _p.p0.y = height - _p.radius;
 }
 
+const vec3 GravitySystem::DEFAULT_GRAVITY = vec3( 0.0, -9.807, 0.0);
+
 #endif
