@@ -1,21 +1,17 @@
 R"zzz(#version 330 core
 layout (points) in;
-layout (line_strip, max_vertices = 100) out;
+layout (points, max_vertices = 2) out;
 void main() {
     vec4 point = gl_in[0].gl_Position;
     
     gl_Position = gl_in[0].gl_Position;
-    EmitVertex();
-    point[0] += 0.5;
-    gl_Position = point;
+    gl_PointSize = 5;
     EmitVertex();
     EndPrimitive();
-    
-//    for (int x = 0; x < 99; x++) {
-//        point[0] += 1;
-//        gl_Position = point;
-//        EmitVertex();
-//        EndPrimitive();
-//    }
+//
+//    point[0] += 0.00001;
+//    gl_Position = point;
+//    EmitVertex();
+//    EndPrimitive();
 }
 )zzz"
