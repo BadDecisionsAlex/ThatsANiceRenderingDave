@@ -89,11 +89,11 @@ int main(int argc, char* argv[])
     
     std::vector<glm::vec4> points;
     std::vector<glm::uvec1> point_numbers;
-    points.push_back(glm::vec4(10, 10, 10, 10));
+    points.push_back(glm::vec4(-0.99, 0, 0, 1));
     point_numbers.push_back(glm::vec1(0));
     
     RenderDataInput particle_pass_input;
-    particle_pass_input.assign(0, "vertex_position", nullptr, points.size(), 4, GL_FLOAT);
+    particle_pass_input.assign(0, "vertex_position", points.data(), points.size(), 4, GL_FLOAT);
     particle_pass_input.assign_index(point_numbers.data(), point_numbers.size(), 1);
     RenderPass particle_pass(-1,
                            particle_pass_input,
@@ -111,14 +111,14 @@ int main(int argc, char* argv[])
 		glfwGetFramebufferSize(window, &window_width, &window_height);
 		glViewport(0, 0, window_width, window_height);
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_MULTISAMPLE);
-		glEnable(GL_BLEND);
-		glEnable(GL_CULL_FACE);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glDepthFunc(GL_LESS);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glCullFace(GL_BACK);
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_MULTISAMPLE);
+        glEnable(GL_BLEND);
+        glEnable(GL_CULL_FACE);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glDepthFunc(GL_LESS);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glCullFace(GL_BACK);
 
         //TODO: Draw here
         particle_pass.updateVBO(0, points.data(), points.size());
