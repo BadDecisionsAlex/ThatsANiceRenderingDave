@@ -96,14 +96,22 @@ bool GravitySystem::inBounds(const VerletParticle& _p) {
 }
 
 void GravitySystem::fixBounds(VerletParticle& _p) {
-  if(_p.p0.x-_p.radius<FLOAT_EPSILON)
-      _p.p0.x = _p.radius;
-  if(_p.p0.y-_p.radius<FLOAT_EPSILON)
-      _p.p0.y = _p.radius;
-  if(_p.p0.x+_p.radius>width-FLOAT_EPSILON)
-      _p.p0.x = width - _p.radius;
-  if(_p.p0.y+_p.radius>height-FLOAT_EPSILON)
-      _p.p0.y = height - _p.radius;
+  if(_p.p0.x-_p.radius<FLOAT_EPSILON){
+      	_p.p.x = _p.p0.x;
+		_p.p0.x = _p.radius;
+	}
+  if(_p.p0.y-_p.radius<FLOAT_EPSILON){
+		_p.p.y = _p.p0.y;
+      	_p.p0.y = _p.radius;
+	}
+  if(_p.p0.x+_p.radius>width-FLOAT_EPSILON){
+		_p.p.x = _p.p0.x;
+      	_p.p0.x = width - _p.radius;
+	}
+  if(_p.p0.y+_p.radius>height-FLOAT_EPSILON){
+		_p.p.y = _p.p0.y;
+      	_p.p0.y = height - _p.radius;
+	}
 }
 
 const vec3 GravitySystem::DEFAULT_GRAVITY = vec3( 0.0, -9.807, 0.0);
