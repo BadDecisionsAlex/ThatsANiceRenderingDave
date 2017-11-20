@@ -61,13 +61,25 @@ vector<int> GravitySystem::flagCollidesFor(const VerletParticle& _p) {
 }
 
 bool GravitySystem::correctCollides() {
-    if (flaggedForCollides.size() == 0)
-        return true;
-    return false;
+	bool done = true;
+	for(int a=0; a < particles.size()-1; ++a){
+		VerletParticle& pA = particles[a];
+		for(int b=a+1;b<particles.size();++b){
+			VerletParticle& pB = particles[b];
+			if( collides( pA, pB ) ){
+				done = false;
+				pA.p0 -= pB.acceleration() + pB.radius * glm::normalize( pB.acceleration() );
+				pB.p0 -= pA.acceleration() + pA.radius * glm::normalize( pA.acceleration() );
+			}
+		}
+	}
+	if(!done)
+		correctCollides();
+	return true;
 }
 
 bool GravitySystem::collides(const VerletParticle& lhs, const VerletParticle& rhs) {
-    return true;
+    return (lhs!=rhs)&&( glm::distance( lhs.tempPos(), rhs.tempPos() ) <lhs.radius+rhs.radius+2*FLOAT_EPSILON);
 }
 
 void GravitySystem::fixCollides(VerletParticle& lsh, VerletParticle& rhs) {
