@@ -101,16 +101,16 @@ int main(int argc, char* argv[])
 
     // Load Initial Particle Positions in ParticleSystem's coord space
     vector<vec2> particle_inits;
-    particle_inits.push_back( vec2( 250.0, 350.0 ) );
-    particle_inits.push_back( vec2( 250.0, 325.0 ) );
-    particle_inits.push_back( vec2( 250.0, 300.0 ) );
-    particle_inits.push_back( vec2( 250.0, 275.0 ) );
     particle_inits.push_back( vec2( 250.0, 250.0 ) );
+    //particle_inits.push_back( vec2( 250.0, 325.0 ) );
+    //particle_inits.push_back( vec2( 250.0, 300.0 ) );
+    //particle_inits.push_back( vec2( 250.0, 275.0 ) );
+    //particle_inits.push_back( vec2( 250.0, 250.0 ) );
     point_numbers.push_back( uvec1( 0 ) );
-    point_numbers.push_back( uvec1( 1 ) );
-    point_numbers.push_back( uvec1( 2 ) );
-    point_numbers.push_back( uvec1( 3 ) );
-    point_numbers.push_back( uvec1( 4 ) );
+    //point_numbers.push_back( uvec1( 1 ) );
+    //point_numbers.push_back( uvec1( 2 ) );
+    //point_numbers.push_back( uvec1( 3 ) );
+    //point_numbers.push_back( uvec1( 4 ) );
     // Initialize a Gravity System and Scene
     GravitySystem* rootSystem = new GravitySystem( particle_inits );
     Scene scene = Scene( rootSystem );
