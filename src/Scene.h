@@ -16,7 +16,7 @@ class Scene{
         vector<vec3> points;
     public:
         Scene(const ParticleSystem* _root):rootSystem(const_cast<ParticleSystem* const>(_root)),points(){}
-        bool retrieveData(){return rootSystem->sendData(points);}
+        bool retrieveData() { return rootSystem->sendData(points); }
         bool updateBuffers(vector<vec4>& pointsNDC, vector<uvec1>& pointsNumbers);
         vec2 toScreen(const vec3& _p);
 };

@@ -96,8 +96,8 @@ bool GravitySystem::correctCollides() {
                     tOfA += accuracy * deltaA;
                     tOfB += accuracy * deltaB;
                     t += accuracy;
-                    if(t>1.0){
-                        std::cerr << "Particle Collision detection error.\n";
+                    if ( t > 1.000001){
+                        std::cerr << "Particle Collision detection error." << std::endl;
                         break;
                     }
                 }
