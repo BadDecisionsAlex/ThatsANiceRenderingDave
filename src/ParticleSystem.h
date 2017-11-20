@@ -25,13 +25,13 @@ struct ParticleSystem {
 };
 
 class GravitySystem : public ParticleSystem {
-    vector<VerletParticle> particles;
     vector<int> flaggedForBounds;
     vector<pair<int,int>> flaggedForCollides;
     vec3 gForce;
     public:
         static const vec3 DEFAULT_GRAVITY;
     
+        vector<VerletParticle> particles;
         GravitySystem():particles(), gForce(DEFAULT_GRAVITY){}
         GravitySystem(float _g):particles(), gForce(vec3(0.0,_g,0.0)){}
         GravitySystem(vec3 _g):particles(), gForce(_g){}

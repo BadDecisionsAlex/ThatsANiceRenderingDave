@@ -6,6 +6,19 @@
 
 #define STEP_TIME 1.0f / 60.0f
 
+// To disable debug messages for this file comment out the first line below
+#define DEBUG_PHYSICS_CPP 0
+#ifdef DEBUG_PHYSICS_CPP
+#define DEBUGPHYSICS(str)       \
+    do{                         \
+        std::cerr << str;       \
+    }while(false)
+#else
+#define DEBUGPHYSICS(str)       \
+    do{                         \
+    }while(false)
+#endif
+
 using glm::vec2;
 using glm::vec3;
 using std::vector;
@@ -20,12 +33,12 @@ bool GravitySystem::sendData(vector<vec3>& points) {
     points.clear();
     for (VerletParticle& vp : particles){
         points.push_back(vec3(vp.pos(),vp.radius));
-        // std::cout << "pre : " << glm::to_string(vp.p) << " post : " << glm::to_string( ( vec3(vp.pos(),vp.radius) ) ) << '\n';
     }
     return true;
 }
 
 bool GravitySystem::step() {
+    //DEBUGPHYSICS("Gravity System is initiating a step.\n" );
     clock_t start_time = clock();
     flaggedForBounds.clear();
     flaggedForCollides.clear();
@@ -33,18 +46,18 @@ bool GravitySystem::step() {
     // Apply velocity and gravity
     for (int a = 0; a < particles.size(); ++a) {
         VerletParticle& vp = particles[a];
-        vp.p0 += t * vp.velocity();
+		vp.p0 += vp.velocity();
         vp.p0 += t * gForce;
         fixBounds(vp);
+        DEBUGPHYSICS("p : " << vp.p.y << "\t\tvelocity : " << vp.velocity().y << "\t\tacceleration : " << vp.acceleration().y << '\n');
     }
-    
+    correctCollides(); 
     // Update Particle Data
     for (VerletParticle& vp : particles) {
         vp.p1 = vp.p;
         vp.p = vp.p0;
-        std::cout << vp.p.y << '\n';
     }
-
+    DEBUGPHYSICS('\n');
     // Wait till a frame should be updated
     clock_t end_time = clock();
     return true;
@@ -63,13 +76,57 @@ vector<int> GravitySystem::flagCollidesFor(const VerletParticle& _p) {
 }
 
 bool GravitySystem::correctCollides() {
-    if (flaggedForCollides.size() == 0)
-        return true;
-    return false;
+    //DEBUGPHYSICS("Correcting Collisions.\n");
+	bool done = true;
+	for(int a=0; a < particles.size()-1; ++a){
+		VerletParticle& pA = particles[a];
+		for(int b=a+1;b<particles.size();++b){
+			VerletParticle& pB = particles[b];
+			if( collides( pA, pB ) ){
+				done = false;
+                // We must determine the value t where collision occurred.
+                // accuracy is the number of subdivisions to check between 0 < t < 1
+                float t = 0;
+                float accuracy = 1.0/10.0;
+                vec2 tOfA = pA.pos();
+                vec2 tOfB = pB.pos();
+                vec2 deltaA = pA.tempPos() - tOfA;
+                vec2 deltaB = pB.tempPos() - tOfB;
+                while(glm::distance( tOfA, tOfB ) > pA.radius + pB.radius + 2 * FLOAT_EPSILON ){
+                    tOfA += accuracy * deltaA;
+                    tOfB += accuracy * deltaB;
+                    t += accuracy;
+                    if(t>1.0){
+                        std::cerr << "Particle Collision detection error.\n";
+                        break;
+                    }
+                }
+                DEBUGPHYSICS("Collision occurs at t : " << t << '\n');
+                DEBUGPHYSICS("tOfA : " << tOfA.y << " tOfB : " << tOfB.y << '\n');
+                DEBUGPHYSICS("VelocityA : " << pA.velocity().y << " VelocityB : " << pB.velocity().y << '\n');
+                // Velocity right after collision
+                vec2 velocityAt = pA.velocity(vec2()) + t * pA.acceleration(vec2()); // V1
+                vec2 velocityBt = pB.velocity(vec2()) + t * pB.acceleration(vec2()); // V2
+                DEBUGPHYSICS("VelocityAofT : " << velocityAt.y << " VelocityBofT : " << velocityBt.y << '\n');
+                // Calculate force applied to each particle.
+                vec2 newVelocityA = velocityAt - velocityBt;
+                vec2 newVelocityB = velocityBt - velocityAt;
+                pA.p = vec3( tOfA - t * newVelocityA, 1.0 );
+                pB.p = vec3( tOfB - t * newVelocityB, 1.0 );
+                DEBUGPHYSICS("pA.p0 was : " << pA.p0.y << " pB.p0 was : " << pB.p0.y << '\n');
+                pA.p0 = vec3( tOfA + ( (1.0f-t) * newVelocityA ), 1.0 );
+                pB.p0 = vec3( tOfB + ( (1.0f-t) * newVelocityB ), 1.0 );
+                DEBUGPHYSICS("pA.p0 is : " << pA.p0.y << " pB.p0 is : " << pB.p0.y << "\n\n");
+			}
+		}
+	}
+	//if(!done)
+	//	correctCollides();
+	return true;
 }
 
 bool GravitySystem::collides(const VerletParticle& lhs, const VerletParticle& rhs) {
-    return true;
+    return (lhs!=rhs)&&( glm::distance( lhs.tempPos(), rhs.tempPos() ) <lhs.radius+rhs.radius+2*FLOAT_EPSILON);
 }
 
 void GravitySystem::fixCollides(VerletParticle& lsh, VerletParticle& rhs) {
@@ -85,9 +142,9 @@ bool GravitySystem::correctBounds() {
 }
 
 bool GravitySystem::inBounds(const VerletParticle& _p) {
-  if(_p.p0.x-_p.radius<FLOAT_EPSILON)
+  if(_p.p0.x-_p.radius<FLOAT_EPSILON && _p.velocity().x < FLOAT_EPSILON )
       return false;
-  if(_p.p0.y-_p.radius<FLOAT_EPSILON)
+  if(_p.p0.y-_p.radius<FLOAT_EPSILON && _p.velocity().y < FLOAT_EPSILON )
       return false;
   if(_p.p0.x+_p.radius>width-FLOAT_EPSILON)
       return false;
@@ -98,14 +155,23 @@ bool GravitySystem::inBounds(const VerletParticle& _p) {
 }
 
 void GravitySystem::fixBounds(VerletParticle& _p) {
-  if(_p.p0.x-_p.radius<FLOAT_EPSILON)
-      _p.p0.x = _p.radius;
-  if(_p.p0.y-_p.radius<FLOAT_EPSILON)
-      _p.p0.y = _p.radius;
-  if(_p.p0.x+_p.radius>width-FLOAT_EPSILON)
-      _p.p0.x = width - _p.radius;
-  if(_p.p0.y+_p.radius>height-FLOAT_EPSILON)
-      _p.p0.y = height - _p.radius;
+    DEBUGPHYSICS("Correcting Bounds.\n");
+    if(_p.p0.x-_p.radius<FLOAT_EPSILON && _p.velocity().x < FLOAT_EPSILON){
+      	_p.p.x = _p.p0.x;
+		_p.p0.x = _p.radius;
+	}
+    if(_p.p0.y-_p.radius<FLOAT_EPSILON && _p.velocity().y < FLOAT_EPSILON){
+		_p.p.y = _p.p0.y;
+      	_p.p0.y = _p.radius;
+    }
+    if(_p.p0.x+_p.radius>width-FLOAT_EPSILON){
+		_p.p.x = _p.p0.x;
+      	_p.p0.x = width - _p.radius;
+	}
+    if(_p.p0.y+_p.radius>height-FLOAT_EPSILON){
+		_p.p.y = _p.p0.y;
+      	_p.p0.y = height - _p.radius;
+	}
 }
 
 const vec3 GravitySystem::DEFAULT_GRAVITY = vec3( 0.0, -9.807, 0.0);

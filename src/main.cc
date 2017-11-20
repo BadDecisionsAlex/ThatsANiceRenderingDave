@@ -79,7 +79,16 @@ int main(int argc, char* argv[])
 
     // Load Initial Particle Positions in ParticleSystem's coord space
     vector<vec2> particle_inits;
-    particle_inits.push_back( vec2( 250.0, 250.0) );
+    particle_inits.push_back( vec2( 250.0, 250.0 ) );
+    //particle_inits.push_back( vec2( 250.0, 325.0 ) );
+    //particle_inits.push_back( vec2( 250.0, 300.0 ) );
+    //particle_inits.push_back( vec2( 250.0, 275.0 ) );
+    //particle_inits.push_back( vec2( 250.0, 250.0 ) );
+    point_numbers.push_back( uvec1( 0 ) );
+    //point_numbers.push_back( uvec1( 1 ) );
+    //point_numbers.push_back( uvec1( 2 ) );
+    //point_numbers.push_back( uvec1( 3 ) );
+    //point_numbers.push_back( uvec1( 4 ) );
     // Initialize a Gravity System and Scene
     GravitySystem* rootSystem = new GravitySystem( particle_inits );
     Scene scene = Scene( rootSystem );
@@ -103,6 +112,8 @@ int main(int argc, char* argv[])
     // ANIMATION LOOP
     //
     // **************
+    
+    long counter = 0;
 
 	while (!glfwWindowShouldClose(window)) {
 		// Setup some basic window stuff.
@@ -120,6 +131,15 @@ int main(int argc, char* argv[])
         glCullFace(GL_BACK);
         
         // Make our updates to physics and scene.
+        /*++counter;
+        if(counter%60==0){
+            // Does not work. Particles are added to physics, and to the vertexes points and point_numbers, but never get drawn.
+            std::cout << points.size() << ' ' << std::flush;
+            rootSystem->particles.push_back(VerletParticle( 250.0, 260.0 ));
+            scene.retrieveData();
+            scene.updateBuffers(points);
+            point_numbers.push_back( uvec1( point_numbers.size() ) );
+        }*/
         rootSystem->step();
         scene.retrieveData();
         scene.updateBuffers(points, point_numbers);
