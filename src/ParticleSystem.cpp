@@ -7,7 +7,7 @@
 #define STEP_TIME 1.0f / 60.0f
 
 // To disable debug messages for this file comment out the first line below
-#define DEBUG_PHYSICS_CPP 0
+//#define DEBUG_PHYSICS_CPP 0
 #ifdef DEBUG_PHYSICS_CPP
 #define DEBUGPHYSICS(str)       \
     do{                         \

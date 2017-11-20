@@ -80,11 +80,15 @@ int main(int argc, char* argv[])
     // Load Initial Particle Positions in ParticleSystem's coord space
     vector<vec2> particle_inits;
     particle_inits.push_back( vec2( 250.0, 250.0 ) );
+    particle_inits.push_back( vec2( 150.0, 250.0 ) );
+    particle_inits.push_back( vec2( 350.0, 250.0 ) );
+    particle_inits.push_back( vec2( 50.0, 250.0 ) );
+
     //particle_inits.push_back( vec2( 250.0, 325.0 ) );
     //particle_inits.push_back( vec2( 250.0, 300.0 ) );
     //particle_inits.push_back( vec2( 250.0, 275.0 ) );
     //particle_inits.push_back( vec2( 250.0, 250.0 ) );
-    point_numbers.push_back( uvec1( 0 ) );
+//    point_numbers.push_back( uvec1( 0 ) );
     //point_numbers.push_back( uvec1( 1 ) );
     //point_numbers.push_back( uvec1( 2 ) );
     //point_numbers.push_back( uvec1( 3 ) );
