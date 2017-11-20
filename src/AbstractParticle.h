@@ -44,7 +44,7 @@ struct VerletParticle : AbstractParticle{
     vec3 velocity(){return p-p1;}
     vec3 velocity(vec3){return velocity();}
     vec2 velocity(vec2){return vec2(velocity());}
-    vec3 acceleration(){return p0-p;}
+    vec3 acceleration(){return (p0-p1) - velocity() ;}
     vec3 acceleration(vec3){return acceleration();}
     vec2 acceleration(vec2){return vec2(acceleration());}
     vec2 previousPos(){return vec2(p1);}

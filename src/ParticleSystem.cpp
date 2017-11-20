@@ -20,7 +20,6 @@ bool GravitySystem::sendData(vector<vec3>& points) {
     points.clear();
     for (VerletParticle& vp : particles){
         points.push_back(vec3(vp.pos(),vp.radius));
-        // std::cout << "pre : " << glm::to_string(vp.p) << " post : " << glm::to_string( ( vec3(vp.pos(),vp.radius) ) ) << '\n';
     }
     return true;
 }
@@ -33,7 +32,7 @@ bool GravitySystem::step() {
     // Apply velocity and gravity
     for (int a = 0; a < particles.size(); ++a) {
         VerletParticle& vp = particles[a];
-        vp.p0 += t * vp.velocity();
+		vp.p0 += vp.velocity();
         vp.p0 += t * gForce;
         fixBounds(vp);
     }
@@ -42,7 +41,6 @@ bool GravitySystem::step() {
     for (VerletParticle& vp : particles) {
         vp.p1 = vp.p;
         vp.p = vp.p0;
-        std::cout << vp.p.y << '\n';
     }
 
     // Wait till a frame should be updated
