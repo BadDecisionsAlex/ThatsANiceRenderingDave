@@ -51,7 +51,20 @@ class GravitySystem : public ParticleSystem {
 
 class GriddedGravitySystem : public GravitySystem{
     public:
-        GriddedGravitySystem(const vector<vec2>& _in) : GravitySystem(_in){}
+    typedef std::vector<VerletParticle> VerletVector;
+    typedef std::vector<VerletVector> ColVector;
+    typedef std::vector<ColVector> ParticleVector;
+    ParticleVector grid;
+        GriddedGravitySystem(const vector<vec2>& _in) : GravitySystem(_in){
+            for (int i = 0; i < width; ++i) {
+                ColVector r;
+                for (int j = 0; j < height; ++j) {
+                    VerletVector s;
+                    r.push_back(s);
+                }
+                grid.push_back(r);
+            }
+        }
         bool step();
 
     protected:
