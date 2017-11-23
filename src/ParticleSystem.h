@@ -52,6 +52,10 @@ class GravitySystem : public ParticleSystem {
 class GriddedGravitySystem : public GravitySystem{
     public:
         GriddedGravitySystem(const vector<vec2>& _in) : GravitySystem(_in){}
+        bool step();
+
+    protected:
+        bool correctCollides();
 };
 
 #endif

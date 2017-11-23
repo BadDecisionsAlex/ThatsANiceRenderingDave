@@ -140,4 +140,32 @@ void GravitySystem::fixBounds(VerletParticle& _p) {
 
 const vec3 GravitySystem::DEFAULT_GRAVITY = vec3( 0.0, -9.807, 0.0);
 
+bool GriddedGravitySystem::step() {
+    //DEBUGPHYSICS("Gravity System is initiating a step.\n" );
+    clock_t start_time = clock();
+    float t = 1.0/60.0; // 60 FPS
+    // Apply velocity and gravity
+    for (int a = 0; a < particles.size(); ++a) {
+        VerletParticle& vp = particles[a];
+		vp.p0 += vp.velocity();
+        vp.p0 += t * gForce;
+        fixBounds(vp);
+        DEBUGPHYSICS("p : " << vp.p.y << "\t\tvelocity : " << vp.velocity().y << "\t\tacceleration : " << vp.acceleration().y << '\n');
+    }
+    // todo : change this function to calcCollisions which is function that other particle systems can overide
+    GriddedGravitySystem::correctCollides();
+    // Update Particle Data
+    for (VerletParticle& vp : particles) {
+        vp.p1 = vp.p;
+        vp.p = vp.p0;
+    }
+    DEBUGPHYSICS('\n');
+    // Wait till a frame should be updated
+    clock_t end_time = clock();
+    return true;
+}
+
+bool GriddedGravitySystem::correctCollides(){
+    return true;
+}
 #endif
