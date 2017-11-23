@@ -25,9 +25,6 @@ struct ParticleSystem {
 };
 
 class GravitySystem : public ParticleSystem {
-    vector<int> flaggedForBounds;
-    vector<pair<int,int>> flaggedForCollides;
-    vec3 gForce;
     public:
         static const vec3 DEFAULT_GRAVITY;
     
@@ -42,14 +39,19 @@ class GravitySystem : public ParticleSystem {
     
         bool sendData(vector<vec3>& points);
         bool step();
-    private:
+
+    protected:
+        vec3 gForce;
         bool correctCollides();
-
-    bool collides(const VerletParticle& lhs, const VerletParticle& rhs);
-
-    void fixBounds(VerletParticle& _p);
+        bool collides(const VerletParticle& lhs, const VerletParticle& rhs);
+        void fixBounds(VerletParticle& _p);
 };
 
 // add a class that if inherited will handle collisions in a grid
+
+class GriddedGravitySystem : public GravitySystem{
+    public:
+        GriddedGravitySystem(const vector<vec2>& _in) : GravitySystem(_in){}
+};
 
 #endif

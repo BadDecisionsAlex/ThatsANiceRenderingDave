@@ -40,9 +40,7 @@ bool GravitySystem::sendData(vector<vec3>& points) {
 bool GravitySystem::step() {
     //DEBUGPHYSICS("Gravity System is initiating a step.\n" );
     clock_t start_time = clock();
-    flaggedForBounds.clear();
-    flaggedForCollides.clear();
-    float t = 1.0/60.0; // 60 FPS    
+    float t = 1.0/60.0; // 60 FPS
     // Apply velocity and gravity
     for (int a = 0; a < particles.size(); ++a) {
         VerletParticle& vp = particles[a];
