@@ -51,7 +51,8 @@ bool GravitySystem::step() {
         fixBounds(vp);
         DEBUGPHYSICS("p : " << vp.p.y << "\t\tvelocity : " << vp.velocity().y << "\t\tacceleration : " << vp.acceleration().y << '\n');
     }
-    correctCollides(); 
+    // todo : change this function to calcCollisions which is function that other particle systems can overide
+    correctCollides();
     // Update Particle Data
     for (VerletParticle& vp : particles) {
         vp.p1 = vp.p;
@@ -63,18 +64,7 @@ bool GravitySystem::step() {
     return true;
 }
 
-vector<int> GravitySystem::flagCollidesFor(const VerletParticle& _p) {
-    vector<int> flags;
-    
-    for (int i = 0; i < particles.size(); ++i) {
-        float radiusSum = particles[i].radius +_p.radius + 2 * FLOAT_EPSILON;
-        if ((particles[i] != _p) && (glm::distance(particles[i].p0, _p.p0) < radiusSum))
-            flags.push_back(i);
-    }
-    
-    return flags;
-}
-
+// todo : change this function name to calcCollisions which is a better name
 bool GravitySystem::correctCollides() {
     //DEBUGPHYSICS("Correcting Collisions.\n");
 	bool done = true;
@@ -125,33 +115,9 @@ bool GravitySystem::correctCollides() {
 	return true;
 }
 
+// todo : might have to be renamed of reimplemented to properly conform to a grid system
 bool GravitySystem::collides(const VerletParticle& lhs, const VerletParticle& rhs) {
     return (lhs!=rhs)&&( glm::distance( lhs.tempPos(), rhs.tempPos() ) <lhs.radius+rhs.radius+2*FLOAT_EPSILON);
-}
-
-void GravitySystem::fixCollides(VerletParticle& lsh, VerletParticle& rhs) {
-    
-}
-
-bool GravitySystem::correctBounds() {
-    for(int i : flaggedForBounds){
-        fixBounds(particles[flaggedForBounds[i]]);
-    }
-    flaggedForBounds.clear();
-    return true;
-}
-
-bool GravitySystem::inBounds(const VerletParticle& _p) {
-  if(_p.p0.x-_p.radius<FLOAT_EPSILON && _p.velocity().x < FLOAT_EPSILON )
-      return false;
-  if(_p.p0.y-_p.radius<FLOAT_EPSILON && _p.velocity().y < FLOAT_EPSILON )
-      return false;
-  if(_p.p0.x+_p.radius>width-FLOAT_EPSILON)
-      return false;
-  if(_p.p0.y+_p.radius>height-FLOAT_EPSILON)
-      return false;
-
-  return true;
 }
 
 void GravitySystem::fixBounds(VerletParticle& _p) {

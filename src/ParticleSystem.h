@@ -44,11 +44,12 @@ class GravitySystem : public ParticleSystem {
         bool step();
     private:
         bool correctCollides();
-        vector<int> flagCollidesFor(const VerletParticle& _p);
-        bool collides(const VerletParticle& lhs, const VerletParticle& rhs);
-        void fixCollides(VerletParticle& lsh, VerletParticle& rhs);
-        bool correctBounds();
-        bool inBounds(const VerletParticle& _p);
-        void fixBounds(VerletParticle& _p);
+
+    bool collides(const VerletParticle& lhs, const VerletParticle& rhs);
+
+    void fixBounds(VerletParticle& _p);
 };
+
+// add a class that if inherited will handle collisions in a grid
+
 #endif
