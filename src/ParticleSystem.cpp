@@ -175,8 +175,6 @@ void GriddedGravitySystem::gridInit(int blockSize){
     int dividedHeight = (int)height / blockSize;
     this->dividedWidth = dividedWidth;
     this->dividedHeight = dividedHeight;
-    int paddingX = (int)width % blockSize;
-    int paddingY = (int)height % blockSize;
     for (int i = 0; i < dividedWidth; ++i) {
         ColVector r;
         for (int j = 0; j < dividedHeight; ++j) {
@@ -188,20 +186,33 @@ void GriddedGravitySystem::gridInit(int blockSize){
 }
 
 void GriddedGravitySystem::gridInsert(VerletParticle p){
-    int cellX = (int) p.pos().x / blockSize;
-    int cellY = (int) p.pos().y / blockSize;
-    if(cellX == this->dividedWidth || cellY == this->dividedHeight)
-        padSpace.push_back(p);
-    else
-        particles.push_back(p);
+    int cellX = p.pos().x / blockSize;
+    int cellY = p.pos().y / blockSize;
+    cellX = std::min(width, (float)std::max(0,cellX));
+    cellY = std::min(height, (float)std::max(0,cellY));
+    grid[cellX][cellY].push_back(p);
 }
-vector<VerletParticle> GriddedGravitySystem::possibleCollisions(VerletParticle v){
-    int cellX = (int) v.pos().x / blockSize;
-    int cellY = (int) v.pos().y / blockSize;
-    vector<VerletParticle> canidateVector;
-    if(cellX == this->dividedWidth || cellY == this->dividedHeight)
-        canidateVector = padSpace;
-    else
-        canidateVector = grid[cellX][cellY];
+
+vector<VerletParticle> GriddedGravitySystem::getCell(VerletParticle p){
+    int cellX = p.pos().x / blockSize;
+    int cellY = p.pos().y / blockSize;
+    cellX = std::min(width, (float)std::max(0,cellX));
+    cellY = std::min(height, (float)std::max(0,cellY));
+    return grid[cellX][cellY];
 }
+
+vector<VerletParticle> GriddedGravitySystem::findCollisions(VerletParticle p){
+    vector<VerletParticle> result;
+    float x = p.pos().x;
+    float y = p.pos().y;
+    float radius = p.radius;
+    vector<VerletParticle> home = getCell(VerletParticle(x , y));
+    vector<VerletParticle> topRight = getCell(VerletParticle(x + radius, y + radius));
+    vector<VerletParticle> topLeft = getCell(VerletParticle(x - radius, y + radius));
+    vector<VerletParticle> bottomRight = getCell(VerletParticle(x + radius, y - radius));
+    vector<VerletParticle> bottomLeft = getCell(VerletParticle(x - radius, y - radius));
+    result.insert(result.end(), home.begin(), home.end());
+    return result;
+}
+
 #endif
