@@ -49,26 +49,25 @@ class GravitySystem : public ParticleSystem {
 
 // add a class that if inherited will handle collisions in a grid
 
-class GriddedGravitySystem : public GravitySystem{
-    public:
+class GriddedGravitySystem : public GravitySystem {
+public:
     typedef std::vector<VerletParticle> VerletVector;
     typedef std::vector<VerletVector> ColVector;
     typedef std::vector<ColVector> ParticleVector;
-    ParticleVector grid;
-    GriddedGravitySystem(const vector<vec2>& _in) : GravitySystem(_in){
-        for (int i = 0; i < width; ++i) {
-            ColVector r;
-            for (int j = 0; j < height; ++j) {
-                VerletVector s;
-                r.push_back(s);
-            }
-            grid.push_back(r);
-        }
-    }
+
+
+    GriddedGravitySystem(const vector<vec2> &_in) : GravitySystem(_in) { gridInit(10); }
+
     bool step();
 
-    protected:
-        bool correctCollides();
+protected:
+    ParticleVector grid;
+    vector<VerletParticle> padSpace;
+    int blockSize;
+    bool correctCollides();
+    void gridInit(int blockSize);
+    void gridInsert(VerletParticle p);
+    int dividedWidth;
+    int dividedHeight;
 };
-
 #endif

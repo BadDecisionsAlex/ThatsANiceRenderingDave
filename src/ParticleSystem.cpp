@@ -168,4 +168,31 @@ bool GriddedGravitySystem::step() {
 bool GriddedGravitySystem::correctCollides(){
     return true;
 }
+
+void GriddedGravitySystem::gridInit(int blockSize){
+    this->blockSize = blockSize;
+    int dividedWidth = (int)width / blockSize;
+    int dividedHeight = (int)height / blockSize;
+    this->dividedWidth = dividedWidth;
+    this->dividedHeight = dividedHeight;
+    int paddingX = (int)width % blockSize;
+    int paddingY = (int)height % blockSize;
+    for (int i = 0; i < dividedWidth; ++i) {
+        ColVector r;
+        for (int j = 0; j < dividedHeight; ++j) {
+            VerletVector s;
+            r.push_back(s);
+        }
+        grid.push_back(r);
+    }
+}
+
+void GriddedGravitySystem::gridInsert(VerletParticle p){
+    int cellX = (int) p.pos().x / blockSize;
+    int cellY = (int) p.pos().y / blockSize;
+    if(cellX == this->dividedWidth || cellY == this->dividedHeight)
+        padSpace.push_back(p);
+    else
+        particles.push_back(p);
+}
 #endif
