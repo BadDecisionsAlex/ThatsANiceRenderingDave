@@ -61,14 +61,17 @@ public:
     bool step();
 
 protected:
-    int dividedWidth;
-    int dividedHeight;    ParticleVector grid;
+    ParticleVector grid;
     vector<VerletParticle> padSpace;
+    int dividedWidth;
+    int dividedHeight;
     int blockSize;
     bool correctCollides();
 
     void gridInit(int blockSize);
     void gridInsert(VerletParticle p);
-    vector<VerletParticle> possibleCollisions(VerletParticle v);
+    vector<VerletParticle> findHomeCell(VerletParticle p);
+    vector<VerletParticle> possibleCollisions(VerletParticle p);
+    vector<vector<VerletParticle>> findResidentCells(VerletParticle p);
 };
 #endif
