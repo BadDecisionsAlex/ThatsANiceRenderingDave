@@ -1,6 +1,7 @@
 #ifndef PARTICLE_SYSTEM_H
 #define PARTICLE_SYSTEM_H
 #include "AbstractParticle.h"   // AbstractParticle, VerletParticle
+#include "ParticleGrid.h"
 #include <glm/glm.hpp>          // vec2, vec3
 #include <vector>               // vector
 #include <time.h>               // needed for timing the step
@@ -51,27 +52,12 @@ class GravitySystem : public ParticleSystem {
 
 class GriddedGravitySystem : public GravitySystem {
 public:
-    typedef std::vector<VerletParticle> VerletVector;
-    typedef std::vector<VerletVector> ColVector;
-    typedef std::vector<ColVector> ParticleVector;
-
-
-    GriddedGravitySystem(const vector<vec2> &_in) : GravitySystem(_in) { gridInit(10); }
-
+    GriddedGravitySystem(const vector<vec2> &_in) : GravitySystem(_in) { grid = ParticleGrid(10, width, height); }
     bool step();
 
 protected:
-    ParticleVector grid;
-    int blockSize;
-    int dividedWidth;
-    int dividedHeight;
+    ParticleGrid grid;
     bool correctCollides();
 
-    void gridInit(int blockSize);
-    void gridInsert(VerletParticle p);
-    vector<VerletParticle> findCollisions(VerletParticle p);
-    vector<VerletParticle> getCell(VerletParticle p);
-    void gridClear();
-    void gridUpdate(vector<VerletParticle> pVector);
 };
 #endif

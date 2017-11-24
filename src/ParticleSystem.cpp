@@ -168,10 +168,10 @@ bool GriddedGravitySystem::step() {
 bool GriddedGravitySystem::correctCollides(){
     //DEBUGPHYSICS("Correcting Collisions.\n");
     bool done = true;
-    gridUpdate(particles);
+    grid.update(particles);
     for (int i = 0; i < particles.size(); ++i) {
         VerletParticle& pA = particles[i];
-        vector<VerletParticle> canidates = findCollisions(pA);
+        vector<VerletParticle> canidates = grid.collides(pA);
         for (int j = 0; j < canidates.size(); ++j) {
            VerletParticle& pB = particles[j];
             if( collides( pA, pB ) ){
@@ -215,79 +215,5 @@ bool GriddedGravitySystem::correctCollides(){
     return true;
 }
 
-void GriddedGravitySystem::gridInit(int blockSize){
-    this->blockSize = blockSize;
-    int dividedWidth = (int)width / blockSize;
-    int dividedHeight = (int)height / blockSize;
-    this->dividedWidth = dividedWidth;
-    this->dividedHeight = dividedHeight;
-    for (int i = 0; i < dividedWidth; ++i) {
-        ColVector r;
-        for (int j = 0; j < dividedHeight; ++j) {
-            VerletVector s;
-            r.push_back(s);
-        }
-        grid.push_back(r);
-    }
-}
-
-void GriddedGravitySystem::gridClear(){
-    for (int i = 0; i < grid.size(); ++i) {
-        ColVector& row = grid[i];
-        for (int j = 0; j < row.size(); ++j) {
-            VerletVector& v = row[j];
-            v.clear();
-        }
-    }
-}
-
-void GriddedGravitySystem::gridUpdate(vector<VerletParticle> pVector) {
-    gridClear();
-    for (int i = 0; i < pVector.size(); ++i) {
-        gridInsert(pVector[i]);
-    }
-}
-
-void GriddedGravitySystem::gridInsert(VerletParticle p){
-    int cellX = p.pos().x / blockSize;
-    int cellY = p.pos().y / blockSize;
-    cellX = std::min(width, (float)std::max(0,cellX));
-    cellY = std::min(height, (float)std::max(0,cellY));
-    grid[cellX][cellY].push_back(p);
-}
-
-vector<VerletParticle> GriddedGravitySystem::getCell(VerletParticle p){
-    int cellX = p.pos().x / blockSize;
-    int cellY = p.pos().y / blockSize;
-    cellX = std::min(width, (float)std::max(0,cellX));
-    cellY = std::min(height, (float)std::max(0,cellY));
-    return grid[cellX][cellY];
-}
-
-vector<VerletParticle> GriddedGravitySystem::findCollisions(VerletParticle p){
-    vector<VerletParticle> result;
-    float x = p.pos().x;
-    float y = p.pos().y;
-    float radius = p.radius;
-    vector<VerletParticle> home = getCell(VerletParticle(x , y));
-    vector<VerletParticle> topRight = getCell(VerletParticle(x + radius, y + radius));
-    vector<VerletParticle> topLeft = getCell(VerletParticle(x - radius, y + radius));
-    vector<VerletParticle> bottomRight = getCell(VerletParticle(x + radius, y - radius));
-    vector<VerletParticle> bottomLeft = getCell(VerletParticle(x - radius, y - radius));
-    result.insert(result.end(), home.begin(), home.end());
-    if(topRight != home && topRight != topLeft && topRight != bottomLeft && topRight != bottomRight){
-        result.insert(result.end(), topRight.begin(), topRight.end());
-    }
-    if(topLeft != home && topLeft != topRight && topLeft != bottomLeft && topLeft != bottomRight){
-        result.insert(result.end(), topLeft.begin(), topLeft.end());
-    }
-    if(bottomRight != home && bottomRight != topLeft && bottomRight != bottomLeft && bottomRight != topRight){
-        result.insert(result.end(), bottomRight.begin(), bottomRight.end());
-    }
-    if(bottomLeft != home && bottomLeft != topLeft && bottomLeft != topLeft && bottomLeft != topRight){
-        result.insert(result.end(), bottomLeft.begin(), bottomLeft.end());
-    }
-    return result;
-}
 
 #endif
