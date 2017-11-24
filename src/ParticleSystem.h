@@ -71,5 +71,7 @@ protected:
     void gridInsert(VerletParticle p);
     vector<VerletParticle> findCollisions(VerletParticle p);
     vector<VerletParticle> getCell(VerletParticle p);
+    void gridClear();
+    void gridUpdate(vector<VerletParticle> pVector);
 };
 #endif

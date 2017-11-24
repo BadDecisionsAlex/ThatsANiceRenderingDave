@@ -166,6 +166,52 @@ bool GriddedGravitySystem::step() {
 }
 
 bool GriddedGravitySystem::correctCollides(){
+    //DEBUGPHYSICS("Correcting Collisions.\n");
+    bool done = true;
+    gridUpdate(particles);
+    for (int i = 0; i < particles.size(); ++i) {
+        VerletParticle& pA = particles[i];
+        vector<VerletParticle> canidates = findCollisions(pA);
+        for (int j = 0; j < canidates.size(); ++j) {
+           VerletParticle& pB = particles[j];
+            if( collides( pA, pB ) ){
+                done = false;
+                // We must determine the value t where collision occurred.
+                // accuracy is the number of subdivisions to check between 0 < t < 1
+                float t = 0;
+                float accuracy = 1.0/10.0;
+                vec2 tOfA = pA.pos();
+                vec2 tOfB = pB.pos();
+                vec2 deltaA = pA.tempPos() - tOfA;
+                vec2 deltaB = pB.tempPos() - tOfB;
+                while(glm::distance( tOfA, tOfB ) > pA.radius + pB.radius + 2 * FLOAT_EPSILON ){
+                    tOfA += accuracy * deltaA;
+                    tOfB += accuracy * deltaB;
+                    t += accuracy;
+                    if ( t > 1.000001){
+                        std::cerr << "Particle Collision detection error." << std::endl;
+                        break;
+                    }
+                }
+                DEBUGPHYSICS("Collision occurs at t : " << t << '\n');
+                DEBUGPHYSICS("tOfA : " << tOfA.y << " tOfB : " << tOfB.y << '\n');
+                DEBUGPHYSICS("VelocityA : " << pA.velocity().y << " VelocityB : " << pB.velocity().y << '\n');
+                // Velocity right after collision
+                vec2 velocityAt = pA.velocity(vec2()) + t * pA.acceleration(vec2()); // V1
+                vec2 velocityBt = pB.velocity(vec2()) + t * pB.acceleration(vec2()); // V2
+                DEBUGPHYSICS("VelocityAofT : " << velocityAt.y << " VelocityBofT : " << velocityBt.y << '\n');
+                // Calculate force applied to each particle.
+                vec2 newVelocityA = velocityAt - velocityBt;
+                vec2 newVelocityB = velocityBt - velocityAt;
+                pA.p = vec3( tOfA - t * newVelocityA, 1.0 );
+                pB.p = vec3( tOfB - t * newVelocityB, 1.0 );
+                DEBUGPHYSICS("pA.p0 was : " << pA.p0.y << " pB.p0 was : " << pB.p0.y << '\n');
+                pA.p0 = vec3( tOfA + ( (1.0f-t) * newVelocityA ), 1.0 );
+                pB.p0 = vec3( tOfB + ( (1.0f-t) * newVelocityB ), 1.0 );
+                DEBUGPHYSICS("pA.p0 is : " << pA.p0.y << " pB.p0 is : " << pB.p0.y << "\n\n");
+            }
+        }
+    }
     return true;
 }
 
@@ -182,6 +228,23 @@ void GriddedGravitySystem::gridInit(int blockSize){
             r.push_back(s);
         }
         grid.push_back(r);
+    }
+}
+
+void GriddedGravitySystem::gridClear(){
+    for (int i = 0; i < grid.size(); ++i) {
+        ColVector& row = grid[i];
+        for (int j = 0; j < row.size(); ++j) {
+            VerletVector& v = row[j];
+            v.clear();
+        }
+    }
+}
+
+void GriddedGravitySystem::gridUpdate(vector<VerletParticle> pVector) {
+    gridClear();
+    for (int i = 0; i < pVector.size(); ++i) {
+        gridInsert(pVector[i]);
     }
 }
 
@@ -212,6 +275,18 @@ vector<VerletParticle> GriddedGravitySystem::findCollisions(VerletParticle p){
     vector<VerletParticle> bottomRight = getCell(VerletParticle(x + radius, y - radius));
     vector<VerletParticle> bottomLeft = getCell(VerletParticle(x - radius, y - radius));
     result.insert(result.end(), home.begin(), home.end());
+    if(topRight != home && topRight != topLeft && topRight != bottomLeft && topRight != bottomRight){
+        result.insert(result.end(), topRight.begin(), topRight.end());
+    }
+    if(topLeft != home && topLeft != topRight && topLeft != bottomLeft && topLeft != bottomRight){
+        result.insert(result.end(), topLeft.begin(), topLeft.end());
+    }
+    if(bottomRight != home && bottomRight != topLeft && bottomRight != bottomLeft && bottomRight != topRight){
+        result.insert(result.end(), bottomRight.begin(), bottomRight.end());
+    }
+    if(bottomLeft != home && bottomLeft != topLeft && bottomLeft != topLeft && bottomLeft != topRight){
+        result.insert(result.end(), bottomLeft.begin(), bottomLeft.end());
+    }
     return result;
 }
 
