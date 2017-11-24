@@ -195,4 +195,13 @@ void GriddedGravitySystem::gridInsert(VerletParticle p){
     else
         particles.push_back(p);
 }
+vector<VerletParticle> GriddedGravitySystem::possibleCollisions(VerletParticle v){
+    int cellX = (int) v.pos().x / blockSize;
+    int cellY = (int) v.pos().y / blockSize;
+    vector<VerletParticle> canidateVector;
+    if(cellX == this->dividedWidth || cellY == this->dividedHeight)
+        canidateVector = padSpace;
+    else
+        canidateVector = grid[cellX][cellY];
+}
 #endif
