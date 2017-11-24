@@ -5,7 +5,7 @@
 #include "ParticleGrid.h"
 
 
-void ParticleGrid::ParticleGrid(int blockSize, float screen_width, float screen_height){
+ParticleGrid::ParticleGrid(int blockSize, float screen_width, float screen_height){
     this->blockSize = blockSize;
     this->screen_width = screen_width;
     this->screen_height = screen_height;

@@ -52,7 +52,8 @@ class GravitySystem : public ParticleSystem {
 
 class GriddedGravitySystem : public GravitySystem {
 public:
-    GriddedGravitySystem(const vector<vec2> &_in) : GravitySystem(_in) { grid = ParticleGrid(10, width, height); }
+    // new constructor that make a grid
+    GriddedGravitySystem(const vector<vec2> &_in, int cell_size) : GravitySystem(_in) , grid(cell_size, width, height){}
     bool step();
 
 protected:

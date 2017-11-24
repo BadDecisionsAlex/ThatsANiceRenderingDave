@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
     particle_inits.push_back( vec2( 50.0, 250.0 ) );
 
     // Initialize a Gravity System and Scene
-    GriddedGravitySystem* rootSystem = new GriddedGravitySystem( particle_inits );
+    GriddedGravitySystem* rootSystem = new GriddedGravitySystem( particle_inits , 10 );
     Scene scene = Scene( rootSystem );
     scene.retrieveData();
     scene.updateBuffers(points, point_numbers);

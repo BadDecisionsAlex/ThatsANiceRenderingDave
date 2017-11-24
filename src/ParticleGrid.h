@@ -18,14 +18,18 @@ using std::pair;
 
 class ParticleGrid{
 public:
-    typedef std::vector<VerletParticle> VerletVector;
-    typedef std::vector<VerletVector> ColVector;
-    typedef std::vector<ColVector> ParticleVector;
+    ParticleGrid(){}
     ParticleGrid(int n, float screen_width, float screen_height);
     void update(vector<VerletParticle> v);
     vector<VerletParticle> collides(VerletParticle p);
 
 private:
+    // typedef to help access the grid
+    typedef std::vector<VerletParticle> VerletVector;
+    typedef std::vector<VerletVector> ColVector;
+    typedef std::vector<ColVector> ParticleVector;
+
+    // private data
     ParticleVector grid;
     int blockSize;
     float screen_width;
@@ -33,6 +37,7 @@ private:
     int dividedWidth;
     int dividedHeight;
 
+    // private methods
     void insert(VerletParticle p);
     vector<VerletParticle> getCell(VerletParticle p);
     void clear();
