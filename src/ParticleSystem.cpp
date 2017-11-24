@@ -170,13 +170,13 @@ bool GriddedGravitySystem::correctCollides(){
 }
 
 void GriddedGravitySystem::gridInit(int blockSize){
-    //your block size must be greater than the diameter of any particle
-    // must divide the grid evenly
     this->blockSize = blockSize;
     int dividedWidth = (int)width / blockSize;
     int dividedHeight = (int)height / blockSize;
     this->dividedWidth = dividedWidth;
     this->dividedHeight = dividedHeight;
+    int paddingX = (int)width % blockSize;
+    int paddingY = (int)height % blockSize;
     for (int i = 0; i < dividedWidth; ++i) {
         ColVector r;
         for (int j = 0; j < dividedHeight; ++j) {
@@ -187,20 +187,21 @@ void GriddedGravitySystem::gridInit(int blockSize){
     }
 }
 
-
-vector<VerletParticle> GriddedGravitySystem::possibleCollisions(VerletParticle p){
-    vector<VerletParticle> homeCellVector = findHomeCell(p);
-    if((p.pos().x + p.radius) < width && (p.pos().y + p.radius) < height){}
-    if((p.pos().x + p.radius) < width && (p.pos().y - p.radius) >= 0){}
-    if((p.pos().x - p.radius) >= 0 && (p.pos().y + p.radius) < height){}
-    if((p.pos().x - p.radius) >= 0 && (p.pos().y - p.radius) >= 0){}
-    VerletParticle topRightParticle     ( p.pos().x + blockSize, p.pos().y + blockSize );
-    VerletParticle topLeftParticle      ( p.pos().x - blockSize, p.pos().y );
-    VerletParticle BottomRightParticle  ( p.pos().x, p.pos().y );
-    VerletParticle BottomLeftParticle   ( p.pos().x, p.pos().y );
-    vector<VerletParticle> topRight      = findHomeCell(topRightParticle);
-    vector<VerletParticle> topLeft       = findHomeCell(topRightParticle);
-    vector<VerletParticle> bottomRight   = findHomeCell(topRightParticle);
-    vector<VerletParticle> bottomLeft    = findHomeCell(topRightParticle);
+void GriddedGravitySystem::gridInsert(VerletParticle p){
+    int cellX = (int) p.pos().x / blockSize;
+    int cellY = (int) p.pos().y / blockSize;
+    if(cellX == this->dividedWidth || cellY == this->dividedHeight)
+        padSpace.push_back(p);
+    else
+        particles.push_back(p);
+}
+vector<VerletParticle> GriddedGravitySystem::possibleCollisions(VerletParticle v){
+    int cellX = (int) v.pos().x / blockSize;
+    int cellY = (int) v.pos().y / blockSize;
+    vector<VerletParticle> canidateVector;
+    if(cellX == this->dividedWidth || cellY == this->dividedHeight)
+        canidateVector = padSpace;
+    else
+        canidateVector = grid[cellX][cellY];
 }
 #endif
