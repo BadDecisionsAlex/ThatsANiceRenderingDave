@@ -43,5 +43,6 @@ class GravitySystem : public ParticleSystem {
         void fixCollision( VerletParticle& lsh, VerletParticle& rhs );
         short inBounds( const VerletParticle& _p );
         void fixBounds( VerletParticle& _p, const short& flag );
+        void fixBounds( VerletParticle& _p );
 };
 #endif
