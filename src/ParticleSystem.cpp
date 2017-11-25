@@ -53,7 +53,7 @@ void GravitySystem::step() {
     executeCollisions(); 
     // Update Particle Data
     for (VerletParticle& vp : particles) {
-        std::cout << " Updating Data vp.p.y : " << vp.p.y << " vp.tempPos().y : " << vp.tempPos().y << std::endl;
+//        std::cout << " Updating Data vp.p.y : " << vp.p.y << " vp.tempPos().y : " << vp.tempPos().y << std::endl;
         vp.p = vp.tempPos();
         vp.v0 = vp.v1;
     }

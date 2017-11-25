@@ -2,6 +2,7 @@
 #include <dirent.h>
 
 #include "render_pass.h"
+#include "gui.h"
 
 #include <algorithm>
 #include <fstream>
@@ -78,6 +79,8 @@ GLFWwindow* init_glefw()
 int main(int argc, char* argv[])
 {
 	GLFWwindow *window = init_glefw();
+    GUI gui(window);
+    
     vector<vec4> points;
     vector<uvec1> point_numbers;
 
@@ -151,8 +154,8 @@ int main(int argc, char* argv[])
         glCullFace(GL_BACK);
         
         // Make our updates to physics and scene.
-        //++counter;
-        if (counter % 60 == 0 && points.size() < 30) {
+        ++counter;
+        if (counter % 60 == 0 && points.size() < 100) {
             VerletParticle newParticle(counter % (int)rootSystem->width, 260.0);
             rootSystem->particles.push_back(newParticle);
             
