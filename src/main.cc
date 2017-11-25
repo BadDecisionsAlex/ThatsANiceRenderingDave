@@ -86,24 +86,24 @@ int main(int argc, char* argv[])
     vector<VerletParticle> particle_inits;
     particle_inits.push_back( VerletParticle( 225.0, 250.0 ) );
     particle_inits.push_back( VerletParticle( 275.0, 250.0 ) );
-    particle_inits[0].v0 = vec3( 1.0, 0.0, 0.0 );
-    particle_inits[1].v0 = vec3( -1.0, 0.0, 0.0 );
+    particle_inits[0].v0 = vec3( 0.1, 0.0, 0.0 );
+    particle_inits[1].v0 = vec3( -0.1, 0.0, 0.0 );
 
-    particle_inits.push_back( VerletParticle( 0.0, 0.0 ) );
-    particle_inits.push_back( VerletParticle( 500, 0.0 ) );
-    particle_inits.push_back( VerletParticle( 0.0, 500 ) );
-    particle_inits.push_back( VerletParticle( 500, 500 ) );
-    particle_inits.push_back( VerletParticle( 245, 100 ) );
-    particle_inits.push_back( VerletParticle( 255, 100 ) );
+    //particle_inits.push_back( VerletParticle( 0.0, 0.0 ) );
+    //particle_inits.push_back( VerletParticle( 500, 0.0 ) );
+    //particle_inits.push_back( VerletParticle( 0.0, 500 ) );
+    //particle_inits.push_back( VerletParticle( 500, 500 ) );
+    //particle_inits.push_back( VerletParticle( 245, 100 ) );
+    //particle_inits.push_back( VerletParticle( 255, 100 ) );
     
-    particle_inits.push_back( VerletParticle( 250, 250 ) );
-    particle_inits.push_back( VerletParticle( 270, 250 ) );
-    particle_inits.push_back( VerletParticle( 50, 50 ) );
-    particle_inits.push_back( VerletParticle( 70, 70 ) );
-    particle_inits.push_back( VerletParticle( 10, 10 ) );
-    particle_inits.push_back( VerletParticle( 30, 10 ) );
-    particle_inits.push_back( VerletParticle( 490, 250 ) );
-    particle_inits.push_back( VerletParticle( 490, 10 ) );
+    particle_inits.push_back( VerletParticle( 250, 350 ) );
+    particle_inits.push_back( VerletParticle( 250, 200 ) );
+    //particle_inits.push_back( VerletParticle( 50, 50 ) );
+    //particle_inits.push_back( VerletParticle( 70, 70 ) );
+    //particle_inits.push_back( VerletParticle( 10, 10 ) );
+    //particle_inits.push_back( VerletParticle( 30, 10 ) );
+    //particle_inits.push_back( VerletParticle( 490, 250 ) );
+    //particle_inits.push_back( VerletParticle( 490, 10 ) );
 
     // Initialize a Gravity System and Scene
     GravitySystem* rootSystem = new GravitySystem( particle_inits );
@@ -154,7 +154,7 @@ int main(int argc, char* argv[])
         glCullFace(GL_BACK);
         
         // Make our updates to physics and scene.
-        ++counter;
+        //++counter;
         if (counter % 10 == 0) {
             VerletParticle newParticle( distribution(generator), distribution(generator) );
             rootSystem->particles.push_back(newParticle);

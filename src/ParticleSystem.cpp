@@ -5,7 +5,7 @@
 #include <glm/gtx/string_cast.hpp>  // glm::to_string
 #include <glm/glm.hpp>              // glm::normalize
 
-#define STEP_TIME 1.0f / 60.0f
+#define STEP_TIME 1.0f / 600.0f
 
 // To disable debug messages for this file comment out the first line below
 //#define DEBUG_PHYSICS_CPP 0
@@ -81,18 +81,20 @@ bool GravitySystem::collides( const VerletParticle& lhs, const VerletParticle& r
 void GravitySystem::fixCollision(VerletParticle& lhs, VerletParticle& rhs) {
     vec3 forceL = lhs.elasticity * lhs.v1;
     vec3 forceR = rhs.elasticity * rhs.v1;
-    /*if(lhs.out && !rhs.out){
-        forceR = vec3( 0.0, 0.0, 0.0 );
-        forceL -= forceR;
-    }else if(rhs.out && !lhs.out){
-        forceL = vec3( 0.0, 0.0, 0.0 );
-        forceR -= forceL;
-    }else if(lhs.out && rhs.out){
-        forceL = vec3( 0.0, lhs.radius, 0.0 );
-        forceR = vec3( 0.0, 0.0, 0.0 );
-    }*/
+    //if(lhs.out && !rhs.out){
+    //    forceR = vec3( 0.0, 0.0, 0.0 );
+    //    forceL -= forceR;
+    //}else if(rhs.out && !lhs.out){
+    //    forceL = vec3( 0.0, 0.0, 0.0 );
+    //    forceR -= forceL;
+    //}else if(lhs.out && rhs.out){
+    //    forceL = vec3( 0.0, - 1.02f * lhs.radius, 0.0 );
+    //    forceR = vec3( 0.0, 0.0, 0.0 );
+    //}
     lhs.v1 += forceR;
     rhs.v1 += forceL;
+    fixBounds(lhs);
+    fixBounds(rhs);
 }
 
 // 0 - No Collision
@@ -124,21 +126,26 @@ short GravitySystem::inBounds(const VerletParticle& _p) {
 void GravitySystem::fixBounds( VerletParticle& _p, const short& flag ) {
     DEBUGPHYSICS("Correcting Bounds.\n");
     if( flag == 1 ){
+        //_p.p = _p.tempPos();
         _p.v1 = _p.elasticity * _p.v1 * vec3( -1.0, 1.0, 1.0 );
         _p.out = true;
 	}
     if( flag == 2 ){
+        //_p.p = _p.tempPos();
         _p.v1 = _p.elasticity * _p.v1 * vec3( 1.0, -1.0, 1.0 );
         _p.out = true;
     }
     if( flag == 3 ){
+        //_p.p = _p.tempPos();
         _p.v1 = _p.elasticity * _p.v1 * vec3( -1.0, 1.0, 1.0 );
         _p.out = true;
 	}
     if( flag == 4 ){
+        //_p.p = _p.tempPos();
         _p.v1 = _p.elasticity * _p.v1 * vec3( 1.0, -1.0, 1.0 );
         _p.out = true;
 	}
+    executeCollisions();
 }
 
 void GravitySystem::fixBounds( VerletParticle& _p ){
