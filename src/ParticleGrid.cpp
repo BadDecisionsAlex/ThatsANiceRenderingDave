@@ -63,11 +63,11 @@ vector<VerletParticle> ParticleGrid::collides(VerletParticle p){
     float x = p.pos().x;
     float y = p.pos().y;
     float radius = p.radius;
-    VerletSet home = getCell(VerletParticle(x , y));
-    VerletSet topRight = getCell(VerletParticle(x + radius, y + radius));
-    VerletSet topLeft = getCell(VerletParticle(x - radius, y + radius));
-    VerletSet bottomRight = getCell(VerletParticle(x + radius, y - radius));
-    VerletSet bottomLeft = getCell(VerletParticle(x - radius, y - radius));
+    VerletSet home = getCell(VerletParticle(x , y, 0));
+    VerletSet topRight = getCell(VerletParticle(x + radius, y + radius, 0));
+    VerletSet topLeft = getCell(VerletParticle(x - radius, y + radius, 0));
+    VerletSet bottomRight = getCell(VerletParticle(x + radius, y - radius, 0));
+    VerletSet bottomLeft = getCell(VerletParticle(x - radius, y - radius, 0));
     resultSet.insert(home.begin(), home.end());
     if(topRight != home && topRight != topLeft && topRight != bottomLeft && topRight != bottomRight){
         resultSet.insert(topRight.begin(), topRight.end());
