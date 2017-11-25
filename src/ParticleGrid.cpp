@@ -57,7 +57,8 @@ vector<VerletParticle> ParticleGrid::getCell(VerletParticle p){
 }
 
 vector<VerletParticle> ParticleGrid::collides(VerletParticle p){
-    vector<VerletParticle> result;
+    VerletSet collisionSet;
+
     float x = p.pos().x;
     float y = p.pos().y;
     float radius = p.radius;
@@ -66,18 +67,21 @@ vector<VerletParticle> ParticleGrid::collides(VerletParticle p){
     vector<VerletParticle> topLeft = getCell(VerletParticle(x - radius, y + radius, 0));
     vector<VerletParticle> bottomRight = getCell(VerletParticle(x + radius, y - radius, 0));
     vector<VerletParticle> bottomLeft = getCell(VerletParticle(x - radius, y - radius, 0));
-    result.insert(result.end(), home.begin(), home.end());
+    collisionSet.insert(home.begin(), home.end());
     if(topRight != home && topRight != topLeft && topRight != bottomLeft && topRight != bottomRight){
-        result.insert(result.end(), topRight.begin(), topRight.end());
+        collisionSet.insert(topRight.begin(), topRight.end());
     }
     if(topLeft != home && topLeft != topRight && topLeft != bottomLeft && topLeft != bottomRight){
-        result.insert(result.end(), topLeft.begin(), topLeft.end());
+        collisionSet.insert(topLeft.begin(), topLeft.end());
     }
     if(bottomRight != home && bottomRight != topLeft && bottomRight != bottomLeft && bottomRight != topRight){
-        result.insert(result.end(), bottomRight.begin(), bottomRight.end());
+        collisionSet.insert(bottomRight.begin(), bottomRight.end());
     }
     if(bottomLeft != home && bottomLeft != topLeft && bottomLeft != topLeft && bottomLeft != topRight){
-        result.insert(result.end(), bottomLeft.begin(), bottomLeft.end());
+        collisionSet.insert(bottomLeft.begin(), bottomLeft.end());
     }
+    collisionSet.erase(p);
+    vector<VerletParticle> result;
+    result.insert(result.end(), collisionSet.begin(), collisionSet.end());
     return result;
 }

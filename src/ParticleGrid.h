@@ -9,6 +9,8 @@
 #include <glm/glm.hpp>          // vec2, vec3
 #include <vector>               // vector
 #include <time.h>               // needed for timing the step
+#include <set>
+#include <unordered_set>
 
 
 using glm::vec2;
@@ -25,6 +27,7 @@ public:
 
 private:
     // typedef to help access the grid
+    typedef std::unordered_set<VerletParticle> VerletSet;
     typedef std::vector<VerletParticle> VerletVector;
     typedef std::vector<VerletVector> ColVector;
     typedef std::vector<ColVector> ParticleVector;
