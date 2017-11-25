@@ -17,8 +17,8 @@ void Scene::updateBuffers(vector<vec4>& pointsNDC, vector<uvec1>& pointsNumbers)
 }
 
 vec2 Scene::toScreen(const vec3& _p){
-	float ndcX = ( 2.0f * _p.x ) / rootSystem->width - 1.0;
-	float ndcY = ( 2.0f * _p.y ) / rootSystem->height - 1.0;
+	float ndcX = ( ( 2.0f * _p.x ) / float(rootSystem->width) ) - 1.0f;
+	float ndcY = ( ( 2.0f * _p.y ) / float(rootSystem->height) ) - 1.0f;
 	return vec2( ndcX, ndcY );
 }
 

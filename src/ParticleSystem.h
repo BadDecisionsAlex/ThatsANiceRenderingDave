@@ -11,7 +11,7 @@ using std::vector;
 using std::pair;
 
 #ifndef FLOAT_EPSILON
-#define FLOAT_EPSILON 0.00000001
+#define FLOAT_EPSILON 0.00000001f
 #endif
 
 struct ParticleSystem {

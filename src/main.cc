@@ -29,7 +29,7 @@ using glm::vec3;
 using glm::vec4;
 using glm::uvec1;
 
-int window_width = 800, window_height = 600;
+int window_width = 500, window_height = 500;
 const std::string window_title = "Particles";
 
 const char* particle_vertex_shader =
@@ -83,21 +83,32 @@ int main(int argc, char* argv[])
 
     // Load Initial Particle Positions in ParticleSystem's coord space
     vector<VerletParticle> particle_inits;
-    particle_inits.push_back( VerletParticle( 225.0, 250.0 ) );
-    particle_inits.push_back( VerletParticle( 275.0, 250.0 ) );
-    particle_inits[0].v0 = vec3( 1.0, 0.0, 0.0 );
-    particle_inits[1].v0 = vec3( -1.0, 0.0, 0.0 );
+    //particle_inits.push_back( VerletParticle( 225.0, 250.0 ) );
+    //particle_inits.push_back( VerletParticle( 275.0, 250.0 ) );
+    //particle_inits[0].v0 = vec3( 1.0, 0.0, 0.0 );
+    //particle_inits[1].v0 = vec3( -1.0, 0.0, 0.0 );
 
-    particle_inits.push_back( VerletParticle( 0.0, 0.0 ) );
-    particle_inits.push_back( VerletParticle( 500, 0.0 ) );
-    particle_inits.push_back( VerletParticle( 0.0, 500 ) );
-    particle_inits.push_back( VerletParticle( 500, 500 ) );
-    particle_inits.push_back( VerletParticle( 245, 100 ) );
-    particle_inits.push_back( VerletParticle( 255, 100 ) );
+    //particle_inits.push_back( VerletParticle( 0.0, 0.0 ) );
+    //particle_inits.push_back( VerletParticle( 500, 0.0 ) );
+    //particle_inits.push_back( VerletParticle( 0.0, 500 ) );
+    //particle_inits.push_back( VerletParticle( 500, 500 ) );
+    //particle_inits.push_back( VerletParticle( 245, 100 ) );
+    //particle_inits.push_back( VerletParticle( 255, 100 ) );
+    
+    particle_inits.push_back( VerletParticle( 250, 250 ) );
+    particle_inits.push_back( VerletParticle( 270, 250 ) );
+    particle_inits.push_back( VerletParticle( 50, 50 ) );
+    particle_inits.push_back( VerletParticle( 70, 70 ) );
+    particle_inits.push_back( VerletParticle( 10, 10 ) );
+    particle_inits.push_back( VerletParticle( 30, 10 ) );
+    particle_inits.push_back( VerletParticle( 490, 250 ) );
+    particle_inits.push_back( VerletParticle( 490, 10 ) );
 
     // Initialize a Gravity System and Scene
     GravitySystem* rootSystem = new GravitySystem( particle_inits );
-    rootSystem->gForce = vec3( 0.0, 0.0, 0.0 );
+    //rootSystem->gForce = vec3( 0.0, 0.0, 0.0 );
+    rootSystem->width = window_width;
+    rootSystem->height = window_height;
     Scene scene = Scene( rootSystem );
     scene.retrieveData();
     scene.updateBuffers(points, point_numbers);
@@ -124,13 +135,13 @@ int main(int argc, char* argv[])
 
 	while (!glfwWindowShouldClose(window)) {
         // THREAD IS SLEEPING!
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        // std::this_thread::sleep_for(std::chrono::seconds(1));
 		
         glfwGetFramebufferSize(window, &window_width, &window_height);
 		glViewport(0, 0, window_width, window_height);
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glEnable(GL_DEPTH_TEST);
-        glEnable(GL_MULTISAMPLE);
+        //glEnable(GL_MULTISAMPLE);
         glEnable(GL_BLEND);
         glEnable(GL_CULL_FACE);
         glEnable(GL_PROGRAM_POINT_SIZE);
