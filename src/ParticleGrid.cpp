@@ -33,7 +33,7 @@ void ParticleGrid::clear(){
     }
 }
 
-void ParticleGrid::update(VerletVector pVector) {
+void ParticleGrid::update(vector<VerletParticle> pVector) {
     this->clear();
     for (int i = 0; i < pVector.size(); ++i) {
         this->insert(pVector[i]);
@@ -56,8 +56,9 @@ ParticleGrid::VerletSet ParticleGrid::getCell(VerletParticle p){
     return grid[cellX][cellY];
 }
 
-ParticleGrid::VerletPointerVector ParticleGrid::collides(VerletParticle p){
-    VerletPointerVector result;
+vector<VerletParticle> ParticleGrid::collides(VerletParticle p){
+    vector<VerletParticle> result;
+    VerletPointerVector intermResult;
     VerletSet resultSet;
     float x = p.pos().x;
     float y = p.pos().y;
@@ -81,6 +82,9 @@ ParticleGrid::VerletPointerVector ParticleGrid::collides(VerletParticle p){
         resultSet.insert(bottomLeft.begin(), bottomLeft.end());
     }
     resultSet.erase(&p);
-    result.insert(result.end(), resultSet.begin(), resultSet.end());
+    intermResult.insert(intermResult.end(), resultSet.begin(), resultSet.end());
+    for (int i = 0; i < intermResult.size(); ++i) {
+        result.push_back(*intermResult[i]);
+    }
     return result;
 }

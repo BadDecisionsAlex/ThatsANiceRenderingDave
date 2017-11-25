@@ -172,10 +172,9 @@ bool GriddedGravitySystem::correctCollides(){
     grid.update(particles);
     for (int i = 0; i < particles.size(); ++i) {
         VerletParticle& pA = particles[i];
-        vector<VerletParticle*> canidates = grid.collides(pA);
+        vector<VerletParticle> canidates = grid.collides(pA);
         for (int j = 0; j < canidates.size(); ++j) {
-            VerletParticle* pBP = canidates[j];
-            VerletParticle pB = *pBP;
+            VerletParticle pB = canidates[j];
             if( collides( pA, pB ) ){
                 done = false;
                 // We must determine the value t where collision occurred.

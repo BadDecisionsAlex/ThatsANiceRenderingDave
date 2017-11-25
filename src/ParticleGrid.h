@@ -12,7 +12,7 @@
 #include <set>
 #include <time.h>               // needed for timing the step
 
-
+using std::vector;
 
 class ParticleGrid{
 public:
@@ -27,8 +27,8 @@ public:
 
     ParticleGrid(){}
     ParticleGrid(int n, float screen_width, float screen_height);
-    void update(VerletVector v);
-    VerletPointerVector collides(VerletParticle p);
+    void update(vector<VerletParticle> v);
+    vector<VerletParticle> collides(VerletParticle p);
 
 private:
 
