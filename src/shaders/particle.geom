@@ -5,7 +5,7 @@ void main() {
     vec4 point = gl_in[0].gl_Position;
     
     gl_Position = gl_in[0].gl_Position;
-    gl_PointSize = 10;
+    gl_PointSize = 16;
     EmitVertex();
     EndPrimitive();
 }

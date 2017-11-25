@@ -9,6 +9,9 @@
 #include <string>
 #include <vector>
 
+#include <thread>
+#include <chrono>
+
 #include <GLFW/glfw3.h>
 #include <glm/gtx/component_wise.hpp>
 #include <glm/gtx/rotate_vector.hpp>
@@ -16,6 +19,7 @@
 #include <glm/gtx/io.hpp>
 #include <debuggl.h>
 
+#include "AbstractParticle.h"
 #include "ParticleSystem.h"
 #include "Scene.h"
 
@@ -78,23 +82,22 @@ int main(int argc, char* argv[])
     vector<uvec1> point_numbers;
 
     // Load Initial Particle Positions in ParticleSystem's coord space
-    vector<vec2> particle_inits;
-    particle_inits.push_back( vec2( 250.0, 250.0 ) );
-    particle_inits.push_back( vec2( 150.0, 250.0 ) );
-    particle_inits.push_back( vec2( 350.0, 250.0 ) );
-    particle_inits.push_back( vec2( 50.0, 250.0 ) );
+    vector<VerletParticle> particle_inits;
+    particle_inits.push_back( VerletParticle( 225.0, 250.0 ) );
+    particle_inits.push_back( VerletParticle( 275.0, 250.0 ) );
+    particle_inits[0].v0 = vec3( 1.0, 0.0, 0.0 );
+    particle_inits[1].v0 = vec3( -1.0, 0.0, 0.0 );
 
-    //particle_inits.push_back( vec2( 250.0, 325.0 ) );
-    //particle_inits.push_back( vec2( 250.0, 300.0 ) );
-    //particle_inits.push_back( vec2( 250.0, 275.0 ) );
-    //particle_inits.push_back( vec2( 250.0, 250.0 ) );
-//    point_numbers.push_back( uvec1( 0 ) );
-    //point_numbers.push_back( uvec1( 1 ) );
-    //point_numbers.push_back( uvec1( 2 ) );
-    //point_numbers.push_back( uvec1( 3 ) );
-    //point_numbers.push_back( uvec1( 4 ) );
+    particle_inits.push_back( VerletParticle( 0.0, 0.0 ) );
+    particle_inits.push_back( VerletParticle( 500, 0.0 ) );
+    particle_inits.push_back( VerletParticle( 0.0, 500 ) );
+    particle_inits.push_back( VerletParticle( 500, 500 ) );
+    particle_inits.push_back( VerletParticle( 245, 100 ) );
+    particle_inits.push_back( VerletParticle( 255, 100 ) );
+
     // Initialize a Gravity System and Scene
     GravitySystem* rootSystem = new GravitySystem( particle_inits );
+    rootSystem->gForce = vec3( 0.0, 0.0, 0.0 );
     Scene scene = Scene( rootSystem );
     scene.retrieveData();
     scene.updateBuffers(points, point_numbers);
@@ -117,11 +120,13 @@ int main(int argc, char* argv[])
     //
     // **************
     
-    long counter = 0;
+    long counter = 1;
 
 	while (!glfwWindowShouldClose(window)) {
-		// Setup some basic window stuff.
-		glfwGetFramebufferSize(window, &window_width, &window_height);
+        // THREAD IS SLEEPING!
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+		
+        glfwGetFramebufferSize(window, &window_width, &window_height);
 		glViewport(0, 0, window_width, window_height);
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glEnable(GL_DEPTH_TEST);
@@ -135,7 +140,7 @@ int main(int argc, char* argv[])
         glCullFace(GL_BACK);
         
         // Make our updates to physics and scene.
-        ++counter;
+        //++counter;
         if (counter % 60 == 0 && points.size() < 30) {
             VerletParticle newParticle(counter % (int)rootSystem->width, 260.0);
             rootSystem->particles.push_back(newParticle);
