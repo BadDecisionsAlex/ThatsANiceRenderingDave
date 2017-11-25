@@ -108,8 +108,6 @@ struct VerletParticle : AbstractParticle {
     }
 
     inline bool operator!=(const VerletParticle &rhs) const { return !(operator==(rhs)); }
-
-    inline bool operator<(const VerletParticle &rhs) const { return operator!=(rhs); }
 };
 
 #endif
