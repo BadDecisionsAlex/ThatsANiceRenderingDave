@@ -26,7 +26,7 @@ using std::make_pair;
 
 GravitySystem::GravitySystem(vec3  _g, const vector<vec2>& _in) : gForce(_g) {
     for (vec2 _p : _in)
-        particles.push_back(VerletParticle(_p, std::rand()));
+        particles.push_back(VerletParticle(_p, rand()));
 }
 
 bool GravitySystem::sendData(vector<vec3>& points) {
@@ -174,7 +174,7 @@ bool GriddedGravitySystem::correctCollides(){
         VerletParticle& pA = particles[i];
         vector<VerletParticle> canidates = grid.collides(pA);
         for (int j = 0; j < canidates.size(); ++j) {
-            VerletParticle pB = canidates[j];
+           VerletParticle& pB = particles[j];
             if( collides( pA, pB ) ){
                 done = false;
                 // We must determine the value t where collision occurred.

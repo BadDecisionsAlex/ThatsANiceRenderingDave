@@ -8,29 +8,26 @@
 #include "AbstractParticle.h"   // AbstractParticle, VerletParticle
 #include <glm/glm.hpp>          // vec2, vec3
 #include <vector>               // vector
-#include <unordered_set>
-#include <set>
 #include <time.h>               // needed for timing the step
 
+
+using glm::vec2;
+using glm::vec3;
 using std::vector;
+using std::pair;
 
 class ParticleGrid{
 public:
-
-    // typedef to help access the grid
-    typedef std::unordered_set<VerletParticle*> VerletSet;
-    typedef std::vector<VerletParticle*> VerletPointerVector;
-    typedef std::vector<VerletParticle> VerletVector;
-    typedef std::vector<VerletSet> ColVector;
-    typedef std::vector<ColVector> ParticleVector;
-
-
     ParticleGrid(){}
     ParticleGrid(int n, float screen_width, float screen_height);
     void update(vector<VerletParticle> v);
     vector<VerletParticle> collides(VerletParticle p);
 
 private:
+    // typedef to help access the grid
+    typedef std::vector<VerletParticle> VerletVector;
+    typedef std::vector<VerletVector> ColVector;
+    typedef std::vector<ColVector> ParticleVector;
 
     // private data
     ParticleVector grid;
@@ -42,7 +39,7 @@ private:
 
     // private methods
     void insert(VerletParticle p);
-    VerletSet getCell(VerletParticle p);
+    vector<VerletParticle> getCell(VerletParticle p);
     void clear();
 
 };
