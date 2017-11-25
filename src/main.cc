@@ -126,26 +126,7 @@ int main(int argc, char* argv[])
         glCullFace(GL_BACK);
         
         // Make our updates to physics and scene.
-        ++counter;
-        if (counter % 60 == 0 && points.size() < 30) {
-            VerletParticle newParticle(counter % (int)rootSystem->width, 260.0);
-            rootSystem->particles.push_back(newParticle);
-            
-            //We are recreating the render pass in order to include the new values.
-            //There is probably a better way to do this
-            particle_pass_input.assign_index(point_numbers.data(), point_numbers.size(), 1);
-            particle_pass = RenderPass(-1,
-                          particle_pass_input,
-                          {
-                              particle_vertex_shader,
-                              particle_geometry_shader,
-                              particle_fragment_shader
-                          },
-                          { /* uniforms */ },
-                          { "fragment_color" }
-                          );
-        }
-        
+
         rootSystem->step();
         scene.retrieveData();
         scene.updateBuffers(points, point_numbers);

@@ -31,37 +31,38 @@ struct AbstractParticle {
 };
 
 struct VerletParticle : AbstractParticle {
+    int id;
     constexpr static float DEFAULT_RADIUS = 5.0;
     // Instance Variables
     vec3 p0, p1;
     float radius;
 
     // Constructors
-    VerletParticle(float _x, float _y) : AbstractParticle(_x, _y), p0(p), p1(p), radius(DEFAULT_RADIUS) {}
+    VerletParticle(float _x, float _y, int id) : AbstractParticle(_x, _y), p0(p), p1(p), radius(DEFAULT_RADIUS), id(id) {}
 
-    VerletParticle(float _x, float _y, float _r) : AbstractParticle(_x, _y), p0(p), p1(p), radius(DEFAULT_RADIUS) {}
+    VerletParticle(float _x, float _y, float _r, int id) : AbstractParticle(_x, _y), p0(p), p1(p), radius(DEFAULT_RADIUS), id(id) {}
 
-    VerletParticle(float _x, float _y, float _x1, float _y1) : AbstractParticle(_x, _y), p0(p), p1(vec3(_x1, _y1, 1.0)),
+    VerletParticle(float _x, float _y, float _x1, float _y1, int id) : AbstractParticle(_x, _y), p0(p), p1(vec3(_x1, _y1, 1.0)),
                                                                radius(DEFAULT_RADIUS) {}
 
-    VerletParticle(float _x, float _y, float _x1, float _y1, float _r) : AbstractParticle(_x, _y), p0(p),
-                                                                         p1(vec3(_x, _y, 1.0)), radius(_r) {}
+    VerletParticle(float _x, float _y, float _x1, float _y1, float _r, int id) : AbstractParticle(_x, _y), p0(p),
+                                                                         p1(vec3(_x, _y, 1.0)), radius(_r), id(id) {}
 
-    VerletParticle(vec2 _p) : AbstractParticle(_p), p0(p), p1(p), radius(DEFAULT_RADIUS) {}
+    VerletParticle(vec2 _p, int id) : AbstractParticle(_p), p0(p), p1(p), radius(DEFAULT_RADIUS), id(id) {}
 
-    VerletParticle(vec2 _p, float _r) : AbstractParticle(_p), p0(p), p1(p), radius(_r) {}
+    VerletParticle(vec2 _p, float _r, int id) : AbstractParticle(_p), p0(p), p1(p), radius(_r), id(id) {}
 
-    VerletParticle(vec2 _p, vec2 _p1) : AbstractParticle(_p), p0(p), p1(vec3(_p1, 1.0)), radius(DEFAULT_RADIUS) {}
+    VerletParticle(vec2 _p, vec2 _p1, int id) : AbstractParticle(_p), p0(p), p1(vec3(_p1, 1.0)), radius(DEFAULT_RADIUS), id(id) {}
 
-    VerletParticle(vec2 _p, vec2 _p1, float _r) : AbstractParticle(_p), p0(p), p1(vec3(_p1, 1.0)), radius(_r) {}
+    VerletParticle(vec2 _p, vec2 _p1, float _r, int id) : AbstractParticle(_p), p0(p), p1(vec3(_p1, 1.0)), radius(_r), id(id) {}
 
-    VerletParticle(vec3 _p) : AbstractParticle(_p), p0(p), p1(p), radius(DEFAULT_RADIUS) {}
+    VerletParticle(vec3 _p, int id) : AbstractParticle(_p), p0(p), p1(p), radius(DEFAULT_RADIUS), id(id) {}
 
-    VerletParticle(vec3 _p, float _r) : AbstractParticle(_p), p0(p), p1(p), radius(_r) {}
+    VerletParticle(vec3 _p, float _r, int id) : AbstractParticle(_p), p0(p), p1(p), radius(_r), id(id) {}
 
-    VerletParticle(vec3 _p, vec3 _p1) : AbstractParticle(_p), p0(p), p1(_p1), radius(DEFAULT_RADIUS) {}
+    VerletParticle(vec3 _p, vec3 _p1, int id) : AbstractParticle(_p), p0(p), p1(_p1), radius(DEFAULT_RADIUS), id(id) {}
 
-    VerletParticle(vec3 _p, vec3 _p1, float _r) : AbstractParticle(_p), p0(p), p1(_p1), radius(_r) {}
+    VerletParticle(vec3 _p, vec3 _p1, float _r, int id) : AbstractParticle(_p), p0(p), p1(_p1), radius(_r), id(id) {}
 
     ~VerletParticle() = default;
 
@@ -101,6 +102,8 @@ struct VerletParticle : AbstractParticle {
     float tempx() const { return p0.x; }
 
     float tempy() const { return p0.y; }
+
+    int getId() const { return id; }
 
     // Comparison
     inline bool operator==(const VerletParticle &rhs) const {
