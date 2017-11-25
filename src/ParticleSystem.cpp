@@ -43,17 +43,14 @@ void GravitySystem::step() {
     float t = STEP_TIME;
     for (int a = 0; a < particles.size(); ++a) {
         VerletParticle& vp = particles[a];
+        vp.out = false;
         vp.v1 = vp.velocity();
         vp.v1 += t * gForce;
-        short f = inBounds( vp );
-        if( f != 0 ){
-            fixBounds( vp, f );
-        }
+        fixBounds( vp );
     }
     executeCollisions(); 
     // Update Particle Data
     for (VerletParticle& vp : particles) {
-        std::cout << " Updating Data vp.p.y : " << vp.p.y << " vp.tempPos().y : " << vp.tempPos().y << std::endl;
         vp.p = vp.tempPos();
         vp.v0 = vp.v1;
     }
@@ -64,9 +61,9 @@ void GravitySystem::step() {
 
 void GravitySystem::executeCollisions() {
     //std::cout << "Executing Collisions." << std::endl;
-    for( int l = 0; l < particles.size()-1; ++l ){
+    for( int l = 0; l < particles.size() - 1; ++l ){
         VerletParticle& lhs = particles[l];
-        for( int r = l+1; r < particles.size(); ++r){
+        for( int r = l + 1; r < particles.size(); ++r){
             VerletParticle& rhs = particles[r];
             if( collides( lhs, rhs ) )
                 fixCollision( lhs, rhs );
@@ -82,25 +79,20 @@ bool GravitySystem::collides( const VerletParticle& lhs, const VerletParticle& r
 }
 
 void GravitySystem::fixCollision(VerletParticle& lhs, VerletParticle& rhs) {
-    //std::cout << "Fixing a collision\n" << std::flush;
-    //std::cout << "  in lhs.v1.x : " << lhs.v1.x << " rhs.v1.x : " << rhs.v1.x << std::endl;
-    vec3 tempL = lhs.v1;
-    vec3 tempR = rhs.v1;
-    lhs.v1 = lhs.elasticity * rhs.v1;
-    rhs.v1 = rhs.elasticity * tempL;
-    //std::cout << " out lhs.v1.x : " << lhs.v1.x << " rhs.v1.x : " << rhs.v1.x << std::endl;
-    
-    //std::cout << " current Pos lhs : " << lhs.p.x << " rhs : " << rhs.p.x << std::endl;
-    vec3 between = rhs.p - lhs.p;
-    float length = glm::length( between );
-    float shift = length - lhs.radius - rhs.radius;
-    shift /= 2.0;
-    lhs.p += shift * glm::normalize(tempL);
-    rhs.p += shift * glm::normalize(tempR);
-    //std::cout << " contact Pos lhs : " << lhs.p.x << " rhs : " << rhs.p.x << std::endl;
-    lhs.p -= lhs.v1;
-    rhs.p -= rhs.v1;
-    //std::cout << " spoofed Pos lhs : " << lhs.p.x << " rhs : " << rhs.p.x << std::endl;
+    vec3 forceL = lhs.elasticity * lhs.v1;
+    vec3 forceR = rhs.elasticity * rhs.v1;
+    /*if(lhs.out && !rhs.out){
+        forceR = vec3( 0.0, 0.0, 0.0 );
+        forceL -= forceR;
+    }else if(rhs.out && !lhs.out){
+        forceL = vec3( 0.0, 0.0, 0.0 );
+        forceR -= forceL;
+    }else if(lhs.out && rhs.out){
+        forceL = vec3( 0.0, lhs.radius, 0.0 );
+        forceR = vec3( 0.0, 0.0, 0.0 );
+    }*/
+    lhs.v1 += forceR;
+    rhs.v1 += forceL;
 }
 
 // 0 - No Collision
@@ -108,6 +100,11 @@ void GravitySystem::fixCollision(VerletParticle& lhs, VerletParticle& rhs) {
 // 2 - Hits South Wall
 // 3 - Hits East Wall
 // 4 - Hits North Wall
+//
+// 11 - Way out West
+// 12 - Way out South
+// 13 - Way out East
+// 14 - Way out North
 short GravitySystem::inBounds(const VerletParticle& _p) {
     VerletParticle west = VerletParticle( -_p.radius, _p.tempPos().y );
     VerletParticle south = VerletParticle( _p.tempPos().x, -_p.radius ); 
@@ -128,20 +125,26 @@ void GravitySystem::fixBounds( VerletParticle& _p, const short& flag ) {
     DEBUGPHYSICS("Correcting Bounds.\n");
     if( flag == 1 ){
         _p.v1 = _p.elasticity * _p.v1 * vec3( -1.0, 1.0, 1.0 );
-        _p.p = vec3( _p.radius, _p.p.y, _p.p.z) - _p.v1;
+        _p.out = true;
 	}
     if( flag == 2 ){
         _p.v1 = _p.elasticity * _p.v1 * vec3( 1.0, -1.0, 1.0 );
-        _p.p = vec3( _p.p.x, _p.radius, _p.p.z) - _p.v1;
+        _p.out = true;
     }
     if( flag == 3 ){
         _p.v1 = _p.elasticity * _p.v1 * vec3( -1.0, 1.0, 1.0 );
-        _p.p = vec3( width - _p.radius, _p.p.y, _p.p.z) - _p.v1;
+        _p.out = true;
 	}
     if( flag == 4 ){
         _p.v1 = _p.elasticity * _p.v1 * vec3( 1.0, -1.0, 1.0 );
-        _p.p = vec3( _p.p.x, height - _p.radius, _p.p.z) - _p.v1;
+        _p.out = true;
 	}
+}
+
+void GravitySystem::fixBounds( VerletParticle& _p ){
+    short flag = inBounds(_p);
+    if(flag!=0)
+        fixBounds( _p, flag );
 }
 
 #endif

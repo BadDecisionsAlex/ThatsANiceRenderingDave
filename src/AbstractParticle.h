@@ -19,13 +19,14 @@ struct AbstractParticle{
 };
 
 struct VerletParticle : AbstractParticle{
-    const float DEFAULT_RADIUS = 10.0;
+    const float DEFAULT_RADIUS = 3.0;
     const float DEFAULT_ELASTICITY = 0.4;
 
     // Instance Variables
     vec3 v0,v1;
     float radius = DEFAULT_RADIUS;
     float elasticity = DEFAULT_ELASTICITY;
+    bool out = false;
     // Constructors
     VerletParticle(float _x, float _y) : AbstractParticle(_x,_y), v0( vec3( 0.0, 0.0, 0.0 ) ), v1( v0 ){}
     VerletParticle(vec2 _p) : VerletParticle( _p.x, _p.y ){}

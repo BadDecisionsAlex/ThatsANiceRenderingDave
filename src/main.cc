@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 
+#include <random>
 #include <thread>
 #include <chrono>
 
@@ -83,17 +84,17 @@ int main(int argc, char* argv[])
 
     // Load Initial Particle Positions in ParticleSystem's coord space
     vector<VerletParticle> particle_inits;
-    //particle_inits.push_back( VerletParticle( 225.0, 250.0 ) );
-    //particle_inits.push_back( VerletParticle( 275.0, 250.0 ) );
-    //particle_inits[0].v0 = vec3( 1.0, 0.0, 0.0 );
-    //particle_inits[1].v0 = vec3( -1.0, 0.0, 0.0 );
+    particle_inits.push_back( VerletParticle( 225.0, 250.0 ) );
+    particle_inits.push_back( VerletParticle( 275.0, 250.0 ) );
+    particle_inits[0].v0 = vec3( 1.0, 0.0, 0.0 );
+    particle_inits[1].v0 = vec3( -1.0, 0.0, 0.0 );
 
-    //particle_inits.push_back( VerletParticle( 0.0, 0.0 ) );
-    //particle_inits.push_back( VerletParticle( 500, 0.0 ) );
-    //particle_inits.push_back( VerletParticle( 0.0, 500 ) );
-    //particle_inits.push_back( VerletParticle( 500, 500 ) );
-    //particle_inits.push_back( VerletParticle( 245, 100 ) );
-    //particle_inits.push_back( VerletParticle( 255, 100 ) );
+    particle_inits.push_back( VerletParticle( 0.0, 0.0 ) );
+    particle_inits.push_back( VerletParticle( 500, 0.0 ) );
+    particle_inits.push_back( VerletParticle( 0.0, 500 ) );
+    particle_inits.push_back( VerletParticle( 500, 500 ) );
+    particle_inits.push_back( VerletParticle( 245, 100 ) );
+    particle_inits.push_back( VerletParticle( 255, 100 ) );
     
     particle_inits.push_back( VerletParticle( 250, 250 ) );
     particle_inits.push_back( VerletParticle( 270, 250 ) );
@@ -131,6 +132,8 @@ int main(int argc, char* argv[])
     //
     // **************
     
+    std::default_random_engine generator;
+    std::normal_distribution<float> distribution( 250, 60 ); 
     long counter = 1;
 
 	while (!glfwWindowShouldClose(window)) {
@@ -151,11 +154,14 @@ int main(int argc, char* argv[])
         glCullFace(GL_BACK);
         
         // Make our updates to physics and scene.
-        //++counter;
-        if (counter % 60 == 0 && points.size() < 30) {
-            VerletParticle newParticle(counter % (int)rootSystem->width, 260.0);
+        ++counter;
+        if (counter % 10 == 0) {
+            VerletParticle newParticle( distribution(generator), distribution(generator) );
             rootSystem->particles.push_back(newParticle);
-            
+            std::cout << "I'm Alive! (" << newParticle.p.x << ", " << newParticle.p.y << ") " << std::endl; 
+            rootSystem->step();
+            scene.retrieveData();
+            scene.updateBuffers(points, point_numbers);
             //We are recreating the render pass in order to include the new values.
             //There is probably a better way to do this
             particle_pass_input.assign_index(point_numbers.data(), point_numbers.size(), 1);
@@ -169,11 +175,11 @@ int main(int argc, char* argv[])
                           { /* uniforms */ },
                           { "fragment_color" }
                           );
+        }else{
+            rootSystem->step();
+            scene.retrieveData();
+            scene.updateBuffers(points, point_numbers);
         }
-        
-        rootSystem->step();
-        scene.retrieveData();
-        scene.updateBuffers(points, point_numbers);
 
         //TODO: Draw here
         particle_pass.updateVBO(0, points.data(), points.size());
