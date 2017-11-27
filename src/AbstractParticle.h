@@ -7,7 +7,9 @@ using glm::vec3;
 
 struct AbstractParticle{
     vec3 p;
-    
+
+    AbstractParticle() {}
+
     AbstractParticle(float _x, float _y) : p(vec3(_x, _y, 1.0)) {}
     
     virtual ~AbstractParticle() = default;
@@ -22,6 +24,7 @@ struct VerletParticle : AbstractParticle{
     
     const float DEFAULT_RADIUS = 3.0;
     const float DEFAULT_ELASTICITY = 0.4;
+    int id;
 
     // Instance Variables
     vec3 v0,v1;
@@ -29,6 +32,7 @@ struct VerletParticle : AbstractParticle{
     float elasticity = DEFAULT_ELASTICITY;
     bool out = false;
     // Constructors
+    VerletParticle() : AbstractParticle() {}
     VerletParticle(float _x, float _y) : AbstractParticle(_x,_y), v0( vec3( 0.0, 0.0, 0.0 ) ), v1( v0 ){}
     VerletParticle(vec2 _p) : VerletParticle( _p.x, _p.y ){}
     ~VerletParticle()=default;

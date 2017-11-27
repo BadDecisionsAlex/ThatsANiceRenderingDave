@@ -35,6 +35,7 @@ void ParticleGrid::clear(){
 void ParticleGrid::update(vector<VerletParticle> pVector) {
     this->clear();
     for (int i = 0; i < pVector.size(); ++i) {
+        pVector[i].id = i;
         this->insert(pVector[i]);
     }
 }
@@ -80,14 +81,14 @@ vector<VerletParticle> ParticleGrid::collides(VerletParticle p){
     float x = p.pos().x;
     float y = p.pos().y;
     float radius = p.radius;
-    ParticleVector north = residents(VerletParticle(x , y + blockSize, 0));
-    ParticleVector south = residents(VerletParticle(x , y - blockSize, 0));
-    ParticleVector east = residents(VerletParticle(x + blockSize, y , 0));
-    ParticleVector west = residents(VerletParticle(x - blockSize, y , 0));
-    ParticleVector northeast = residents(VerletParticle(x + blockSize, y + blockSize, 0));
-    ParticleVector northwest = residents(VerletParticle(x - blockSize, y + blockSize, 0));
-    ParticleVector southeast = residents(VerletParticle(x + blockSize, y - blockSize, 0));
-    ParticleVector southwest = residents(VerletParticle(x - blockSize, y - blockSize, 0));
+    ParticleVector north = residents(VerletParticle(x , y + blockSize));
+    ParticleVector south = residents(VerletParticle(x , y - blockSize));
+    ParticleVector east = residents(VerletParticle(x + blockSize, y));
+    ParticleVector west = residents(VerletParticle(x - blockSize, y));
+    ParticleVector northeast = residents(VerletParticle(x + blockSize, y + blockSize));
+    ParticleVector northwest = residents(VerletParticle(x - blockSize, y + blockSize));
+    ParticleVector southeast = residents(VerletParticle(x + blockSize, y - blockSize));
+    ParticleVector southwest = residents(VerletParticle(x - blockSize, y - blockSize));
     reduceVector(home_cell, ids);
     reduceVector(north, ids);
     reduceVector(south, ids);
