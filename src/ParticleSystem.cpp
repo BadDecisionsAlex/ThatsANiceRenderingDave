@@ -38,7 +38,6 @@ void GravitySystem::sendData(vector<vec3>& points) {
 }
 
 void GravitySystem::step() {
-    grid.update(particles);
     clock_t start_time = clock();
     flaggedForCollides.clear();
     // Apply velocity and gravity
@@ -64,10 +63,12 @@ void GravitySystem::step() {
 
 void GravitySystem::executeCollisions() {
     //std::cout << "Executing Collisions." << std::endl;
+    grid.update(particles);
     for( int l = 0; l < particles.size() - 1; ++l ){
+        vector<VerletParticle> collisions = grid.collides(particles[l]);
         VerletParticle& lhs = particles[l];
-        for( int r = l + 1; r < particles.size(); ++r){
-            VerletParticle& rhs = particles[r];
+        for( int r = 0; r < collisions.size(); ++r){
+            VerletParticle& rhs = collisions[r];
             if( collides( lhs, rhs ) )
                 fixCollision( lhs, rhs );
         }
