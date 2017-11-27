@@ -75,6 +75,8 @@ void GravitySystem::executeCollisions() {
     for (int i = 0; i < particles.size(); ++i) {
         VerletParticle& lhs = particles[i];
         vector<VerletParticle> canidates = grid.collides(lhs);
+        std::cout << "PArticles : " << particles.size() << std::endl;
+        std::cout << "Candidates size : " << canidates.size() << std::endl;
         for (int j = 0; j < canidates.size(); ++j) {
             VerletParticle& rhs = canidates[j];
             if( collides( lhs, rhs ) )
