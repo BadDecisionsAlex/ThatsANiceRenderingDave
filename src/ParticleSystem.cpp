@@ -49,7 +49,7 @@ void GravitySystem::step() {
         vp.v1 += t * gForce;
         fixBounds( vp );
     }
-    executeCollisions(); 
+    executeCollisions();
     // Update Particle Data
     for (VerletParticle& vp : particles) {
 //        std::cout << " Updating Data vp.p.y : " << vp.p.y << " vp.tempPos().y : " << vp.tempPos().y << std::endl;
@@ -63,12 +63,20 @@ void GravitySystem::step() {
 
 void GravitySystem::executeCollisions() {
     //std::cout << "Executing Collisions." << std::endl;
+    //for( int l = 0; l < particles.size() - 1; ++l ){
+    //    VerletParticle& lhs = particles[l];
+    //    for( int r = l + 1; r < particles.size(); ++r){
+    //        VerletParticle& rhs = particles[r];
+    //        if( collides( lhs, rhs ) )
+    //            fixCollision( lhs, rhs );
+    //    }
+    //}
     grid.update(particles);
-    for( int l = 0; l < particles.size() - 1; ++l ){
-        vector<VerletParticle> collisions = grid.collides(particles[l]);
-        VerletParticle& lhs = particles[l];
-        for( int r = 0; r < collisions.size(); ++r){
-            VerletParticle& rhs = collisions[r];
+    for (int i = 0; i < particles.size(); ++i) {
+        VerletParticle& lhs = particles[i];
+        vector<VerletParticle> canidates = grid.collides(lhs);
+        for (int j = 0; j < canidates.size(); ++j) {
+            VerletParticle& rhs = canidates[j];
             if( collides( lhs, rhs ) )
                 fixCollision( lhs, rhs );
         }
@@ -149,7 +157,7 @@ void GravitySystem::fixBounds( VerletParticle& _p, const short& flag ) {
         _p.v1 = _p.elasticity * _p.v1 * vec3( 1.0, -1.0, 1.0 );
         _p.out = true;
 	}
-    executeCollisions();
+    //executeCollisions();
 }
 
 void GravitySystem::fixBounds( VerletParticle& _p ){
