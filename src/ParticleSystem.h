@@ -35,7 +35,7 @@ class GravitySystem : public ParticleSystem {
         GravitySystem( float _g) : particles(), gForce( vec3( 0.0, _g, 0.0 ) ){}
         GravitySystem( vec3 _g) : particles(), gForce( _g ){}
         GravitySystem( const vector<vec2>& _in);
-        GravitySystem( const vector<VerletParticle>& _in ) : particles( _in ){}
+        GravitySystem( const vector<VerletParticle>& _in ) : particles( _in ), grid(10.0f, width, height){}
         void sendData( vector<vec3>& points );
         void step();
     private:

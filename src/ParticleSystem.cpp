@@ -26,7 +26,7 @@ using std::vector;
 using std::make_pair;
 
 GravitySystem::GravitySystem( const vector<vec2>& _in ){
-    grid = ParticleGrid(10, width, height);
+    grid = ParticleGrid(10.0f, width, height);
     for ( vec2 _p : _in )
         particles.push_back( VerletParticle( _p ) );
 }
@@ -38,6 +38,7 @@ void GravitySystem::sendData(vector<vec3>& points) {
 }
 
 void GravitySystem::step() {
+    grid.update(particles);
     clock_t start_time = clock();
     flaggedForCollides.clear();
     // Apply velocity and gravity
