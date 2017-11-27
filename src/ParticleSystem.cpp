@@ -26,6 +26,7 @@ using std::vector;
 using std::make_pair;
 
 GravitySystem::GravitySystem( const vector<vec2>& _in ){
+    grid = ParticleGrid(10, width, height);
     for ( vec2 _p : _in )
         particles.push_back( VerletParticle( _p ) );
 }

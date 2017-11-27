@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>          // vec2, vec3
 #include <vector>               // vector
 #include <time.h>               // needed for timing the step
+#include "ParticleGrid.h"
 
 using glm::vec2;
 using glm::vec3;
@@ -38,6 +39,8 @@ class GravitySystem : public ParticleSystem {
         void sendData( vector<vec3>& points );
         void step();
     private:
+        ParticleGrid grid;
+
         void executeCollisions();
         bool collides( const VerletParticle& lhs, const VerletParticle& rhs );
         void fixCollision( VerletParticle& lsh, VerletParticle& rhs );
