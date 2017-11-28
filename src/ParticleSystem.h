@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>          // vec2, vec3
 #include <vector>               // vector
 #include <time.h>               // needed for timing the step
+#include "ParticleGrid.h"
 
 using glm::vec2;
 using glm::vec3;
@@ -11,7 +12,7 @@ using std::vector;
 using std::pair;
 
 #ifndef FLOAT_EPSILON
-#define FLOAT_EPSILON 0.00000001
+#define FLOAT_EPSILON 0.00000001f
 #endif
 
 struct ParticleSystem {
@@ -20,35 +21,31 @@ struct ParticleSystem {
     ParticleSystem() : width(500.0), height(500.0) {}
     ParticleSystem(float _w, float _h) : width(_w), height(_h) {}
     
-    bool virtual sendData(vector<vec3>&  points){return false;};
-    bool virtual step()=0;
+    void virtual sendData(vector<vec3>&  points){};
+    void virtual step()=0;
 };
 
 class GravitySystem : public ParticleSystem {
-    vector<int> flaggedForBounds;
+    const vec3 DEFAULT_GRAVITY = vec3( 0.0, -9.807, 0.0 );
     vector<pair<int,int>> flaggedForCollides;
-    vec3 gForce;
-    public:
-        static const vec3 DEFAULT_GRAVITY;
-    
+    public: 
         vector<VerletParticle> particles;
-        GravitySystem():particles(), gForce(DEFAULT_GRAVITY){}
-        GravitySystem(float _g):particles(), gForce(vec3(0.0,_g,0.0)){}
-        GravitySystem(vec3 _g):particles(), gForce(_g){}
-        GravitySystem(vec3 _g, const vector<vec2>& _in );
-        GravitySystem(float _g, const vector<vec2>& _in):GravitySystem( vec3(0.0,_g,0.0), _in ){}
-        GravitySystem(const vector<vec2>& _in):GravitySystem(DEFAULT_GRAVITY, _in){}
-        GravitySystem(float _g, const vector<VerletParticle>& _in):particles(_in), gForce( vec3( 0.0, _g, 0.0 ) ){}
-    
-        bool sendData(vector<vec3>& points);
-        bool step();
+        vec3 gForce = DEFAULT_GRAVITY;
+        GravitySystem() : particles(){}
+        GravitySystem( float _g) : particles(), gForce( vec3( 0.0, _g, 0.0 ) ){}
+        GravitySystem( vec3 _g) : particles(), gForce( _g ){}
+        GravitySystem( const vector<vec2>& _in);
+        GravitySystem( const vector<VerletParticle>& _in ) : particles( _in ), grid(10.0f, width, height){}
+        void sendData( vector<vec3>& points );
+        void step();
     private:
-        bool correctCollides();
-        vector<int> flagCollidesFor(const VerletParticle& _p);
-        bool collides(const VerletParticle& lhs, const VerletParticle& rhs);
-        void fixCollides(VerletParticle& lsh, VerletParticle& rhs);
-        bool correctBounds();
-        bool inBounds(const VerletParticle& _p);
-        void fixBounds(VerletParticle& _p);
+        ParticleGrid grid;
+
+        void executeCollisions();
+        bool collides( const VerletParticle& lhs, const VerletParticle& rhs );
+        void fixCollision( VerletParticle& lsh, VerletParticle& rhs );
+        short inBounds( const VerletParticle& _p );
+        void fixBounds( VerletParticle& _p, const short& flag );
+        void fixBounds( VerletParticle& _p );
 };
 #endif

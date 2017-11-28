@@ -5,7 +5,7 @@ using glm::vec2;
 using glm::vec3;
 using glm::vec4;
 
-bool Scene::updateBuffers(vector<vec4>& pointsNDC, vector<uvec1>& pointsNumbers){
+void Scene::updateBuffers(vector<vec4>& pointsNDC, vector<uvec1>& pointsNumbers){
 	pointsNDC.clear();
 	pointsNumbers.clear();
 	int pointCounter = 0;
@@ -14,12 +14,11 @@ bool Scene::updateBuffers(vector<vec4>& pointsNDC, vector<uvec1>& pointsNumbers)
 		pointsNumbers.push_back(uvec1(pointCounter));
 		pointCounter += 1;
 	}
-    return true;
 }
 
 vec2 Scene::toScreen(const vec3& _p){
-	float ndcX = ( 2.0f * _p.x ) / rootSystem->width - 1.0;
-	float ndcY = ( 2.0f * _p.y ) / rootSystem->height - 1.0;
+	float ndcX = ( ( 2.0f * _p.x ) / float(rootSystem->width) ) - 1.0f;
+	float ndcY = ( ( 2.0f * _p.y ) / float(rootSystem->height) ) - 1.0f;
 	return vec2( ndcX, ndcY );
 }
 
