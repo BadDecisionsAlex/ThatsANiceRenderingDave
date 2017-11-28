@@ -71,8 +71,8 @@ GLFWwindow* init_glefw()
 	glfwSwapInterval(1);
 	const GLubyte* renderer = glGetString(GL_RENDERER);  // get renderer string
 	const GLubyte* version = glGetString(GL_VERSION);    // version as a string
-	std::cout << "Renderer: " << renderer << "\n";
-	std::cout << "OpenGL version supported:" << version << "\n";
+	//std::cout << "Renderer: " << renderer << "\n";
+	//std::cout << "OpenGL version supported:" << version << "\n";
 
 	return ret;
 }
@@ -161,7 +161,7 @@ int main(int argc, char* argv[])
         if (counter % 10 == 0) {
             VerletParticle newParticle( distribution(generator), distribution(generator) );
             rootSystem->particles.push_back(newParticle);
-            std::cout << "I'm Alive! (" << newParticle.p.x << ", " << newParticle.p.y << ") " << std::endl; 
+            //std::cout << "I'm Alive! (" << newParticle.p.x << ", " << newParticle.p.y << ") " << std::endl; 
             rootSystem->step();
             scene.retrieveData();
             scene.updateBuffers(points, point_numbers);

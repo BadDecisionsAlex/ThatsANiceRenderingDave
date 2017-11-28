@@ -63,8 +63,7 @@ void ParticleGrid::reduceVector(const vector<VerletParticle>& v, ParticleIdSet& 
 }
 
 void ParticleGrid::expandVector(const ParticleIdSet& ids, vector<VerletParticle>& v){
-    ParticleIdSet::iterator it;
-    for (it = ids.begin(); it != ids.end(); ++it) {
+    for (ParticleIdSet::const_iterator it = ids.begin(); it != ids.end(); ++it) {
         int id = *it;
         v.push_back(grid_map[id]);
     }
