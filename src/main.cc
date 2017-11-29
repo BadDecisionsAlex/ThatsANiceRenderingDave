@@ -158,7 +158,7 @@ int main(int argc, char* argv[])
         
         // Make our updates to physics and scene.
         ++counter;
-        if (counter % 10 == 0) {
+        if (counter % 5 == 0) {
             VerletParticle newParticle( distribution(generator), distribution(generator) );
             rootSystem->particles.push_back(newParticle);
             //std::cout << "I'm Alive! (" << newParticle.p.x << ", " << newParticle.p.y << ") " << std::endl; 
@@ -178,6 +178,8 @@ int main(int argc, char* argv[])
                           { /* uniforms */ },
                           { "fragment_color" }
                           );
+            if( counter % 600  == 0 )
+                std::cout << rootSystem->particles.size() << std::endl;
         }else{
             rootSystem->step();
             scene.retrieveData();

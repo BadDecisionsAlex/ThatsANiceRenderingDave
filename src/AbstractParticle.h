@@ -23,7 +23,7 @@ struct AbstractParticle{
 struct VerletParticle : AbstractParticle{
     
     const float DEFAULT_RADIUS = 3.0;
-    const float DEFAULT_ELASTICITY = 0.4;
+    const float DEFAULT_ELASTICITY = 0.25;
     int id;
 
     // Instance Variables
