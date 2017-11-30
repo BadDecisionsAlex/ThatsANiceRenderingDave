@@ -8,7 +8,7 @@
 <div align="center">
 https://www.youtube.com/watch?v=r13I-TuDcWI
 </div>
-<b>
+</br><b>
 Scripts (run them from the root folder) : </b></br></p>
 "./clean"   cleans out trash files in all subfolders. Feel free to add to the list.</br>
 "./bd"      attempts to compile and build the src.</br>
