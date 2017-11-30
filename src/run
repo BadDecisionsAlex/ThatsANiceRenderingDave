@@ -1,0 +1,20 @@
+#!/bin/bash
+# Runs the program if it exists, builds and runs otherwise
+cd ..
+if [ ! -d build ]; then
+    echo "Making build directory."
+    mkdir build
+fi
+cd build
+if [ ! -d bin ]; then
+    echo "CMAKEing"
+    cmake ..
+fi
+if [ ! -e bin/particles ]; then
+    echo "Making"
+    if ! make -j8; then
+        : echo "Problem Making"
+        exit
+    fi
+fi
+./bin/particles
