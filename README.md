@@ -8,10 +8,10 @@
 <div align="center">
 https://www.youtube.com/watch?v=r13I-TuDcWI
 </div>
-
-Scripts (run them from the root folder) : 
-"./clean"   cleans out trash files in all subfolders. Feel free to add to the list.
-"./bd"      attempts to compile and build the src.
-"./run"     attempts to run the project. Only rebuilds if there is no executable. This will NOT compile changes.
+<p>
+Scripts (run them from the root folder) : </b>
+"./clean"   cleans out trash files in all subfolders. Feel free to add to the list.</b>
+"./bd"      attempts to compile and build the src.</b>
+"./run"     attempts to run the project. Only rebuilds if there is no executable. This will NOT compile changes.</b>
 "./bdr"     attempts to compile the project and then runs.
-
+</p>
