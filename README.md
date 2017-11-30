@@ -9,9 +9,9 @@
 https://www.youtube.com/watch?v=r13I-TuDcWI
 </div>
 <p>
-Scripts (run them from the root folder) : </b>
-"./clean"   cleans out trash files in all subfolders. Feel free to add to the list.</b>
-"./bd"      attempts to compile and build the src.</b>
-"./run"     attempts to run the project. Only rebuilds if there is no executable. This will NOT compile changes.</b>
+Scripts (run them from the root folder) : </br>
+"./clean"   cleans out trash files in all subfolders. Feel free to add to the list.</br>
+"./bd"      attempts to compile and build the src.</br>
+"./run"     attempts to run the project. Only rebuilds if there is no executable. This will NOT compile changes.</br>
 "./bdr"     attempts to compile the project and then runs.
 </p>
