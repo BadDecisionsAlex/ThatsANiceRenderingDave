@@ -25,13 +25,16 @@
 #include "ParticleSystem.h"
 #include "Scene.h"
 
+#include "VerletParticle.h"
+#include "GravitySystem.h"
+
 using std::vector;
 using glm::vec2;
 using glm::vec3;
 using glm::vec4;
 using glm::uvec1;
 
-int window_width = 500, window_height = 500;
+int window_width = 1000, window_height = 1000;
 const std::string window_title = "Particles";
 
 const char* particle_vertex_shader =

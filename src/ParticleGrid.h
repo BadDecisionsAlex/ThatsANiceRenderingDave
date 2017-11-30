@@ -5,7 +5,7 @@
 #ifndef PARTICLES_PARTICLEGRID_H
 #define PARTICLES_PARTICLEGRID_H
 
-#include "AbstractParticle.h"   // AbstractParticle, VerletParticle
+#include "VerletParticle.h"
 #include <glm/glm.hpp>          // vec2, vec3
 #include <vector>               // vector
 #include <time.h>               // needed for timing the step

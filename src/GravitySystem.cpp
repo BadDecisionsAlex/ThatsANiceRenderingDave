@@ -1,6 +1,6 @@
 #ifndef PARTICLE_SYSTEM_CPP
 #define PARTICLE_SYSTEM_CPP
-#include "ParticleSystem.h"
+#include "GravitySystem.h"
 #include <iostream>                 // std::cout
 #include <glm/gtx/string_cast.hpp>  // glm::to_string
 #include <glm/glm.hpp>              // glm::normalize
