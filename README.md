@@ -9,7 +9,7 @@
 https://www.youtube.com/watch?v=r13I-TuDcWI
 </div>
 </br><b>
-Scripts (run them from the root folder) : </b></br></p>
+Scripts ( run them from the root folder or /src ) : </b></br></p>
 "./clean"   cleans out trash files in all subfolders. Feel free to add to the list.</br>
 "./bd"      attempts to compile and build the src.</br>
 "./run"     attempts to run the project. Only rebuilds if there is no executable. This will NOT compile changes.</br>
