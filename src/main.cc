@@ -99,23 +99,27 @@ int main(int argc, char* argv[])
     rootSystem->height = window_height;
     
     //Add points
-    rootSystem->particles.push_back(MassParticle(vec3(250, 500, 0)));
-    rootSystem->particles.push_back(MassParticle(vec3(750, 500, 0)));
-    rootSystem->particles.push_back(MassParticle(vec3(500, 250, 0)));
-    rootSystem->particles.push_back(MassParticle(vec3(500, 750, 0)));
+//    rootSystem->particles.push_back(MassParticle(vec3(250, 500, 0)));
+//    rootSystem->particles.push_back(MassParticle(vec3(750, 500, 0)));
+//    rootSystem->particles.push_back(MassParticle(vec3(500, 250, 0)));
+//    rootSystem->particles.push_back(MassParticle(vec3(500, 750, 0)));
     
-    for (int c = 0; c < 60000; ++c) {
+//    MassParticle p(vec3(300, 300, 0));
+//    p.velocity = vec3(0, 10, 0);
+//    rootSystem->particles.push_back(p);
+    
+    for (int c = 0; c < 100000; ++c) {
         int x = rand() % 1000;
         int y = rand() % 1000;
-        
+
         float dx = (rand() % 1000) / 500.0 - 1;
         float dy = (rand() % 1000) / 500.0 - 1;
         int life = rand() % 10000;
-        
+
         MassParticle particle = MassParticle(vec3(x, y, 0));
-        particle.velocity = vec3(dx, dy, 0);
+        particle.velocity = vec3(dx * 6, 0, 0);
         particle.life = life;
-        
+
         rootSystem->particles.push_back(particle);
     }
     
@@ -178,7 +182,7 @@ int main(int argc, char* argv[])
             int life = rand() % 10000;
             
             MassParticle particle = MassParticle(vec3(x, y, 0));
-            particle.velocity = vec3(dx, dy, 0);
+            particle.velocity = vec3(dx * 2, dy * 2, 0);
             particle.life = life;
             
             rootSystem->particles.push_back(particle);

@@ -8,7 +8,7 @@ void main() {
     color = vec4((point[0] + 1) / 2, (point[1] + 1) / 2, 0.0, 1.0);
     
     gl_Position = gl_in[0].gl_Position;
-    gl_PointSize = 12;
+    gl_PointSize = 3;
     EmitVertex();
     EndPrimitive();
 }

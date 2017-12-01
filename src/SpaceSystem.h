@@ -19,6 +19,10 @@ public:
     void step();
     void getPointsForScreen(vector<vec4>& points, vector<uvec1>& indices);
     vec4 toScreen(const vec3& point);
+    
+private:
+    vec3 center;
+    int stepCount = 0;
 };
 
 #endif /* SpaceSystem_h */
