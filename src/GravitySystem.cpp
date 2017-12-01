@@ -86,11 +86,14 @@ void GravitySystem::step() {
     flaggedForCollides.clear();
     // Apply velocity and gravity
     float t = STEP_TIME;
+    vec3 grav = t * gForce;
     for (int a = 0; a < particles.size(); ++a) {
         VerletParticle& vp = particles[a];
         vp.out = false;
         vp.v1 = vp.velocity();
-        vp.v1 += t * gForce;
+        vp.v1 += grav;
+        if( glm::length(vp.v1) >= 10.0 )
+            vp.v1 /= 2.0;
         fixBounds( vp );
     }
     executeCollisions();
@@ -98,7 +101,7 @@ void GravitySystem::step() {
     for (VerletParticle& vp : particles) {
 //        std::cout << " Updating Data vp.p.y : " << vp.p.y << " vp.tempPos().y : " << vp.tempPos().y << std::endl;
         vp.p = vp.tempPos();
-        vp.v0 = vp.v1;
+        vp.v0 = vp.v1; //drag
     }
     // Wait till a frame should be updated
     clock_t end_time = clock();
@@ -130,9 +133,11 @@ void GravitySystem::executeCollisions() {
 }
 
 bool GravitySystem::collides( const VerletParticle& lhs, const VerletParticle& rhs ) {
+    float t = float(STEP_TIME);
+    t*=t;
     bool differentParticle = lhs!=rhs;
     bool inContact = glm::distance( lhs.tempPos(), rhs.tempPos() ) < lhs.radius + rhs.radius + 2.0f * float(FLOAT_EPSILON);
-    bool movingTowards = glm::distance( lhs.p + (1.0f/200.0f) * lhs.v1, rhs.p + (1.0f/20.0f) * rhs.v1 ) < glm::distance( lhs.p, rhs.p );
+    bool movingTowards = glm::distance( lhs.p + t * lhs.v1, rhs.p + t * rhs.v1 ) < glm::distance( lhs.p, rhs.p );
     return differentParticle && inContact && movingTowards;
 }
 
@@ -166,17 +171,17 @@ void GravitySystem::fixCollision(VerletParticle& lhs, VerletParticle& rhs) {
 // 13 - Way out East
 // 14 - Way out North
 short GravitySystem::inBounds(const VerletParticle& _p) {
-    VerletParticle west = VerletParticle( -_p.radius, _p.tempPos().y );
-    VerletParticle south = VerletParticle( _p.tempPos().x, -_p.radius ); 
-    VerletParticle east = VerletParticle( width + _p.radius, _p.tempPos().y );
-    VerletParticle north = VerletParticle( _p.tempPos().x, height + _p.radius ); 
-    if( collides( _p, west ) )
+    //VerletParticle west = VerletParticle( -_p.radius, _p.tempPos().y );
+    //VerletParticle south = VerletParticle( _p.tempPos().x, -_p.radius ); 
+    //VerletParticle east = VerletParticle( width + _p.radius, _p.tempPos().y );
+    //VerletParticle north = VerletParticle( _p.tempPos().x, height + _p.radius ); 
+    if( /*collides( _p, west ) ) || */ _p.tempPos().x <= _p.radius && _p.p.x > _p.radius )
         return 1;
-    if( collides( _p, south ) )
+    if( /*collides( _p, south ) ) || */ _p.tempPos().y <= _p.radius && _p.p.y > _p.radius )
         return 2;
-    if( collides( _p, east ) )
+    if( /*collides( _p, east ) ) || */ _p.tempPos().x >= width- _p.radius && _p.p.x < width - _p.radius )
         return 3;
-    if( collides( _p, north ) )
+    if( /*collides( _p, north ) ) || */ _p.tempPos().y >= height - _p.radius && _p.p.y < height - _p.radius )
         return 4;
     return 0;
 }
@@ -184,24 +189,28 @@ short GravitySystem::inBounds(const VerletParticle& _p) {
 void GravitySystem::fixBounds( VerletParticle& _p, const short& flag ) {
     DEBUGPHYSICS("Correcting Bounds.\n");
     if( flag == 1 ){
-        //_p.p = _p.tempPos();
-        _p.v1 = _p.elasticity * _p.v1 * vec3( -1.0, 1.0, 1.0 );
-        _p.out = true;
+        _p.p = _p.tempPos();
+        //_p.v1 = /*_p.elasticity **/ _p.v1 * vec3( -1.0, 1.0, 1.0 );
+        //_p.out = true;
+        _p.v1.x *= -1.0;
 	}
     if( flag == 2 ){
-        //_p.p = _p.tempPos();
-        _p.v1 = _p.elasticity * _p.v1 * vec3( 1.0, -1.0, 1.0 );
-        _p.out = true;
+        _p.p = _p.tempPos();
+        //_p.v1 = /*_p.elasticity **/ _p.v1 * vec3( 1.0, -1.0, 1.0 );
+        //_p.out = true;
+        _p.v1.y *= -1.0;
     }
     if( flag == 3 ){
-        //_p.p = _p.tempPos();
-        _p.v1 = _p.elasticity * _p.v1 * vec3( -1.0, 1.0, 1.0 );
-        _p.out = true;
+        _p.p = _p.tempPos();
+        //_p.v1 = /*_p.elasticity **/ _p.v1 * vec3( -1.0, 1.0, 1.0 );
+        //_p.out = true;
+        _p.v1.x *= -1.0;
 	}
     if( flag == 4 ){
-        //_p.p = _p.tempPos();
-        _p.v1 = _p.elasticity * _p.v1 * vec3( 1.0, -1.0, 1.0 );
-        _p.out = true;
+        _p.p = _p.tempPos();
+        //_p.v1 = /*_p.elasticity **/ _p.v1 * vec3( 1.0, -1.0, 1.0 );
+        //_p.out = true;
+        _p.v1.y *= -1.0;
 	}
     //executeCollisions();
 }
