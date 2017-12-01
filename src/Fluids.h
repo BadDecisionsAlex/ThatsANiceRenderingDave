@@ -1,6 +1,6 @@
 // Comment out the line below to add this bad boy to the compile chain or to see the code with proper color fields.
 // Removed from compile chain until it is complete. 
-#if 0
+//#if 0
 
 #ifndef FLUIDS_H
 #define FLUIDS_H
