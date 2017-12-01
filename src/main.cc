@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
 {
 	GLFWwindow *window = init_glefw();
     GUI gui(window);
-    
+
     vector<vec4> points;
     vector<uvec1> point_numbers;
 
@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
     //particle_inits.push_back( VerletParticle( 500, 500 ) );
     //particle_inits.push_back( VerletParticle( 245, 100 ) );
     //particle_inits.push_back( VerletParticle( 255, 100 ) );
-    
+
     particle_inits.push_back( VerletParticle( 250, 350 ) );
     particle_inits.push_back( VerletParticle( 250, 200 ) );
     //particle_inits.push_back( VerletParticle( 50, 50 ) );
@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
     Scene scene = Scene( rootSystem );
     scene.retrieveData();
     scene.updateBuffers(points, point_numbers);
-    
+
     RenderDataInput particle_pass_input;
     particle_pass_input.assign(0, "vertex_position", points.data(), points.size(), 4, GL_FLOAT);
     particle_pass_input.assign_index(point_numbers.data(), point_numbers.size(), 1);
@@ -135,15 +135,15 @@ int main(int argc, char* argv[])
     // ANIMATION LOOP
     //
     // **************
-    
+
     std::default_random_engine generator;
-    std::normal_distribution<float> distribution( 250, 60 ); 
+    std::normal_distribution<float> distribution( 250, 60 );
     long counter = 1;
 
 	while (!glfwWindowShouldClose(window)) {
         // THREAD IS SLEEPING!
         // std::this_thread::sleep_for(std::chrono::seconds(1));
-		
+
         glfwGetFramebufferSize(window, &window_width, &window_height);
 		glViewport(0, 0, window_width, window_height);
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -156,13 +156,13 @@ int main(int argc, char* argv[])
         glDepthFunc(GL_LESS);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glCullFace(GL_BACK);
-        
+
         // Make our updates to physics and scene.
         ++counter;
         if (counter % 10 == 0) {
             VerletParticle newParticle( distribution(generator), distribution(generator) );
             rootSystem->particles.push_back(newParticle);
-            //std::cout << "I'm Alive! (" << newParticle.p.x << ", " << newParticle.p.y << ") " << std::endl; 
+            //std::cout << "I'm Alive! (" << newParticle.p.x << ", " << newParticle.p.y << ") " << std::endl;
             rootSystem->step();
             scene.retrieveData();
             scene.updateBuffers(points, point_numbers);
@@ -187,16 +187,16 @@ int main(int argc, char* argv[])
 
         //TODO: Draw here
         particle_pass.updateVBO(0, points.data(), points.size());
-        
+
         particle_pass.setup();
         CHECK_GL_ERROR(glDrawElements(GL_POINTS, point_numbers.size(), GL_UNSIGNED_INT, 0));
-        
+
 		// Poll and swap.
 		glfwPollEvents();
 		glfwSwapBuffers(window);
 	}
 	glfwDestroyWindow(window);
 	glfwTerminate();
-    
+
 	exit(EXIT_SUCCESS);
 }
