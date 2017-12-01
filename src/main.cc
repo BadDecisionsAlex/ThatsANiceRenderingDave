@@ -93,7 +93,11 @@ int main(int argc, char* argv[])
     //Setup gravity system
 
     // Initialize a Gravity System and Scene
-    SpaceSystem* rootSystem = new SpaceSystem();
+    
+    vector<VerletParticle> starterParticles;
+    starterParticles.push_back(VerletParticle(100, 100));
+    
+    GravitySystem* rootSystem = new GravitySystem(starterParticles);
     rootSystem->width = window_width;
     rootSystem->height = window_height;
     
@@ -107,37 +111,37 @@ int main(int argc, char* argv[])
 //    p.velocity = vec3(0, 10, 0);
 //    rootSystem->particles.push_back(p);
     
-    for (int c = 0; c < 100000; ++c) {
-        int x = rand() % 1000;
-        int y = rand() % 1000;
-
-        float dx = (rand() % 1000) / 500.0 - 1;
-        float dy = (rand() % 1000) / 500.0 - 1;
-        int life = rand() % 10000;
-
-        MassParticle particle = MassParticle(vec3(x, y, 0));
-        particle.velocity = vec3(dx * 6, 0, 0);
-        particle.life = life;
-
-        rootSystem->particles.push_back(particle);
-    }
+//    for (int c = 0; c < 100000; ++c) {
+//        int x = rand() % 1000;
+//        int y = rand() % 1000;
+//
+//        float dx = (rand() % 1000) / 500.0 - 1;
+//        float dy = (rand() % 1000) / 500.0 - 1;
+//        int life = rand() % 10000;
+//
+//        MassParticle particle = MassParticle(vec3(x, y, 0));
+//        particle.velocity = vec3(dx * 6, 0, 0);
+//        particle.life = life;
+//
+//        rootSystem->particles.push_back(particle);
+//    }
     
-//    rootSystem->prepareDraw();
-    rootSystem->getPointsForScreen(points, point_numbers);
-    
-    RenderDataInput particle_pass_input;
-    particle_pass_input.assign(0, "vertex_position", points.data(), points.size(), 4, GL_FLOAT);
-    particle_pass_input.assign_index(point_numbers.data(), point_numbers.size(), 1);
-    RenderPass particle_pass(-1,
-                             particle_pass_input,
-                             {
-                                 particle_vertex_shader,
-                                 particle_geometry_shader,
-                                 particle_fragment_shader
-                             },
-                             { /* uniforms */ },
-                             { "fragment_color" }
-                             );
+    rootSystem->prepareDraw();
+//    rootSystem->getPointsForScreen(points, point_numbers);
+//
+//    RenderDataInput particle_pass_input;
+//    particle_pass_input.assign(0, "vertex_position", points.data(), points.size(), 4, GL_FLOAT);
+//    particle_pass_input.assign_index(point_numbers.data(), point_numbers.size(), 1);
+//    RenderPass particle_pass(-1,
+//                             particle_pass_input,
+//                             {
+//                                 particle_vertex_shader,
+//                                 particle_geometry_shader,
+//                                 particle_fragment_shader
+//                             },
+//                             { /* uniforms */ },
+//                             { "fragment_color" }
+//                             );
     
     // **************
     //
@@ -174,32 +178,34 @@ int main(int argc, char* argv[])
 //            rootSystem->step();
 //            rootSystem->prepareDraw();
             
-            int x = rand() % 1000;
-            int y = rand() % 1000;
+//            int x = rand() % 1000;
+//            int y = rand() % 1000;
+//
+//            float dx = (rand() % 1000) / 500.0 - 1;
+//            float dy = (rand() % 1000) / 500.0 - 1;
+//            int life = rand() % 10000;
+//
+//            MassParticle particle = MassParticle(vec3(x, y, 0));
+//            particle.velocity = vec3(dx * 2, dy * 2, 0);
+//            particle.life = life;
+//
+//            rootSystem->particles.push_back(particle);
             
-            float dx = (rand() % 1000) / 500.0 - 1;
-            float dy = (rand() % 1000) / 500.0 - 1;
-            int life = rand() % 10000;
+            rootSystem->prepareDraw();
             
-            MassParticle particle = MassParticle(vec3(x, y, 0));
-            particle.velocity = vec3(dx * 2, dy * 2, 0);
-            particle.life = life;
+//            rootSystem->getPointsForScreen(points, point_numbers);
             
-            rootSystem->particles.push_back(particle);
-            
-            rootSystem->getPointsForScreen(points, point_numbers);
-            
-            particle_pass_input.assign_index(point_numbers.data(), point_numbers.size(), 1);
-            particle_pass = RenderPass(-1,
-                                       particle_pass_input,
-                                       {
-                                           particle_vertex_shader,
-                                           particle_geometry_shader,
-                                           particle_fragment_shader
-                                       },
-                                       { /* uniforms */ },
-                                       { "fragment_color" }
-                                       );
+//            particle_pass_input.assign_index(point_numbers.data(), point_numbers.size(), 1);
+//            particle_pass = RenderPass(-1,
+//                                       particle_pass_input,
+//                                       {
+//                                           particle_vertex_shader,
+//                                           particle_geometry_shader,
+//                                           particle_fragment_shader
+//                                       },
+//                                       { /* uniforms */ },
+//                                       { "fragment_color" }
+//                                       );
         }else{
             rootSystem->step();
             rootSystem->getPointsForScreen(points, point_numbers);
@@ -207,12 +213,12 @@ int main(int argc, char* argv[])
 
         //TODO: Draw here
 //        rootSystem->prepareDraw();
-//        rootSystem->draw();
+        rootSystem->draw();
         
-        particle_pass.updateVBO(0, points.data(), points.size());
-
-        particle_pass.setup();
-        CHECK_GL_ERROR(glDrawElements(GL_POINTS, point_numbers.size(), GL_UNSIGNED_INT, 0));
+//        particle_pass.updateVBO(0, points.data(), points.size());
+//
+//        particle_pass.setup();
+//        CHECK_GL_ERROR(glDrawElements(GL_POINTS, point_numbers.size(), GL_UNSIGNED_INT, 0));
 
 		// Poll and swap.
 		glfwPollEvents();

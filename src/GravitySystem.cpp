@@ -75,7 +75,7 @@ void GravitySystem::draw() {
     getPointsForScreen(points, indices);
     particle_pass.updateVBO(0, points.data(), points.size());
     particle_pass.setup();
-    CHECK_GL_ERROR(glDrawElements(GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0));
+    glDrawElements(GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0);
 }
 
 
