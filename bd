@@ -1,0 +1,9 @@
+#!/bin/bash
+# Deletes the current build folder, rebuilds, reruns CMAKE, recompiles src
+echo "We can build him better, stronger, faster."
+rm -rf build
+mkdir build
+cd build
+cmake ..
+make -j8
+

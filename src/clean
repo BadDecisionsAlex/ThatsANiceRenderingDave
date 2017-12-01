@@ -1,0 +1,9 @@
+#!/bin/bash
+cd ..
+echo "Cleaning Up Your Mess Nerds"
+# Any files you wish to clear should be listed here.
+rm -fr *.plist
+rm -fr *.gch
+rm -fr *.Trashes
+rm -fr *.swp
+rm -fr *.log

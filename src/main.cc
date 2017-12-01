@@ -2,12 +2,17 @@
 #include <dirent.h>
 
 #include "render_pass.h"
+#include "gui.h"
 
 #include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
+
+#include <random>
+#include <thread>
+#include <chrono>
 
 #include <GLFW/glfw3.h>
 #include <glm/gtx/component_wise.hpp>
@@ -16,6 +21,7 @@
 #include <glm/gtx/io.hpp>
 #include <debuggl.h>
 
+#include "AbstractParticle.h"
 #include "ParticleSystem.h"
 #include "Scene.h"
 
@@ -25,7 +31,7 @@ using glm::vec3;
 using glm::vec4;
 using glm::uvec1;
 
-int window_width = 800, window_height = 600;
+int window_width = 500, window_height = 500;
 const std::string window_title = "Particles";
 
 const char* particle_vertex_shader =
@@ -65,8 +71,8 @@ GLFWwindow* init_glefw()
 	glfwSwapInterval(1);
 	const GLubyte* renderer = glGetString(GL_RENDERER);  // get renderer string
 	const GLubyte* version = glGetString(GL_VERSION);    // version as a string
-	std::cout << "Renderer: " << renderer << "\n";
-	std::cout << "OpenGL version supported:" << version << "\n";
+	//std::cout << "Renderer: " << renderer << "\n";
+	//std::cout << "OpenGL version supported:" << version << "\n";
 
 	return ret;
 }
@@ -74,22 +80,43 @@ GLFWwindow* init_glefw()
 int main(int argc, char* argv[])
 {
 	GLFWwindow *window = init_glefw();
+    GUI gui(window);
+
     vector<vec4> points;
     vector<uvec1> point_numbers;
 
     // Load Initial Particle Positions in ParticleSystem's coord space
-    vector<vec2> particle_inits;
-    particle_inits.push_back( vec2( 250.0, 250.0 ) );
-    particle_inits.push_back( vec2( 150.0, 250.0 ) );
-    particle_inits.push_back( vec2( 350.0, 250.0 ) );
-    particle_inits.push_back( vec2( 50.0, 250.0 ) );
+    vector<VerletParticle> particle_inits;
+    particle_inits.push_back( VerletParticle( 225.0, 250.0 ) );
+    particle_inits.push_back( VerletParticle( 275.0, 250.0 ) );
+    particle_inits[0].v0 = vec3( 0.1, 0.0, 0.0 );
+    particle_inits[1].v0 = vec3( -0.1, 0.0, 0.0 );
+
+    //particle_inits.push_back( VerletParticle( 0.0, 0.0 ) );
+    //particle_inits.push_back( VerletParticle( 500, 0.0 ) );
+    //particle_inits.push_back( VerletParticle( 0.0, 500 ) );
+    //particle_inits.push_back( VerletParticle( 500, 500 ) );
+    //particle_inits.push_back( VerletParticle( 245, 100 ) );
+    //particle_inits.push_back( VerletParticle( 255, 100 ) );
+
+    particle_inits.push_back( VerletParticle( 250, 350 ) );
+    particle_inits.push_back( VerletParticle( 250, 200 ) );
+    //particle_inits.push_back( VerletParticle( 50, 50 ) );
+    //particle_inits.push_back( VerletParticle( 70, 70 ) );
+    //particle_inits.push_back( VerletParticle( 10, 10 ) );
+    //particle_inits.push_back( VerletParticle( 30, 10 ) );
+    //particle_inits.push_back( VerletParticle( 490, 250 ) );
+    //particle_inits.push_back( VerletParticle( 490, 10 ) );
 
     // Initialize a Gravity System and Scene
     GravitySystem* rootSystem = new GravitySystem( particle_inits );
+    //rootSystem->gForce = vec3( 0.0, 0.0, 0.0 );
+    rootSystem->width = window_width;
+    rootSystem->height = window_height;
     Scene scene = Scene( rootSystem );
     scene.retrieveData();
     scene.updateBuffers(points, point_numbers);
-    
+
     RenderDataInput particle_pass_input;
     particle_pass_input.assign(0, "vertex_position", points.data(), points.size(), 4, GL_FLOAT);
     particle_pass_input.assign_index(point_numbers.data(), point_numbers.size(), 1);
@@ -103,20 +130,25 @@ int main(int argc, char* argv[])
                            { /* uniforms */ },
                            { "fragment_color" }
                            );
+    // **************
     //
     // ANIMATION LOOP
     //
     // **************
-    
-    long counter = 0;
+
+    std::default_random_engine generator;
+    std::normal_distribution<float> distribution( 250, 60 );
+    long counter = 1;
 
 	while (!glfwWindowShouldClose(window)) {
-		// Setup some basic window stuff.
-		glfwGetFramebufferSize(window, &window_width, &window_height);
+        // THREAD IS SLEEPING!
+        // std::this_thread::sleep_for(std::chrono::seconds(1));
+
+        glfwGetFramebufferSize(window, &window_width, &window_height);
 		glViewport(0, 0, window_width, window_height);
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glEnable(GL_DEPTH_TEST);
-        glEnable(GL_MULTISAMPLE);
+        //glEnable(GL_MULTISAMPLE);
         glEnable(GL_BLEND);
         glEnable(GL_CULL_FACE);
         glEnable(GL_PROGRAM_POINT_SIZE);
@@ -124,13 +156,16 @@ int main(int argc, char* argv[])
         glDepthFunc(GL_LESS);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glCullFace(GL_BACK);
-        
+
         // Make our updates to physics and scene.
         ++counter;
-        if (counter % 60 == 0 && points.size() < 30) {
-            VerletParticle newParticle(counter % (int)rootSystem->width, 260.0);
+        if (counter % 10 == 0) {
+            VerletParticle newParticle( distribution(generator), distribution(generator) );
             rootSystem->particles.push_back(newParticle);
-            
+            //std::cout << "I'm Alive! (" << newParticle.p.x << ", " << newParticle.p.y << ") " << std::endl;
+            rootSystem->step();
+            scene.retrieveData();
+            scene.updateBuffers(points, point_numbers);
             //We are recreating the render pass in order to include the new values.
             //There is probably a better way to do this
             particle_pass_input.assign_index(point_numbers.data(), point_numbers.size(), 1);
@@ -144,24 +179,24 @@ int main(int argc, char* argv[])
                           { /* uniforms */ },
                           { "fragment_color" }
                           );
+        }else{
+            rootSystem->step();
+            scene.retrieveData();
+            scene.updateBuffers(points, point_numbers);
         }
-        
-        rootSystem->step();
-        scene.retrieveData();
-        scene.updateBuffers(points, point_numbers);
 
         //TODO: Draw here
         particle_pass.updateVBO(0, points.data(), points.size());
-        
+
         particle_pass.setup();
         CHECK_GL_ERROR(glDrawElements(GL_POINTS, point_numbers.size(), GL_UNSIGNED_INT, 0));
-        
+
 		// Poll and swap.
 		glfwPollEvents();
 		glfwSwapBuffers(window);
 	}
 	glfwDestroyWindow(window);
 	glfwTerminate();
-    
+
 	exit(EXIT_SUCCESS);
 }
