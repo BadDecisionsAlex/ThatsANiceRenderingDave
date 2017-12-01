@@ -36,12 +36,14 @@ const char* particle_fragment_shader1 =
 //Draw
 
 GravitySystem::GravitySystem(const vector<VerletParticle>& _in) : particles(_in), grid(10.0f, width, height), particle_pass(-1, particle_pass_input, { particle_vertex_shader1, particle_geometry_shader1, particle_fragment_shader1 }, { /* uniforms */ }, { "fragment_color" }) {
+    getPointsForScreen(points, indices);
+    particle_pass_input.assign(0, "vertex_position", points.data(), points.size(), 4, GL_FLOAT);
 }
 
 void GravitySystem::getPointsForScreen(vector<vec4>& points, vector<uvec1>& indices) {
     points.clear();
     indices.clear();
-    int count = 1;
+    int count = 0;
     for (VerletParticle& vp : particles) {
         vec4 point = toScreen(vp.p);
         points.push_back(point);
@@ -57,7 +59,6 @@ vec4 GravitySystem::toScreen(const vec3& point) {
 }
 
 void GravitySystem::prepareDraw() {
-    particle_pass_input.assign(0, "vertex_position", points.data(), points.size(), 4, GL_FLOAT);
     particle_pass_input.assign_index(indices.data(), indices.size(), 1);
     particle_pass = RenderPass(-1,
                              particle_pass_input,
@@ -75,7 +76,7 @@ void GravitySystem::draw() {
     getPointsForScreen(points, indices);
     particle_pass.updateVBO(0, points.data(), points.size());
     particle_pass.setup();
-    glDrawElements(GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0);
+    CHECK_GL_ERROR(glDrawElements(GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0));
 }
 
 
