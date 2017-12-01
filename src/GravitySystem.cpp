@@ -26,21 +26,21 @@ using glm::vec4;
 using std::vector;
 using std::make_pair;
 
-const char* particle_vertex_shader =
+const char* particle_vertex_shader1 =
 #include "shaders/particle.vert"
 ;
 
-const char* particle_geometry_shader =
+const char* particle_geometry_shader1 =
 #include "shaders/particle.geom"
 ;
 
-const char* particle_fragment_shader =
+const char* particle_fragment_shader1 =
 #include "shaders/particle.frag"
 ;
 
 //Draw
 
-GravitySystem::GravitySystem(const vector<VerletParticle>& _in) : particles(_in), grid(10.0f, width, height), particle_pass(-1, particle_pass_input, { particle_vertex_shader, particle_geometry_shader, particle_fragment_shader }, { /* uniforms */ }, { "fragment_color" }) {
+GravitySystem::GravitySystem(const vector<VerletParticle>& _in) : particles(_in), grid(10.0f, width, height), particle_pass(-1, particle_pass_input, { particle_vertex_shader1, particle_geometry_shader1, particle_fragment_shader1 }, { /* uniforms */ }, { "fragment_color" }) {
 }
 
 void GravitySystem::getPointsForScreen(vector<vec4>& points, vector<uvec1>& indices) {
@@ -58,7 +58,7 @@ void GravitySystem::getPointsForScreen(vector<vec4>& points, vector<uvec1>& indi
 vec4 GravitySystem::toScreen(const vec3& point) {
     float ndcX = ((2.0f * point.x) / float(width)) - 1.0f;
     float ndcY = ((2.0f * point.y) / float(height)) - 1.0f;
-    return vec4(ndcX, ndcY, 1.0, 1.0);
+    return vec4(ndcX, ndcY, 0.0, 1.0);
 }
 
 void GravitySystem::prepareDraw() {
@@ -67,9 +67,9 @@ void GravitySystem::prepareDraw() {
     particle_pass = RenderPass(-1,
                              particle_pass_input,
                              {
-                                 particle_vertex_shader,
-                                 particle_geometry_shader,
-                                 particle_fragment_shader
+                                 particle_vertex_shader1,
+                                 particle_geometry_shader1,
+                                 particle_fragment_shader1
                              },
                              { /* uniforms */ },
                              { "fragment_color" }

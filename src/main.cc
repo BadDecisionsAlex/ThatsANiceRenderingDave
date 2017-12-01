@@ -33,6 +33,18 @@ using glm::vec3;
 using glm::vec4;
 using glm::uvec1;
 
+const char* particle_vertex_shader =
+#include "shaders/particle.vert"
+;
+
+const char* particle_geometry_shader =
+#include "shaders/particle.geom"
+;
+
+const char* particle_fragment_shader =
+#include "shaders/particle.frag"
+;
+
 int window_width = 1000, window_height = 1000;
 const std::string window_title = "Particles";
 
@@ -71,6 +83,9 @@ int main(int argc, char* argv[])
 {
 	GLFWwindow *window = init_glefw();
     GUI gui(window);
+    
+    vector<vec4> points;
+    vector<uvec1> point_numbers;
 
     //Setup gravity system
     vector<VerletParticle> particle_inits;
@@ -86,7 +101,22 @@ int main(int argc, char* argv[])
     GravitySystem* rootSystem = new GravitySystem(particle_inits);
     rootSystem->width = window_width;
     rootSystem->height = window_height;
-    rootSystem->prepareDraw();
+//    rootSystem->prepareDraw();
+    rootSystem->getPointsForScreen(points, point_numbers);
+    
+    RenderDataInput particle_pass_input;
+    particle_pass_input.assign(0, "vertex_position", points.data(), points.size(), 4, GL_FLOAT);
+    particle_pass_input.assign_index(point_numbers.data(), point_numbers.size(), 1);
+    RenderPass particle_pass(-1,
+                             particle_pass_input,
+                             {
+                                 particle_vertex_shader,
+                                 particle_geometry_shader,
+                                 particle_fragment_shader
+                             },
+                             { /* uniforms */ },
+                             { "fragment_color" }
+                             );
     
     //
     // ANIMATION LOOP
@@ -119,15 +149,35 @@ int main(int argc, char* argv[])
         if (counter % 10 == 0) {
             VerletParticle newParticle( distribution(generator), distribution(generator) );
             rootSystem->particles.push_back(newParticle);
-            rootSystem->step();
-            rootSystem->prepareDraw();
+//            rootSystem->step();
+//            rootSystem->prepareDraw();
+            
+            rootSystem->getPointsForScreen(points, point_numbers);
+            
+            particle_pass_input.assign_index(point_numbers.data(), point_numbers.size(), 1);
+            particle_pass = RenderPass(-1,
+                                       particle_pass_input,
+                                       {
+                                           particle_vertex_shader,
+                                           particle_geometry_shader,
+                                           particle_fragment_shader
+                                       },
+                                       { /* uniforms */ },
+                                       { "fragment_color" }
+                                       );
         }else{
             rootSystem->step();
+            rootSystem->getPointsForScreen(points, point_numbers);
         }
 
         //TODO: Draw here
-        rootSystem->prepareDraw();
-        rootSystem->draw();
+//        rootSystem->prepareDraw();
+//        rootSystem->draw();
+        
+        particle_pass.updateVBO(0, points.data(), points.size());
+        
+        particle_pass.setup();
+        CHECK_GL_ERROR(glDrawElements(GL_POINTS, point_numbers.size(), GL_UNSIGNED_INT, 0));
         
 		// Poll and swap.
 		glfwPollEvents();

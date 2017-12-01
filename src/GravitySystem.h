@@ -27,6 +27,7 @@ public:
     //drawing
     void prepareDraw();
     void draw();
+    void getPointsForScreen(vector<glm::vec4>& points, vector<glm::uvec1>& indices);
     
 private:
     ParticleGrid grid;
@@ -45,7 +46,6 @@ private:
     void fixBounds( VerletParticle& _p, const short& flag );
     void fixBounds( VerletParticle& _p );
     
-    void getPointsForScreen(vector<glm::vec4>& points, vector<glm::uvec1>& indices);
     glm::vec4 toScreen(const vec3& point);
 };
 
