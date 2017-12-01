@@ -26,6 +26,7 @@ struct ParticleSystem: Drawable {
     ParticleSystem(float _w, float _h) : width(_w), height(_h) {}
     
     void virtual step() = 0;
+    void virtual setup() {}
 };
 
 #endif

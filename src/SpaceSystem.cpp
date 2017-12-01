@@ -7,6 +7,28 @@
 
 #include <stdio.h>
 #include "SpaceSystem.h"
+#include "Shaders.h"
+
+void SpaceSystem::setup() {
+    //Add particles
+    for (int c = 0; c < 100000; ++c) {
+        int x = rand() % 1000;
+        int y = rand() % 1000;
+        float z = -(rand() % 10000 / 10000.0);
+        
+        float dx = (rand() % 1000) / 500.0 - 1;
+        float dy = (rand() % 1000) / 500.0 - 1;
+        int life = rand() % 10000;
+        
+        MassParticle particle = MassParticle(vec3(x, y, z));
+        particle.velocity = vec3(0, 0, 0);
+        particle.life = life;
+        
+        particles.push_back(particle);
+    }
+    
+    getPointsForScreen(points, indices);
+}
 
 void SpaceSystem::getPointsForScreen(vector<vec4>& points, vector<uvec1>& indices) {
     points.clear();
@@ -80,3 +102,34 @@ void SpaceSystem::step() {
         p.p += p.velocity;
     }
 }
+
+
+//MARK: - Draw
+
+SpaceSystem::SpaceSystem() : particle_pass(-1, particle_pass_input, { particle_vertex_shader, particle_geometry_shader, particle_fragment_shader }, { /* uniforms */ }, { "fragment_color" }) {
+    getPointsForScreen(points, indices);
+    particle_pass_input.assign(0, "vertex_position", points.data(), points.size(), 4, GL_FLOAT);
+}
+
+void SpaceSystem::prepareDraw() {
+    particle_pass_input.assign_index(indices.data(), indices.size(), 1);
+    particle_pass = RenderPass(-1,
+                               particle_pass_input,
+                               {
+                                   particle_vertex_shader,
+                                   particle_geometry_shader,
+                                   particle_fragment_shader
+                               },
+                               { /* uniforms */ },
+                               { "fragment_color" }
+                               );
+}
+
+void SpaceSystem::draw() {
+    getPointsForScreen(points, indices);
+    particle_pass.updateVBO(0, points.data(), points.size());
+    particle_pass.setup();
+    CHECK_GL_ERROR(glDrawElements(GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0));
+}
+
+

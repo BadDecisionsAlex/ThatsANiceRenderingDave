@@ -1,6 +1,7 @@
 #ifndef PARTICLE_SYSTEM_CPP
 #define PARTICLE_SYSTEM_CPP
 #include "GravitySystem.h"
+#include "Shaders.h"
 #include <iostream>                 // std::cout
 #include <glm/gtx/string_cast.hpp>  // glm::to_string
 
@@ -21,21 +22,10 @@
 
 using std::make_pair;
 
-const char* particle_vertex_shader1 =
-#include "shaders/particle.vert"
-;
-
-const char* particle_geometry_shader1 =
-#include "shaders/particle.geom"
-;
-
-const char* particle_fragment_shader1 =
-#include "shaders/particle.frag"
-;
 
 //Draw
 
-GravitySystem::GravitySystem(const vector<VerletParticle>& _in) : particles(_in), grid(10.0f, width, height), particle_pass(-1, particle_pass_input, { particle_vertex_shader1, particle_geometry_shader1, particle_fragment_shader1 }, { /* uniforms */ }, { "fragment_color" }) {
+GravitySystem::GravitySystem(const vector<VerletParticle>& _in) : particles(_in), grid(10.0f, width, height), particle_pass(-1, particle_pass_input, { particle_vertex_shader, particle_geometry_shader, particle_fragment_shader }, { /* uniforms */ }, { "fragment_color" }) {
     getPointsForScreen(points, indices);
     particle_pass_input.assign(0, "vertex_position", points.data(), points.size(), 4, GL_FLOAT);
 }
@@ -63,9 +53,9 @@ void GravitySystem::prepareDraw() {
     particle_pass = RenderPass(-1,
                              particle_pass_input,
                              {
-                                 particle_vertex_shader1,
-                                 particle_geometry_shader1,
-                                 particle_fragment_shader1
+                                 particle_vertex_shader,
+                                 particle_geometry_shader,
+                                 particle_fragment_shader
                              },
                              { /* uniforms */ },
                              { "fragment_color" }

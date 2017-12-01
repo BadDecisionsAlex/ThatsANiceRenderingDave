@@ -36,18 +36,6 @@ using glm::vec3;
 using glm::vec4;
 using glm::uvec1;
 
-const char* particle_vertex_shader =
-#include "shaders/particle.vert"
-;
-
-const char* particle_geometry_shader =
-#include "shaders/particle.geom"
-;
-
-const char* particle_fragment_shader =
-#include "shaders/particle.frag"
-;
-
 int window_width = 1000, window_height = 1000;
 const std::string window_title = "Particles";
 
@@ -88,12 +76,14 @@ int main(int argc, char* argv[])
     GUI gui(window);
 
     //Setup gravity system
-    vector<VerletParticle> starterParticles;
-    starterParticles.push_back(VerletParticle(100, 100));
+//    vector<VerletParticle> starterParticles;
+//    starterParticles.push_back(VerletParticle(100, 100));
+//    GravitySystem* rootSystem = new GravitySystem(starterParticles);
     
-    GravitySystem* rootSystem = new GravitySystem(starterParticles);
+    SpaceSystem* rootSystem = new SpaceSystem();
     rootSystem->width = window_width;
     rootSystem->height = window_height;
+    rootSystem->setup();
     
     //Do initial prepare
     rootSystem->prepareDraw();
@@ -129,14 +119,14 @@ int main(int argc, char* argv[])
         rootSystem->step();
 
         // Make our updates to physics and scene.
-        ++counter;
-        if (counter % 5 == 0) {
-            VerletParticle newParticle(distribution(generator), distribution(generator));
-            rootSystem->particles.push_back(newParticle);
-            
-            //prepare after changes
-            rootSystem->prepareDraw();
-        }
+//        ++counter;
+//        if (counter % 5 == 0) {
+//            VerletParticle newParticle(distribution(generator), distribution(generator));
+//            rootSystem->particles.push_back(newParticle);
+//
+//            //prepare after changes
+//            rootSystem->prepareDraw();
+//        }
 
         //TODO: Draw here
         rootSystem->draw();

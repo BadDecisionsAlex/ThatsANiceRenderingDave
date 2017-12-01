@@ -9,6 +9,7 @@
 #define Drawable_h
 #include <GL/glew.h>
 #include <debuggl.h>
+#include <iostream>
 #include "render_pass.h"
 
 struct Drawable {
