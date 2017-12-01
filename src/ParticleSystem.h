@@ -27,7 +27,7 @@ struct ParticleSystem {
 
 class GravitySystem : public ParticleSystem {
     const vec3 DEFAULT_GRAVITY = vec3( 0.0, -9.807, 0.0 );
-    vector<pair<int,int>> flaggedForCollides;
+    vector<pair<int,int> > flaggedForCollides;
     public: 
         vector<VerletParticle> particles;
         vec3 gForce = DEFAULT_GRAVITY;

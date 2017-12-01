@@ -5,7 +5,7 @@
 #ifndef FLUIDS_H
 #define FLUIDS_H
 
-#include <glm/glm.h>
+#include <glm/glm.hpp>
 #include "ParticleSystem.h"
 #include <vector>
 using glm::vec2;
@@ -18,8 +18,8 @@ using std::vector;
 class FluidGrid {
 
     struct Cell {
-        float d = 0;    // density
-        float dp = 0;   // previous density
+        float d = 0.0;    // density
+        float dp = 0.0;   // previous density
         vec2 v;         // velocity
         vec2 vp;        // previous velocity
     }; 
@@ -30,7 +30,7 @@ class FluidGrid {
         typedef typename vector<Cell>::iterator iterator;
         typedef typename vector<Cell>::const_iterator const_iterator;
         
-        int N = DEFAULT_SIZE_N;
+        int N = int(DEFAULT_SIZE_N);
         vector<Cell> grid = vector<Cell>(N*N);
 
         // speedhack non-sense to let us stuff a matrix into a vector cheaply.
