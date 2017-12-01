@@ -8,8 +8,6 @@
 #ifndef GravitySystem_h
 #define GravitySystem_h
 
-#include <glm/gtc/vec1.hpp>
-
 #include "ParticleSystem.h"
 #include "ParticleGrid.h"
 
@@ -27,7 +25,7 @@ public:
     //drawing
     void prepareDraw();
     void draw();
-    void getPointsForScreen(vector<glm::vec4>& points, vector<glm::uvec1>& indices);
+    void getPointsForScreen(vector<vec4>& points, vector<uvec1>& indices);
     
 private:
     ParticleGrid grid;
@@ -35,8 +33,8 @@ private:
     //Rendering (Could be made simpler)
     RenderDataInput particle_pass_input;
     RenderPass particle_pass;
-    vector<glm::vec4> points;
-    vector<glm::uvec1> indices;
+    vector<vec4> points;
+    vector<uvec1> indices;
     
     
     void executeCollisions();

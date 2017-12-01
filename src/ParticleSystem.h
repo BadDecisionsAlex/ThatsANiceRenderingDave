@@ -1,13 +1,16 @@
 #ifndef PARTICLE_SYSTEM_H
 #define PARTICLE_SYSTEM_H
 #include <glm/glm.hpp>          // vec2, vec3
+#include <glm/gtc/vec1.hpp>
 #include <vector>               // vector
 #include <time.h>               // needed for timing the step
 #include "AbstractParticle.h"   // AbstractParticle
 #include "Drawable.h"
 
+using glm::uvec1;
 using glm::vec2;
 using glm::vec3;
+using glm::vec4;
 using std::vector;
 using std::pair;
 
@@ -15,7 +18,8 @@ using std::pair;
 #define FLOAT_EPSILON 0.00000001f
 #endif
 
-struct ParticleSystem: Drawable {
+//TODO: make drawable once that is fixed
+struct ParticleSystem {
     float width, height;
     
     ParticleSystem() : width(1000), height(1000) {}

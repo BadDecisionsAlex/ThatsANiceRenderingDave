@@ -27,6 +27,9 @@
 #include "VerletParticle.h"
 #include "GravitySystem.h"
 
+#include "SpaceSystem.h"
+#include "MassParticle.h"
+
 using std::vector;
 using glm::vec2;
 using glm::vec3;
@@ -88,19 +91,34 @@ int main(int argc, char* argv[])
     vector<uvec1> point_numbers;
 
     //Setup gravity system
-    vector<VerletParticle> particle_inits;
-    particle_inits.push_back(VerletParticle(225.0, 250.0));
-    particle_inits.push_back(VerletParticle(275.0, 250.0));
-    particle_inits[0].v0 = vec3(0.1, 0.0, 0.0);
-    particle_inits[1].v0 = vec3(-0.1, 0.0, 0.0);
-    
-    particle_inits.push_back(VerletParticle(250, 350));
-    particle_inits.push_back(VerletParticle(250, 200));
+
 
     // Initialize a Gravity System and Scene
-    GravitySystem* rootSystem = new GravitySystem(particle_inits);
+    SpaceSystem* rootSystem = new SpaceSystem();
     rootSystem->width = window_width;
     rootSystem->height = window_height;
+    
+    //Add points
+    rootSystem->particles.push_back(MassParticle(vec3(250, 500, 0)));
+    rootSystem->particles.push_back(MassParticle(vec3(750, 500, 0)));
+    rootSystem->particles.push_back(MassParticle(vec3(500, 250, 0)));
+    rootSystem->particles.push_back(MassParticle(vec3(500, 750, 0)));
+    
+    for (int c = 0; c < 60000; ++c) {
+        int x = rand() % 1000;
+        int y = rand() % 1000;
+        
+        float dx = (rand() % 1000) / 500.0 - 1;
+        float dy = (rand() % 1000) / 500.0 - 1;
+        int life = rand() % 10000;
+        
+        MassParticle particle = MassParticle(vec3(x, y, 0));
+        particle.velocity = vec3(dx, dy, 0);
+        particle.life = life;
+        
+        rootSystem->particles.push_back(particle);
+    }
+    
 //    rootSystem->prepareDraw();
     rootSystem->getPointsForScreen(points, point_numbers);
     
@@ -146,11 +164,24 @@ int main(int argc, char* argv[])
         
         // Make our updates to physics and scene.
         ++counter;
-        if (counter % 10 == 0) {
-            VerletParticle newParticle( distribution(generator), distribution(generator) );
-            rootSystem->particles.push_back(newParticle);
+        if (counter % 5 == -1) {
+//            VerletParticle newParticle( distribution(generator), distribution(generator) );
+//            rootSystem->particles.push_back(newParticle);
 //            rootSystem->step();
 //            rootSystem->prepareDraw();
+            
+            int x = rand() % 1000;
+            int y = rand() % 1000;
+            
+            float dx = (rand() % 1000) / 500.0 - 1;
+            float dy = (rand() % 1000) / 500.0 - 1;
+            int life = rand() % 10000;
+            
+            MassParticle particle = MassParticle(vec3(x, y, 0));
+            particle.velocity = vec3(dx, dy, 0);
+            particle.life = life;
+            
+            rootSystem->particles.push_back(particle);
             
             rootSystem->getPointsForScreen(points, point_numbers);
             

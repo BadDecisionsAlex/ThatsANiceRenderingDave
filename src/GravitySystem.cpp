@@ -19,11 +19,6 @@
     }while(false)
 #endif
 
-using glm::uvec1;
-using glm::vec2;
-using glm::vec3;
-using glm::vec4;
-using std::vector;
 using std::make_pair;
 
 const char* particle_vertex_shader1 =
