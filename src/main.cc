@@ -86,12 +86,11 @@ int main(int argc, char* argv[])
 {
 	GLFWwindow *window = init_glefw();
     GUI gui(window);
-    
+
     vector<vec4> points;
     vector<uvec1> point_numbers;
 
     //Setup gravity system
-
 
     // Initialize a Gravity System and Scene
     SpaceSystem* rootSystem = new SpaceSystem();
@@ -140,19 +139,20 @@ int main(int argc, char* argv[])
                              { "fragment_color" }
                              );
     
+    // **************
     //
     // ANIMATION LOOP
     //
     // **************
-    
+
     std::default_random_engine generator;
-    std::normal_distribution<float> distribution( 250, 60 ); 
+    std::normal_distribution<float> distribution( 250, 60 );
     long counter = 1;
 
 	while (!glfwWindowShouldClose(window)) {
         // THREAD IS SLEEPING!
         // std::this_thread::sleep_for(std::chrono::seconds(1));
-		
+
         glfwGetFramebufferSize(window, &window_width, &window_height);
 		glViewport(0, 0, window_width, window_height);
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -165,7 +165,7 @@ int main(int argc, char* argv[])
         glDepthFunc(GL_LESS);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glCullFace(GL_BACK);
-        
+
         // Make our updates to physics and scene.
         ++counter;
         if (counter % 5 == -1) {
@@ -210,16 +210,16 @@ int main(int argc, char* argv[])
 //        rootSystem->draw();
         
         particle_pass.updateVBO(0, points.data(), points.size());
-        
+
         particle_pass.setup();
         CHECK_GL_ERROR(glDrawElements(GL_POINTS, point_numbers.size(), GL_UNSIGNED_INT, 0));
-        
+
 		// Poll and swap.
 		glfwPollEvents();
 		glfwSwapBuffers(window);
 	}
 	glfwDestroyWindow(window);
 	glfwTerminate();
-    
+
 	exit(EXIT_SUCCESS);
 }
