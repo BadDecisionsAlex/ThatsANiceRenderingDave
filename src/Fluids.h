@@ -1,6 +1,6 @@
 // Comment out the line below to add this bad boy to the compile chain or to see the code with proper color fields.
 // Removed from compile chain until it is complete. 
-#if 0
+//#if 0
 
 #ifndef FLUIDS_H
 #define FLUIDS_H
@@ -11,17 +11,21 @@
 using glm::vec2;
 using std::vector;
 
-#define DEFAULT_SIZE_N = 50;
+#define DEFAULT_SIZE_N 50
 
 // Needs to extend ParticleSystem.
 // Needs an entirely new kind of drawing method than we had in Particles.
 class FluidGrid {
 
     struct Cell {
-        float d = 0.0;    // density
-        float dp = 0.0;   // previous density
-        vec2 v;         // velocity
-        vec2 vp;        // previous velocity
+        float d = 0.0;      // density
+        float dp = 0.0;     // previous density
+        vec2 v;             // velocity
+        vec2 vp;            // previous velocity
+        float p = 0.0;      // pressure
+        float pp = 0.0;     // previous pressure
+        float div = 0.0;    // divergence
+        float divp = 0.0;   // previouis divergence
     }; 
     
     // just a glorified vector<vector<Cell>> that I optimized for speed.
@@ -30,27 +34,35 @@ class FluidGrid {
         typedef typename vector<Cell>::iterator iterator;
         typedef typename vector<Cell>::const_iterator const_iterator;
         
-        int N = int(DEFAULT_SIZE_N);
-        vector<Cell> grid = vector<Cell>(N*N);
+        int N = DEFAULT_SIZE_N;
+        vector<Cell> g = vector<Cell>(N*N);
 
         // speedhack non-sense to let us stuff a matrix into a vector cheaply.
-        Cell& operator[] ( int r, int c ){
-            return grid[r+N*c];
+        Cell& operator[] ( int i ){
+            return g[i];
         }
-        const Cell& operator[] ( int r, int c ) const {
-            return grid[r+N*c];
+        const Cell& operator[] ( int i ) const {
+            return g[i];
+        }
+
+        Cell& at( int r, int c ) {
+            return g[ r + N * c ];
+        }
+
+        const Cell& at(int r, int c) const {
+            return g[ r + N * c ];
         }
 
         // these allow us to use foreach loops
-        iterator begin() {return grid.begin();}
-        const_iterator begin() const {return grid.begin();}
-        const_iterator cbegin() const {return grid.cbegin();}
-        iterator end() {return grid.end();}
-        const_iterator end() const {return grid.end();}
-        const_iterator cend() const {return grid.cend();}
+        iterator begin() {return g.begin();}
+        const_iterator begin() const {return g.begin();}
+        //const_iterator cbegin() const {return g.cbegin();}
+        iterator end() {return g.end();}
+        const_iterator end() const {return g.end();}
+        //const_iterator cend() const {return g.cend();}
     };
 
-    int N = DEFAULT_SIZE_N;     // Row/Col size of our grid
+    int N = int(DEFAULT_SIZE_N);     // Row/Col size of our grid
     Grid grid;
 
     // applies a force to all of the cells of the grid ( useful for gravity )
@@ -64,10 +76,9 @@ class FluidGrid {
         for( int k=0; k < 20; ++k ){
             for( int r=0; r < N; ++r ){
                 for( int c=0; c < N; ++c ){
-                    
-                    grid[r,c].v = ( 1.0 / ( 1.0 + 4.0 * a ) )                                         // we must divide the sum of our later terms by this scalar to relax them. See : Gauss-Seidel Relaxation
-                        * ( grid[r,c].vp +                                                            // our previous velocity
-                        a * ( grid[r-1,c].vp + grid[r+1,c].vp + grid[r,c-1].vp + grid[r,c+1].vp );    // the sum of the velocities of our neighbors
+                    grid.at(r,c).v = ( 1.0f / ( 1.0f + 4.0f * a ) )
+                        * ( grid.at(r,c).vp + a 
+                        * ( grid.at(r-1,c).vp + grid.at(r+1,c).vp + grid.at(r,c-1).vp + grid.at(r,c+1).vp ) );
                 }}}
     }
 
@@ -81,11 +92,11 @@ class FluidGrid {
         for( int r=0; r < N; ++r ){
             for( int c=0; c < N; ++c ){
                 vec2 pos = vec2( r, c );
-                pos -=  dt0 * grid[r,c].v;
+                pos -=  dt0 * grid.at(r,c).v;
                 //  clamp between ( 0.5, N + 0.5 )
                 if( pos.x < 0.5 )
                     pos.x = 0.5;
-                if( pox.x > N + 0.5 )
+                if( pos.x > N + 0.5 )
                     pos.x = N + 0.5;
                 if( pos.y < 0.5 )
                     pos.y = 0.5;
@@ -103,7 +114,7 @@ class FluidGrid {
                 t0 = 1.0 - t1;
 
                 // set our new density from the imagined previous timestep positions of particles that are now in this cell.
-                grid[r,c].d = s0 * ( t0 * grid[r0,c0].dp + t1 * grid[r0,c1].dp + s1 * grid[r1,c0].dp + t1 * grid[r1,c1].dp );
+                grid.at(r,c).d = s0 * ( t0 * grid.at(r0,c0).dp + t1 * grid.at(r0,c1).dp + s1 * grid.at(r1,c0).dp + t1 * grid.at(r1,c1).dp );
             }}
     }
 
@@ -121,7 +132,10 @@ class FluidGrid {
     
     // divergence parameter shows how velocity fields move "along themselves" flowing through the grid.
     void project( float div ){
-        // FIXME
+        float h = 1.0 / N;
+        for( Cell& c : grid ){
+            
+        }
     }
 
     void velocity_step( float visc, float dt ){

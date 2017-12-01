@@ -130,6 +130,7 @@ int main(int argc, char* argv[])
                            { /* uniforms */ },
                            { "fragment_color" }
                            );
+    // **************
     //
     // ANIMATION LOOP
     //
