@@ -19,7 +19,7 @@ using std::pair;
 #endif
 
 //TODO: make drawable once that is fixed
-struct ParticleSystem {
+struct ParticleSystem: Drawable {
     float width, height;
     
     ParticleSystem() : width(1000), height(1000) {}
