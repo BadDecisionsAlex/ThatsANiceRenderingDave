@@ -1,6 +1,6 @@
 // Comment out the line below to add this bad boy to the compile chain or to see the code with proper color fields.
 // Removed from compile chain until it is complete. 
-//#if 0
+#if 0
 
 #ifndef FLUIDS_H
 #define FLUIDS_H
@@ -23,16 +23,14 @@ class FluidGrid {
         vec2 v;             // velocity
         vec2 vp;            // previous velocity
         float p = 0.0;      // pressure
-        float pp = 0.0;     // previous pressure
         float div = 0.0;    // divergence
-        float divp = 0.0;   // previouis divergence
     }; 
     
     // just a glorified vector<vector<Cell>> that I optimized for speed.
     struct Grid {
 
-        typedef typename vector<Cell>::iterator iterator;
-        typedef typename vector<Cell>::const_iterator const_iterator;
+        typedef  vector<Cell>::iterator iterator;
+        typedef  vector<Cell>::const_iterator const_iterator;
         
         int N = DEFAULT_SIZE_N;
         vector<Cell> g = vector<Cell>(N*N);
@@ -133,8 +131,10 @@ class FluidGrid {
     // divergence parameter shows how velocity fields move "along themselves" flowing through the grid.
     void project( float div ){
         float h = 1.0 / N;
-        for( Cell& c : grid ){
-            
+        for( int r=0; r < N; ++r ){
+            for( int c=0; c < N; ++c ){
+                grid.at(r,c).div = -0.5f * h * ( grid.at(r-1,c).vp.x - grid.at(r+1,c).vp.x + grid.at(r,c+1).vp.y - grid.at(r,c-1).vp.y );
+            }
         }
     }
 
@@ -142,5 +142,5 @@ class FluidGrid {
         // FIXME
     }
     
-}
+};
 #endif
