@@ -23,7 +23,6 @@
 
 #include "AbstractParticle.h"
 #include "ParticleSystem.h"
-#include "Scene.h"
 
 #include "VerletParticle.h"
 #include "GravitySystem.h"
@@ -36,18 +35,6 @@ using glm::uvec1;
 
 int window_width = 1000, window_height = 1000;
 const std::string window_title = "Particles";
-
-const char* particle_vertex_shader =
-#include "shaders/particle.vert"
-;
-
-const char* particle_geometry_shader =
-#include "shaders/particle.geom"
-;
-
-const char* particle_fragment_shader =
-#include "shaders/particle.frag"
-;
 
 // FIXME: Add more shaders here.
 
@@ -84,55 +71,23 @@ int main(int argc, char* argv[])
 {
 	GLFWwindow *window = init_glefw();
     GUI gui(window);
-    
-    vector<vec4> points;
-    vector<uvec1> point_numbers;
 
-    // Load Initial Particle Positions in ParticleSystem's coord space
+    //Setup gravity system
     vector<VerletParticle> particle_inits;
-    particle_inits.push_back( VerletParticle( 225.0, 250.0 ) );
-    particle_inits.push_back( VerletParticle( 275.0, 250.0 ) );
-    particle_inits[0].v0 = vec3( 0.1, 0.0, 0.0 );
-    particle_inits[1].v0 = vec3( -0.1, 0.0, 0.0 );
-
-    //particle_inits.push_back( VerletParticle( 0.0, 0.0 ) );
-    //particle_inits.push_back( VerletParticle( 500, 0.0 ) );
-    //particle_inits.push_back( VerletParticle( 0.0, 500 ) );
-    //particle_inits.push_back( VerletParticle( 500, 500 ) );
-    //particle_inits.push_back( VerletParticle( 245, 100 ) );
-    //particle_inits.push_back( VerletParticle( 255, 100 ) );
+    particle_inits.push_back(VerletParticle(225.0, 250.0));
+    particle_inits.push_back(VerletParticle(275.0, 250.0));
+    particle_inits[0].v0 = vec3(0.1, 0.0, 0.0);
+    particle_inits[1].v0 = vec3(-0.1, 0.0, 0.0);
     
-    particle_inits.push_back( VerletParticle( 250, 350 ) );
-    particle_inits.push_back( VerletParticle( 250, 200 ) );
-    //particle_inits.push_back( VerletParticle( 50, 50 ) );
-    //particle_inits.push_back( VerletParticle( 70, 70 ) );
-    //particle_inits.push_back( VerletParticle( 10, 10 ) );
-    //particle_inits.push_back( VerletParticle( 30, 10 ) );
-    //particle_inits.push_back( VerletParticle( 490, 250 ) );
-    //particle_inits.push_back( VerletParticle( 490, 10 ) );
+    particle_inits.push_back(VerletParticle(250, 350));
+    particle_inits.push_back(VerletParticle(250, 200));
 
     // Initialize a Gravity System and Scene
-    GravitySystem* rootSystem = new GravitySystem( particle_inits );
-    //rootSystem->gForce = vec3( 0.0, 0.0, 0.0 );
+    GravitySystem* rootSystem = new GravitySystem(particle_inits);
     rootSystem->width = window_width;
     rootSystem->height = window_height;
-    Scene scene = Scene( rootSystem );
-    scene.retrieveData();
-    scene.updateBuffers(points, point_numbers);
+    rootSystem->prepareDraw();
     
-    RenderDataInput particle_pass_input;
-    particle_pass_input.assign(0, "vertex_position", points.data(), points.size(), 4, GL_FLOAT);
-    particle_pass_input.assign_index(point_numbers.data(), point_numbers.size(), 1);
-    RenderPass particle_pass(-1,
-                           particle_pass_input,
-                           {
-                               particle_vertex_shader,
-                               particle_geometry_shader,
-                               particle_fragment_shader
-                           },
-                           { /* uniforms */ },
-                           { "fragment_color" }
-                           );
     //
     // ANIMATION LOOP
     //
@@ -164,34 +119,15 @@ int main(int argc, char* argv[])
         if (counter % 10 == 0) {
             VerletParticle newParticle( distribution(generator), distribution(generator) );
             rootSystem->particles.push_back(newParticle);
-            //std::cout << "I'm Alive! (" << newParticle.p.x << ", " << newParticle.p.y << ") " << std::endl; 
             rootSystem->step();
-            scene.retrieveData();
-            scene.updateBuffers(points, point_numbers);
-            //We are recreating the render pass in order to include the new values.
-            //There is probably a better way to do this
-            particle_pass_input.assign_index(point_numbers.data(), point_numbers.size(), 1);
-            particle_pass = RenderPass(-1,
-                          particle_pass_input,
-                          {
-                              particle_vertex_shader,
-                              particle_geometry_shader,
-                              particle_fragment_shader
-                          },
-                          { /* uniforms */ },
-                          { "fragment_color" }
-                          );
+            rootSystem->prepareDraw();
         }else{
             rootSystem->step();
-            scene.retrieveData();
-            scene.updateBuffers(points, point_numbers);
         }
 
         //TODO: Draw here
-        particle_pass.updateVBO(0, points.data(), points.size());
-        
-        particle_pass.setup();
-        CHECK_GL_ERROR(glDrawElements(GL_POINTS, point_numbers.size(), GL_UNSIGNED_INT, 0));
+        rootSystem->prepareDraw();
+        rootSystem->draw();
         
 		// Poll and swap.
 		glfwPollEvents();

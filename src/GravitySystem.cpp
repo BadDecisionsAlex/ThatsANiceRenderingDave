@@ -3,7 +3,6 @@
 #include "GravitySystem.h"
 #include <iostream>                 // std::cout
 #include <glm/gtx/string_cast.hpp>  // glm::to_string
-#include <glm/glm.hpp>              // glm::normalize
 
 #define STEP_TIME 1.0f / 600.0f
 
@@ -20,22 +19,72 @@
     }while(false)
 #endif
 
+using glm::uvec1;
 using glm::vec2;
 using glm::vec3;
+using glm::vec4;
 using std::vector;
 using std::make_pair;
 
-GravitySystem::GravitySystem( const vector<vec2>& _in ){
-    grid = ParticleGrid(10.0f, width, height);
-    for ( vec2 _p : _in )
-        particles.push_back( VerletParticle( _p ) );
+const char* particle_vertex_shader =
+#include "shaders/particle.vert"
+;
+
+const char* particle_geometry_shader =
+#include "shaders/particle.geom"
+;
+
+const char* particle_fragment_shader =
+#include "shaders/particle.frag"
+;
+
+//Draw
+
+GravitySystem::GravitySystem(const vector<VerletParticle>& _in) : particles(_in), grid(10.0f, width, height), particle_pass(-1, particle_pass_input, { particle_vertex_shader, particle_geometry_shader, particle_fragment_shader }, { /* uniforms */ }, { "fragment_color" }) {
 }
 
-void GravitySystem::sendData(vector<vec3>& points) {
+void GravitySystem::getPointsForScreen(vector<vec4>& points, vector<uvec1>& indices) {
     points.clear();
-    for ( VerletParticle& vp : particles )
-        points.push_back( vec3( vp.pos( vec2() ), vp.radius) );
+    indices.clear();
+    int count = 1;
+    for (VerletParticle& vp : particles) {
+        vec4 point = toScreen(vp.p);
+        points.push_back(point);
+        indices.push_back(uvec1(count));
+        ++count;
+    }
 }
+
+vec4 GravitySystem::toScreen(const vec3& point) {
+    float ndcX = ((2.0f * point.x) / float(width)) - 1.0f;
+    float ndcY = ((2.0f * point.y) / float(height)) - 1.0f;
+    return vec4(ndcX, ndcY, 1.0, 1.0);
+}
+
+void GravitySystem::prepareDraw() {
+    particle_pass_input.assign(0, "vertex_position", points.data(), points.size(), 4, GL_FLOAT);
+    particle_pass_input.assign_index(indices.data(), indices.size(), 1);
+    particle_pass = RenderPass(-1,
+                             particle_pass_input,
+                             {
+                                 particle_vertex_shader,
+                                 particle_geometry_shader,
+                                 particle_fragment_shader
+                             },
+                             { /* uniforms */ },
+                             { "fragment_color" }
+                             );
+}
+
+void GravitySystem::draw() {
+    getPointsForScreen(points, indices);
+    particle_pass.updateVBO(0, points.data(), points.size());
+    particle_pass.setup();
+    CHECK_GL_ERROR(glDrawElements(GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0));
+}
+
+
+// Gravity System
 
 void GravitySystem::step() {
     clock_t start_time = clock();
