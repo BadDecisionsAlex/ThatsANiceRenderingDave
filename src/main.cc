@@ -64,8 +64,6 @@ GLFWwindow* init_glefw()
 	glfwSwapInterval(1);
 	const GLubyte* renderer = glGetString(GL_RENDERER);  // get renderer string
 	const GLubyte* version = glGetString(GL_VERSION);    // version as a string
-	//std::cout << "Renderer: " << renderer << "\n";
-	//std::cout << "OpenGL version supported:" << version << "\n";
 
 	return ret;
 }
@@ -91,17 +89,12 @@ int main(int argc, char* argv[])
 
     std::default_random_engine generator;
     std::normal_distribution<float> distribution( 250, 60 );
-    long counter = 1;
 
 	while (!glfwWindowShouldClose(window)) {
-        // THREAD IS SLEEPING!
-        // std::this_thread::sleep_for(std::chrono::seconds(1));
-
         glfwGetFramebufferSize(window, &window_width, &window_height);
 		glViewport(0, 0, window_width, window_height);
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glEnable(GL_DEPTH_TEST);
-        //glEnable(GL_MULTISAMPLE);
         glEnable(GL_BLEND);
         glEnable(GL_CULL_FACE);
         glEnable(GL_PROGRAM_POINT_SIZE);
@@ -112,16 +105,6 @@ int main(int argc, char* argv[])
         
         //Step our systems
         rootSystem->step();
-
-        // Make our updates to physics and scene.
-//        ++counter;
-//        if (counter % 5 == 0) {
-//            VerletParticle newParticle(distribution(generator), distribution(generator));
-//            rootSystem->particles.push_back(newParticle);
-//
-//            //prepare after changes
-//            rootSystem->prepareDraw();
-//        }
 
         //TODO: Draw here
         rootSystem->draw();
