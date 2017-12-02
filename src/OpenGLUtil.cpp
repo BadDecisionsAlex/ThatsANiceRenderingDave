@@ -2,10 +2,6 @@
 // Created by Joshua Cristol on 12/2/17.
 //
 
-#include <iostream>
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <debuggl.h>
 #include "OpenGLUtil.h"
 
 void ErrorCallback(int error, const char* description) {

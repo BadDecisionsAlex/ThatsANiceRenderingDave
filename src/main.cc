@@ -28,9 +28,9 @@ using glm::uvec1;
 
 int window_width = 1000, window_height = 1000;
 
-
 int main(int argc, char* argv[])
 {
+    // pass default
     OpenGLUtil openGL = OpenGLUtil(window_width, window_height, "Particles");
     GLFWwindow* window = openGL.setup();
     GUI gui(window);

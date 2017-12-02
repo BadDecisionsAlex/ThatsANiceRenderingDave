@@ -5,6 +5,11 @@
 #ifndef PARTICLES_OPENGLUTIL_H
 #define PARTICLES_OPENGLUTIL_H
 
+#include <iostream>
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include <debuggl.h>
+
 
 
 class OpenGLUtil {
@@ -25,4 +30,4 @@ private:
 };
 
 
-#endif //PARTICLES_OPENGLUTIL_H
+#endif PARTICLES_OPENGLUTIL_H
