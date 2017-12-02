@@ -75,11 +75,6 @@ int main(int argc, char* argv[])
 	GLFWwindow *window = init_glefw();
     GUI gui(window);
 
-    //Setup gravity system
-//    vector<VerletParticle> starterParticles;
-//    starterParticles.push_back(VerletParticle(100, 100));
-//    GravitySystem* rootSystem = new GravitySystem(starterParticles);
-    
     SpaceSystem* rootSystem = new SpaceSystem();
     rootSystem->width = window_width;
     rootSystem->height = window_height;
