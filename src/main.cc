@@ -28,8 +28,6 @@ using glm::uvec1;
 
 int window_width = 1000, window_height = 1000;
 
-// FIXME: Add more shaders here.
-
 
 int main(int argc, char* argv[])
 {
@@ -46,9 +44,9 @@ int main(int argc, char* argv[])
     rootSystem->prepareDraw();
 	while (openGL.drawBool()) {
         openGL.beforeDraw();
-        //Step our systems
+        // Step our systems
         rootSystem->step();
-        //TODO: Draw here
+        // call system the draw functions
         rootSystem->draw();
 		// Poll and swap.
         openGL.afterDraw();
