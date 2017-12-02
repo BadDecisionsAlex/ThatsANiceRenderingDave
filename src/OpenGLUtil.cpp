@@ -3,6 +3,9 @@
 //
 
 #include <iostream>
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include <debuggl.h>
 #include "OpenGLUtil.h"
 
 void ErrorCallback(int error, const char* description) {
@@ -27,6 +30,7 @@ GLFWwindow* OpenGLUtil::setup() {
     glfwSwapInterval(1);
     const GLubyte* renderer = glGetString(GL_RENDERER);  // get renderer string
     const GLubyte* version = glGetString(GL_VERSION);    // version as a string
+    this->window = ret;
     return ret;
 }
 

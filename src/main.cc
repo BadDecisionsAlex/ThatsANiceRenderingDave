@@ -1,34 +1,24 @@
 #include <GL/glew.h>
-#include <dirent.h>
-
 #include "render_pass.h"
 #include "gui.h"
 
-#include <algorithm>
 #include <fstream>
 #include <iostream>
-#include <string>
-#include <vector>
 
 #include <random>
 #include <thread>
-#include <chrono>
 
-#include <GLFW/glfw3.h>
 #include <glm/gtx/component_wise.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtx/string_cast.hpp>
 #include <glm/gtx/io.hpp>
-#include <debuggl.h>
 
-#include "AbstractParticle.h"
 #include "ParticleSystem.h"
 
-#include "VerletParticle.h"
 #include "GravitySystem.h"
 
 #include "SpaceSystem.h"
-#include "MassParticle.h"
+#include "OpenGLUtil.h"
 
 using std::vector;
 using glm::vec2;
@@ -37,84 +27,31 @@ using glm::vec4;
 using glm::uvec1;
 
 int window_width = 1000, window_height = 1000;
-const std::string window_title = "Particles";
 
 // FIXME: Add more shaders here.
 
-void ErrorCallback(int error, const char* description) {
-	std::cerr << "GLFW Error: " << description << "\n";
-}
-
-GLFWwindow* init_glefw()
-{
-	if (!glfwInit())
-		exit(EXIT_FAILURE);
-	glfwSetErrorCallback(ErrorCallback);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_SAMPLES, 4);
-	auto ret = glfwCreateWindow(window_width, window_height, window_title.data(), nullptr, nullptr);
-	CHECK_SUCCESS(ret != nullptr);
-	glfwMakeContextCurrent(ret);
-	glewExperimental = GL_TRUE;
-	CHECK_SUCCESS(glewInit() == GLEW_OK);
-	glGetError();  // clear GLEW's error for it
-	glfwSwapInterval(1);
-	const GLubyte* renderer = glGetString(GL_RENDERER);  // get renderer string
-	const GLubyte* version = glGetString(GL_VERSION);    // version as a string
-
-	return ret;
-}
 
 int main(int argc, char* argv[])
 {
-	GLFWwindow *window = init_glefw();
+    OpenGLUtil openGL = OpenGLUtil(window_width, window_height, "Particles");
+    GLFWwindow* window = openGL.setup();
     GUI gui(window);
 
     SpaceSystem* rootSystem = new SpaceSystem();
     rootSystem->width = window_width;
     rootSystem->height = window_height;
     rootSystem->setup();
-    
+
     //Do initial prepare
     rootSystem->prepareDraw();
-    
-    // **************
-    //
-    // ANIMATION LOOP
-    //
-    // **************
-
-    std::default_random_engine generator;
-    std::normal_distribution<float> distribution( 250, 60 );
-
-	while (!glfwWindowShouldClose(window)) {
-        glfwGetFramebufferSize(window, &window_width, &window_height);
-		glViewport(0, 0, window_width, window_height);
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_BLEND);
-        glEnable(GL_CULL_FACE);
-        glEnable(GL_PROGRAM_POINT_SIZE);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glDepthFunc(GL_LESS);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glCullFace(GL_BACK);
-        
+	while (openGL.drawBool()) {
+        openGL.beforeDraw();
         //Step our systems
         rootSystem->step();
-
         //TODO: Draw here
         rootSystem->draw();
-
 		// Poll and swap.
-		glfwPollEvents();
-		glfwSwapBuffers(window);
+        openGL.afterDraw();
 	}
-	glfwDestroyWindow(window);
-	glfwTerminate();
-
-	exit(EXIT_SUCCESS);
+    openGL.destroy();
 }

@@ -6,13 +6,6 @@
 #define PARTICLES_OPENGLUTIL_H
 
 
-#include <GLFW/glfw3.h>
-#include <string>
-#include <GLFW/glfw3.h>
-#include <stdlib.h>
-#include <debuggl.h>
-#include <GL/glew.h>
-#include <iostream>
 
 class OpenGLUtil {
 public:
