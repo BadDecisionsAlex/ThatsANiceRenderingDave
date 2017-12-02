@@ -14,9 +14,7 @@
 #include <glm/gtx/io.hpp>
 
 #include "ParticleSystem.h"
-
 #include "GravitySystem.h"
-
 #include "SpaceSystem.h"
 #include "OpenGLUtil.h"
 
@@ -30,25 +28,25 @@ int window_width = 1000, window_height = 1000;
 
 int main(int argc, char* argv[])
 {
-    // pass default
     OpenGLUtil openGL = OpenGLUtil(window_width, window_height, "Particles");
     GLFWwindow* window = openGL.setup();
     GUI gui(window);
 
+    // create particle systems
     SpaceSystem* rootSystem = new SpaceSystem();
     rootSystem->width = window_width;
     rootSystem->height = window_height;
     rootSystem->setup();
 
-    //Do initial prepare
     rootSystem->prepareDraw();
+
 	while (openGL.drawBool()) {
         openGL.beforeDraw();
         // Step our systems
         rootSystem->step();
         // call system the draw functions
         rootSystem->draw();
-		// Poll and swap.
+
         openGL.afterDraw();
 	}
     openGL.destroy();
