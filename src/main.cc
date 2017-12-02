@@ -40,6 +40,7 @@ int main(int argc, char* argv[])
 
     rootSystem->prepareDraw();
 
+
 	while (openGL.drawBool()) {
         openGL.beforeDraw();
         // Step our systems

@@ -6,7 +6,7 @@
   <img src="HAL9000.png" alt="HAL9000" />
 </h1>
 <div align="center">
-https://www.youtube.com/watch?v=r13I-TuDcWI
+https://www.youtube.com/watch?velocity=r13I-TuDcWI
 </div>
 </br><b>
 Scripts ( run them from the root folder or /src ) : </b></br></p>
