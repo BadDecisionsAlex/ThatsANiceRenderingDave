@@ -39,7 +39,7 @@ struct Grid{
     const_iterator end() const {return grid.end();}
 };
 
-class FluidSystem {
+class FluidSystem : public ParticleSystem {
 public:
     FluidSystem(int grid_size, int dx, int dy, float dt) : grid(Grid(grid_size, dx, dy)), oldGrid(Grid(grid_size, dx, dy)), dt(dt){}
     void step();

@@ -41,8 +41,7 @@ int main(int argc, char* argv[])
 //
 //    rootSystem->prepareDraw();
 
-    FluidSystem f(100, 10, 10, (1.0f/ 60.0f));
-    f.step();
+    FluidSystem* f = new FluidSystem(100, 10, 10, (1.0f/ 60.0f));
 
 	while (openGL.drawBool()) {
         openGL.beforeDraw();
