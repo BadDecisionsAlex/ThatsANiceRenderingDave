@@ -18,8 +18,8 @@ public:
     
     void setup();
     void step();
-    void getPointsForScreen(vector<vec4>& points, vector<uvec1>& indices);
-    vec4 toScreen(const vec3& point);
+    void getPointsForScreen(vector<vec4>& points, vector<vec4>& velocities, vector<uvec1>& indices);
+    vec4 toScreen(const vec3& point, int id);
     
     void prepareDraw();
     void draw();
@@ -32,6 +32,7 @@ private:
     RenderDataInput particle_pass_input;
     RenderPass particle_pass;
     vector<vec4> points;
+    vector<vec4> velocities;
     vector<uvec1> indices;
 };
 

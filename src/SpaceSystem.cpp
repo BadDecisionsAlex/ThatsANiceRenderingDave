@@ -9,76 +9,54 @@
 #include "SpaceSystem.h"
 #include "Shaders.h"
 
+#define NUMBER_OF_PARTICLES 1000.0
+
 void SpaceSystem::setup() {
     //Add particles
-    for (int c = 0; c < 100000; ++c) {
+    for (int c = 0; c < NUMBER_OF_PARTICLES; ++c) {
         int x = rand() % 1000;
         int y = rand() % 1000;
-        float z = -(rand() % 10000 / 10000.0);
         
         float dx = (rand() % 1000) / 500.0 - 1;
         float dy = (rand() % 1000) / 500.0 - 1;
-        int life = rand() % 10000;
         
-        MassParticle particle = MassParticle(vec3(x, y, z));
+        MassParticle particle = MassParticle(vec3(x, y, 0));
         particle.velocity = vec3(0, 0, 0);
-        particle.life = life;
         
         particles.push_back(particle);
     }
     
-    getPointsForScreen(points, indices);
+    getPointsForScreen(points, velocities, indices);
 }
 
-void SpaceSystem::getPointsForScreen(vector<vec4>& points, vector<uvec1>& indices) {
+void SpaceSystem::getPointsForScreen(vector<vec4>& points, vector<vec4>& velocities, vector<uvec1>& indices) {
     points.clear();
     indices.clear();
+    velocities.clear();
     int count = 0;
     for (MassParticle& p : particles) {
-        vec4 point = toScreen(p.p);
+        vec4 point = toScreen(p.p, count);
+        vec4 velocity = vec4(p.velocity, 1.0);
         points.push_back(point);
         indices.push_back(uvec1(count));
+        velocities.push_back(velocity);
         ++count;
     }
-    vec4 point = toScreen(center);
+    vec4 point = toScreen(center, count);
     points.push_back(point);
+    velocities.push_back(vec4(0, 0, 0, 1));
     indices.push_back(uvec1(count));
 }
 
-vec4 SpaceSystem::toScreen(const vec3& point) {
-    float ndcX = ((2.0f * point.x) / float(width * 2)) - 1.0f;
-    float ndcY = ((2.0f * point.y) / float(height * 2)) - 1.0f;
-    return vec4(ndcX, ndcY, 0.0, 1.0);
+vec4 SpaceSystem::toScreen(const vec3& point, int id) {
+//    float ndcX = ((2.0f * point.x) / float(width * 2)) - 1.0f;
+//    float ndcY = ((2.0f * point.y) / float(height * 2)) - 1.0f;
+    float z = -id / (NUMBER_OF_PARTICLES + 1);
+    return vec4(point.x, point.y, z, 1.0);
 }
 
 void SpaceSystem::step() {
-    //find center of mass
-//    vec3 center(0, 0, 0);
-//    int count = 0;
-//    for (MassParticle& p : particles) {
-//        center += p.p;
-//        count += 1;
-//    }
-//
-//    if (count <= 0)
-//        return;
-//    center /= count;
     
-//    vector<int> toRemove;
-//    for (int x = 0; x < particles.size(); ++x) {
-//        MassParticle& p = particles[x];
-//        p.age += 1;
-//
-//        if (p.age >= p.life) {
-//            toRemove.push_back(x);
-//        }
-//    }
-//
-//    for (int x = toRemove.size() - 1; x >= 0; --x) {
-//        int index = toRemove[x];
-//        particles.erase(particles.begin() + index);
-//    }
-
     stepCount += 1;
     if (stepCount >= 360) {
         stepCount = 0;
@@ -107,8 +85,9 @@ void SpaceSystem::step() {
 //MARK: - Draw
 
 SpaceSystem::SpaceSystem() : particle_pass(-1, particle_pass_input, { particle_vertex_shader, particle_geometry_shader, particle_fragment_shader }, { /* uniforms */ }, { "fragment_color" }) {
-    getPointsForScreen(points, indices);
+    getPointsForScreen(points, velocities, indices);
     particle_pass_input.assign(0, "vertex_position", points.data(), points.size(), 4, GL_FLOAT);
+    particle_pass_input.assign(1, "point_velocity", velocities.data(), velocities.size(), 4, GL_FLOAT);
 }
 
 void SpaceSystem::prepareDraw() {
@@ -126,8 +105,9 @@ void SpaceSystem::prepareDraw() {
 }
 
 void SpaceSystem::draw() {
-    getPointsForScreen(points, indices);
+    getPointsForScreen(points, velocities, indices);
     particle_pass.updateVBO(0, points.data(), points.size());
+    particle_pass.updateVBO(1, velocities.data(), velocities.size());
     particle_pass.setup();
     CHECK_GL_ERROR(glDrawElements(GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0));
 }
