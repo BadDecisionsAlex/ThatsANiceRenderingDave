@@ -41,8 +41,17 @@ struct Grid{
 
 class FluidSystem : public ParticleSystem {
 public:
+    FluidSystem();
     FluidSystem(int grid_size, int dx, int dy, float dt) : grid(Grid(grid_size, dx, dy)), oldGrid(Grid(grid_size, dx, dy)), dt(dt){}
+
+    //draw functions
     void step();
+    void setup();
+    void getPointsForScreen(vector<vec4>& points, vector<uvec1>& indices);
+    vec4 toScreen(const vec3& point);
+
+    void prepareDraw();
+    void draw();
 
 private:
     Grid grid;

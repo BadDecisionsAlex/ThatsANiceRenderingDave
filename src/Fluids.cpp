@@ -198,3 +198,6 @@ void FluidSystem::project(){
 
     }
 }
+
+
+FluidSystem::FluidSystem() : FluidSystem(100, 10, 10, (1.0/60.0)){}
