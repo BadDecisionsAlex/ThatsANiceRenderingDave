@@ -20,12 +20,24 @@ struct Cell {
     float pressure = 0.0;
     float divergence = 0.0;
     vec2 particle;
-    int row;
-    int col;
 };
 typedef  vector<Cell>::iterator iterator;
 typedef  vector<Cell>::const_iterator const_iterator;
 
+struct Grid{
+    Grid(int grid_size, int dx, int dy);
+    int N;
+    float dx;
+    float dy;
+    vector<Cell> grid;
+
+    Cell& at( int r, int c ) { return grid[ r * N + c ]; }
+    vec2 cellToParticle(int i, int j);
+    iterator begin() {return grid.begin();}
+    const_iterator begin() const {return grid.begin();}
+    iterator end() {return grid.end();}
+    const_iterator end() const {return grid.end();}
+};
 
 class FluidSystem {
 public:
@@ -37,7 +49,8 @@ private:
     Grid oldGrid;
     float dt;
     void advection();
-    Cell reclinearInterpolation(vec2 position);
+    Cell interpolate(vec2 position);
+    Cell imaginationHelper(Cell& a, Cell& b, Cell& c, Cell& d, float rA, float rB, float rC, float rD);
 };
 
 #endif

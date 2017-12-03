@@ -9,14 +9,93 @@ Grid::Grid(int grid_size, int dx, int dy) {
     this->N = grid_size;
     this->dx = dx;
     this->dy = dy;
-    this->grid = vector<Cell>(N*N);
-    for (int row = 0; row < N; ++row) {
-        for (int col = 0; col < N; ++col) {
-            Cell& c = this->at(row, col);
-            c.row = row;
-            c.col = col;
-            c.particle = vec2(row + (dx / 2.0f), col + (dy, 2.0f));
+    this->grid = vector<Cell>((N + 2) * (N + 2));
+    for (int i = 1; i < N + 1; ++i) {
+        for (int j = 1; j < N + 1; ++j) {
+            Cell& c = this->at(i, j);
+            c.particle = cellToParticle(i, j);
         }
+    }
+}
+
+vec2 Grid::cellToParticle(int i, int j){
+    return vec2(i * (dx / 2.0f), j * (dy / 2.0f));
+}
+
+Cell FluidSystem::imaginationHelper(Cell& a, Cell& b, Cell& c, Cell& d, float rA, float rB, float rC, float rD){
+    Cell imaginationCell;
+    imaginationCell.velocity = a.velocity * (1.0f / rA) + b.velocity * (1.0f / rB) + c.velocity * (1.0f / rC) + d.velocity * (1.0f / rD);
+    imaginationCell.density = a.density * (1.0f / rA) + b.density * (1.0f / rB) + c.density * (1.0f / rC) + d.density * (1.0f / rD);
+    imaginationCell.pressure = a.pressure * (1.0f / rA) + b.pressure * (1.0f / rB) + c.pressure * (1.0f / rC) + d.pressure * (1.0f / rD);
+    imaginationCell.divergence = a.divergence * (1.0f / rA) + b.divergence * (1.0f / rB) + c.divergence * (1.0f / rC) + d.divergence * (1.0f / rD);
+    return imaginationCell;
+}
+
+Cell FluidSystem::interpolate(vec2 position){
+    int cellX = (position.x / oldGrid.dx) + 1;
+    int cellY = (position.y / oldGrid.dy) + 1;
+    Cell& residentCell = oldGrid.at(cellX, cellY);
+    Cell& north = oldGrid.at(cellX, cellY - 1);
+    Cell& south = oldGrid.at(cellX, cellY + 1);
+    Cell& east = oldGrid.at(cellX + 1, cellY);
+    Cell& west = oldGrid.at(cellX - 1, cellY);
+    Cell& northWest = oldGrid.at(cellX - 1, cellY - 1);
+    Cell& northEast = oldGrid.at(cellX + 1, cellY - 1);
+    Cell& southWest = oldGrid.at(cellX - 1, cellY + 1);
+    Cell& southEast = oldGrid.at(cellX + 1, cellY + 1);
+    //interpolate from this cells position to the other ones find ratios basically
+    float distResidentCell = glm::distance(residentCell.particle, position);
+    if(distResidentCell == 0.0f){
+        return residentCell;
+    }
+    // position is (right or horizontally inline)  and (below or vertically inline) the middle bottom right quad
+    Cell imaginationCell;
+    if(position.x >= cellX && position.y >= cellY){
+        float distEast = glm::distance(east.particle, position);
+        float distSouthEast = glm::distance(southEast.particle, position);
+        float distSouth = glm::distance(south.particle, position);
+        float sum = distEast + distSouthEast + distSouth + distResidentCell;
+        float ratioEast = distEast / sum;
+        float ratioSouthEast = distSouthEast / sum;
+        float ratioSouth = distSouth / sum;
+        float ratioResident = distResidentCell / sum;
+        return imaginationHelper(east, southEast, south, residentCell, ratioEast, ratioSouthEast, ratioSouth, ratioResident);
+    }
+    // position is (right or horizontally inline)  and (above) the middle top right quad
+    if(position.x >= cellX && position.y < cellY){
+        float distEast = glm::distance(east.particle, position);
+        float distNorthEast = glm::distance(northEast.particle, position);
+        float distNorth = glm::distance(north.particle, position);
+        float sum = distEast + distNorthEast + distNorth + distResidentCell;
+        float ratioEast = distEast / sum;
+        float ratioNorthEast = distNorthEast / sum;
+        float ratioNorth = distNorth / sum;
+        float ratioResident = distResidentCell / sum;
+        return imaginationHelper(east, northEast, north, residentCell, ratioEast, ratioNorthEast, ratioNorth, ratioResident);
+    }
+    // position is (left)  and (below or vertically inline) the middle bottom left quad
+    if(position.x < cellX && position.y >= cellY){
+        float distWest = glm::distance(west.particle, position);
+        float distSouthWest = glm::distance(southWest.particle, position);
+        float distSouth = glm::distance(south.particle, position);
+        float sum = distWest + distSouthWest + distSouth + distResidentCell;
+        float ratioWest = distWest / sum;
+        float ratioSouthWest = distSouthWest / sum;
+        float ratioSouth = distSouth / sum;
+        float ratioResident = distResidentCell / sum;
+        return imaginationHelper(west, southWest, south, residentCell, ratioWest, ratioSouthWest, ratioSouth, ratioResident);
+    }
+    // position is (left)  and (above) the middle top left quad
+    if(position.x < cellX && position.y < cellY){
+        float distWest = glm::distance(west.particle, position);
+        float distNorthWest = glm::distance(northWest.particle, position);
+        float distNorth = glm::distance(north.particle, position);
+        float sum = distWest + distNorthWest + distNorth + distResidentCell;
+        float ratioWest = distWest / sum;
+        float ratioNorthWest = distNorthWest / sum;
+        float ratioNorth = distNorth / sum;
+        float ratioResident = distResidentCell / sum;
+        return imaginationHelper(west, northWest, north, residentCell, ratioWest, ratioNorthWest, ratioNorth, ratioResident);
     }
 }
 
@@ -25,44 +104,19 @@ void FluidSystem::step() {
     std::copy(grid.begin(), grid.end(), oldGrid.begin());
     advection();
 }
-Cell FluidSystem::reclinearInterpolation(vec2 position){
-    float halfDx = this->grid.dx / 2.0f;
-    float halfDy = this->grid.dy / 2.0f;
-    vec2 p1 = vec2(position.x + halfDx, position.y + halfDy);
-    vec2 p2 = vec2(position.x + halfDx, position.y - halfDy);
-    vec2 p3 = vec2(position.x - halfDx, position.y + halfDy);
-    vec2 p4 = vec2(position.x - halfDx, position.y - halfDy);
-    Cell& c1 = oldGrid.at(p1);
-    Cell& c2 = oldGrid.at(p2);
-    Cell& c3 = oldGrid.at(p3);
-    Cell& c4 = oldGrid.at(p4);
-    float d1 = glm::distance(c1.particle, position);
-    float d2 = glm::distance(c2.particle, position);
-    float d3 = glm::distance(c3.particle, position);
-    float d4 = glm::distance(c4.particle, position);
-    float sum = d1 + d2 + d2 + d4;
-    float r1 = d1 / sum;
-    float r2 = d2 / sum;
-    float r3 = d3 / sum;
-    float r4 = d4 / sum;
-    Cell theoreticalCell;
-    theoreticalCell.velocity = (r1 * c1.velocity) + (r2 * c2.velocity) + (r3 * c3.velocity) + (r4 * c4.velocity);
-    theoreticalCell.pressure = (r1 * c1.pressure) + (r2 * c2.pressure) + (r3 * c3.pressure) + (r4 * c4.pressure);
-    theoreticalCell.density = (r1 * c1.density) + (r2 * c2.density) + (r3 * c3.density) + (r4 * c4.density);
-    theoreticalCell.divergence = (r1 * c1.divergence) + (r2 * c2.divergence) + (r3 * c3.divergence) + (r4 * c4.divergence);
-    return theoreticalCell;
-}
 
 void FluidSystem::advection(){
-    // based on the velocity vector find where the cells "particle was before in the old grid"
-    // update the current quantities with the information interplated from the previous position
-    for(iterator i = grid.begin(); i < grid.end(); ++i){
-        Cell& currentCell = *i;
-        vec2 previousParticlePosition = currentCell.particle + (-currentCell.velocity * dt);
-        Cell theoreticalCell = reclinearInterpolation(previousParticlePosition);
-        currentCell.velocity = theoreticalCell.velocity;
-        currentCell.pressure = theoreticalCell.pressure;
-        currentCell.density = theoreticalCell.density;
-        currentCell.divergence = theoreticalCell.divergence;
+    for (int i = 1; i < grid.N + 1; ++i) {
+        for (int j = 1; j < grid.N + 1; ++j) {
+            Cell& currentCell = grid.at(i, j);
+            vec2 particleCell = grid.cellToParticle(i, j);
+            vec2 backwardStepParticle = particleCell - dt * currentCell.velocity;
+            Cell iCell = interpolate(backwardStepParticle);
+            currentCell.divergence = iCell.divergence;
+            currentCell.pressure = iCell.pressure;
+            currentCell.velocity = iCell.velocity;
+            currentCell.density = iCell.density;
+        }
     }
 }
+
