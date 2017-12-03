@@ -100,8 +100,6 @@ Cell FluidSystem::interpolate(vec2 position){
     }
 }
 
-
-
 void FluidSystem::advectVelocity(){
     for (int i = 1; i < grid.N + 1; ++i) {
         for (int j = 1; j < grid.N + 1; ++j) {
@@ -195,7 +193,6 @@ FluidSystem::FluidSystem(int grid_size, int dx, int dy, float time_step) : grid(
                     fluid_pass_input.assign(1, "density", densities.data(), densities.size(), 1, GL_FLOAT);
                 }
 
-
 void FluidSystem::prepareDraw() {
     fluid_pass_input.assign_index(indices.data(), indices.size(), 1);
     fluid_pass = RenderPass(-1,
@@ -217,8 +214,6 @@ void FluidSystem::draw() {
     fluid_pass.setup();
     CHECK_GL_ERROR(glDrawElements(GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0));
 }
-
-// other draw functions
 
 void FluidSystem::getPointsForScreen(vector<vec4>& particles, vector<vec1>& densities, vector<uvec1>& indices) {
     particles.clear();
