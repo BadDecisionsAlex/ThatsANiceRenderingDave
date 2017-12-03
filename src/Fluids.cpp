@@ -4,81 +4,65 @@
 
 #include "Fluids.h"
 
-// applies a force to all of the cells of the grid ( useful for gravity )
-void FluidSystem::add ( vec2 force, float dt ) {
-    for(Cell& c : grid)
-        c.velocity += dt * force;
-}
 
-void FluidSystem::diffuse ( float diff, float dt) {
-    float a = dt * diff * grid.N * grid.N;
-    for( int k=0; k < 20; ++k ){
-        for( int r=0; r < grid.N; ++r ){
-            for( int c=0; c < grid.N; ++c ){
-                grid.at(r,c).velocity = ( 1.0f / ( 1.0f + 4.0f * a ) )
-                                 * ( grid.at(r,c).oldVelocity + a
-                                                       * ( grid.at(r-1,c).oldVelocity + grid.at(r+1,c).oldVelocity + grid.at(r,c-1).oldVelocity + grid.at(r,c+1).oldVelocity ) );
-            }}}
-}
-
-// the psuedo code was pretty easy to parse into C++ until this point.
-// this is a near copy of their version until I can understand it more and swap for better structures and library functions.
-// FIXME
-void FluidSystem::advect ( float dt ) {
-    int r0, c0, r1, c1;         // i have no idea what these are.
-    float s0, t0, s1, t1;       // these either.
-    float dt0 = dt * float(grid.N);
-    for( int r=0; r < grid.N; ++r ){
-        for( int c=0; c < grid.N; ++c ){
-            vec2 pos = vec2( r, c );
-            pos -=  dt0 * grid.at(r,c).velocity;
-            //  clamp between ( 0.5, N + 0.5 )
-            if( pos.x < 0.5 )
-                pos.x = 0.5;
-            if( pos.x > grid.N + 0.5 )
-                pos.x = grid.N + 0.5;
-            if( pos.y < 0.5 )
-                pos.y = 0.5;
-            if( pos.y > grid.N + 0.5 )
-                pos.y = grid.N + 0.5;
-            // I think this is a really really OG round operation
-            r0 = pos.x;
-            r1 = r0 + 1;
-            c0 = pos.y;
-            c1 = c0 + 1;
-
-            s1 = pos.x - short(r0);
-            s0 = 1.0 - s1;
-            t1 = pos.y - short(c0);
-            t0 = 1.0 - t1;
-
-            // set our new density from the imagined previous timestep positions of particles that are now in this cell.
-            grid.at(r,c).density = s0 * ( t0 * grid.at(r0,c0).oldDensity + t1 * grid.at(r0,c1).oldDensity + s1 * grid.at(r1,c0).oldDensity + t1 * grid.at(r1,c1).oldDensity );
-        }}
-}
-
-// definitely make those inputs static to optimize but I'm leaving them for now.
-// FIXME
-void FluidSystem::density_step( float diff, float dt ){
-    add( vec2( 0.0, -9.8 ), dt );
-    for( Cell& c : grid )   // put current velocity into previous velocity.
-        c.oldVelocity = c.velocity;
-    diffuse( diff, dt );
-    for( Cell& c : grid )   // put current velocity into previous velocity.
-        c.oldVelocity = c.velocity;
-    advect( dt );
-}
-
-// divergence parameter shows how velocity fields move "along themselves" flowing through the grid.
-void FluidSystem::project( float div ){
-    float h = 1.0 / grid.N;
-    for( int r=0; r < grid.N; ++r ){
-        for( int c=0; c < grid.N; ++c ){
-            grid.at(r,c).divergence = -0.5f * h * ( grid.at(r-1,c).oldVelocity.x - grid.at(r+1,c).oldVelocity.x + grid.at(r,c+1).oldVelocity.y - grid.at(r,c-1).oldVelocity.y );
+Grid::Grid(int grid_size, int dx, int dy) {
+    this->N = grid_size;
+    this->dx = dx;
+    this->dy = dy;
+    this->grid = vector<Cell>(N*N);
+    for (int row = 0; row < N; ++row) {
+        for (int col = 0; col < N; ++col) {
+            Cell& c = this->at(row, col);
+            c.row = row;
+            c.col = col;
+            c.particle = vec2(row + (dx / 2.0f), col + (dy, 2.0f));
         }
     }
 }
 
-void FluidSystem::velocity_step( float visc, float dt ){
-    // FIXME
+void FluidSystem::step() {
+    //copy the current array into the old array
+    std::copy(grid.begin(), grid.end(), oldGrid.begin());
+    advection();
+}
+Cell FluidSystem::reclinearInterpolation(vec2 position){
+    float halfDx = this->grid.dx / 2.0f;
+    float halfDy = this->grid.dy / 2.0f;
+    vec2 p1 = vec2(position.x + halfDx, position.y + halfDy);
+    vec2 p2 = vec2(position.x + halfDx, position.y - halfDy);
+    vec2 p3 = vec2(position.x - halfDx, position.y + halfDy);
+    vec2 p4 = vec2(position.x - halfDx, position.y - halfDy);
+    Cell& c1 = oldGrid.at(p1);
+    Cell& c2 = oldGrid.at(p2);
+    Cell& c3 = oldGrid.at(p3);
+    Cell& c4 = oldGrid.at(p4);
+    float d1 = glm::distance(c1.particle, position);
+    float d2 = glm::distance(c2.particle, position);
+    float d3 = glm::distance(c3.particle, position);
+    float d4 = glm::distance(c4.particle, position);
+    float sum = d1 + d2 + d2 + d4;
+    float r1 = d1 / sum;
+    float r2 = d2 / sum;
+    float r3 = d3 / sum;
+    float r4 = d4 / sum;
+    Cell theoreticalCell;
+    theoreticalCell.velocity = (r1 * c1.velocity) + (r2 * c2.velocity) + (r3 * c3.velocity) + (r4 * c4.velocity);
+    theoreticalCell.pressure = (r1 * c1.pressure) + (r2 * c2.pressure) + (r3 * c3.pressure) + (r4 * c4.pressure);
+    theoreticalCell.density = (r1 * c1.density) + (r2 * c2.density) + (r3 * c3.density) + (r4 * c4.density);
+    theoreticalCell.divergence = (r1 * c1.divergence) + (r2 * c2.divergence) + (r3 * c3.divergence) + (r4 * c4.divergence);
+    return theoreticalCell;
+}
+
+void FluidSystem::advection(){
+    // based on the velocity vector find where the cells "particle was before in the old grid"
+    // update the current quantities with the information interplated from the previous position
+    for(iterator i = grid.begin(); i < grid.end(); ++i){
+        Cell& currentCell = *i;
+        vec2 previousParticlePosition = currentCell.particle + (-currentCell.velocity * dt);
+        Cell theoreticalCell = reclinearInterpolation(previousParticlePosition);
+        currentCell.velocity = theoreticalCell.velocity;
+        currentCell.pressure = theoreticalCell.pressure;
+        currentCell.density = theoreticalCell.density;
+        currentCell.divergence = theoreticalCell.divergence;
+    }
 }

@@ -17,6 +17,7 @@
 #include "GravitySystem.h"
 #include "SpaceSystem.h"
 #include "OpenGLUtil.h"
+#include "Fluids.h"
 
 using std::vector;
 using glm::vec2;
@@ -33,21 +34,22 @@ int main(int argc, char* argv[])
     GUI gui(window);
 
     // create particle systems
-    SpaceSystem* rootSystem = new SpaceSystem();
-    rootSystem->width = window_width;
-    rootSystem->height = window_height;
-    rootSystem->setup();
+//    SpaceSystem* rootSystem = new SpaceSystem();
+//    rootSystem->width = window_width;
+//    rootSystem->height = window_height;
+//    rootSystem->setup();
+//
+//    rootSystem->prepareDraw();
 
-    rootSystem->prepareDraw();
-
+    FluidSystem f(100, 10, 10, (1.0f/ 60.0f));
+    f.step();
 
 	while (openGL.drawBool()) {
         openGL.beforeDraw();
         // Step our systems
-        rootSystem->step();
+//        rootSystem->step();
         // call system the draw functions
-        rootSystem->draw();
-
+//        rootSystem->draw();
         openGL.afterDraw();
 	}
     openGL.destroy();
