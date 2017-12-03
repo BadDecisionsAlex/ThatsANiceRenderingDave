@@ -15,8 +15,8 @@ using std::vector;
 
 // Cell definition
 struct Cell {
-    float density = 0.0;
-    vec2 velocity = vec2(0.0f, 0.0f);
+    float density = 10.0;
+    vec2 velocity = vec2(0.0f, 0.01f);
     float pressure = 0.0;
     float divergence = 0.0;
     vec2 particle;
@@ -48,9 +48,13 @@ private:
     Grid grid;
     Grid oldGrid;
     float dt;
-    void advection();
+    void advectVelocity();
+    void advectDensity();
     Cell interpolate(vec2 position);
     Cell imaginationHelper(Cell& a, Cell& b, Cell& c, Cell& d, float rA, float rB, float rC, float rD);
+    void diffuseVelocity();
+    void diffuseDensity();
+    void project();
 };
 
 #endif

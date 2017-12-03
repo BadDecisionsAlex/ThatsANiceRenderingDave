@@ -102,21 +102,99 @@ Cell FluidSystem::interpolate(vec2 position){
 void FluidSystem::step() {
     //copy the current array into the old array
     std::copy(grid.begin(), grid.end(), oldGrid.begin());
-    advection();
+    // get force input from ui
+    float ui_input_density;
+    vec2 ui_input_velocity;
+    diffuseVelocity();
+    project();
+    std::copy(grid.begin(), grid.end(), oldGrid.begin());
+    advectVelocity();
+    project();
+    diffuseDensity();
+    advectDensity();
 }
 
-void FluidSystem::advection(){
+void FluidSystem::advectVelocity(){
     for (int i = 1; i < grid.N + 1; ++i) {
         for (int j = 1; j < grid.N + 1; ++j) {
             Cell& currentCell = grid.at(i, j);
             vec2 particleCell = grid.cellToParticle(i, j);
             vec2 backwardStepParticle = particleCell - dt * currentCell.velocity;
             Cell iCell = interpolate(backwardStepParticle);
-//            currentCell.divergence = iCell.divergence;
-//            currentCell.pressure = iCell.pressure;
             currentCell.velocity = iCell.velocity;
-            currentCell.density = iCell.density;
         }
     }
 }
 
+void FluidSystem::advectDensity(){
+    for (int i = 1; i < grid.N + 1; ++i) {
+        for (int j = 1; j < grid.N + 1; ++j) {
+            Cell& currentCell = grid.at(i, j);
+            vec2 particleCell = grid.cellToParticle(i, j);
+            vec2 backwardStepParticle = particleCell - dt * currentCell.velocity;
+            Cell iCell = interpolate(backwardStepParticle);
+            currentCell.density= iCell.density;
+        }
+    }
+}
+
+void FluidSystem::diffuseVelocity(){
+    float viscoity = grid.N * grid.N * 0.2;
+    for (int k = 0; k < 20; ++k) {
+        for (int i = 1; i < grid.N + 1; ++i) {
+            for (int j = 1; j < grid.N + 1; ++j) {
+                Cell& currentCell = grid.at(i, j);
+                Cell& north = oldGrid.at(i, j - 1);
+                Cell& south = oldGrid.at(i, j + 1);
+                Cell& east = oldGrid.at(i + 1, j);
+                Cell& west = oldGrid.at(i - 1, j);
+                //make left hand just horizonatal component same for the right hand
+                vec2 leftHandLaplace = (east.velocity - (2.0f * currentCell.velocity) + west.velocity) / (grid.dx * grid.dx);
+                vec2 rightHandLaplace = (south.velocity - (2.0f * currentCell.velocity) + north.velocity) / (grid.dy * grid.dy);
+                vec2 laplace = (leftHandLaplace + rightHandLaplace) * viscoity;
+                currentCell.velocity = laplace;
+            }
+        }
+    }
+}
+
+void FluidSystem::diffuseDensity(){
+    float viscoity = grid.N * grid.N * 0.2;
+    for (int k = 0; k < 20; ++k) {
+        for (int i = 1; i < grid.N + 1; ++i) {
+            for (int j = 1; j < grid.N + 1; ++j) {
+                Cell& currentCell = grid.at(i, j);
+                Cell& north = oldGrid.at(i, j - 1);
+                Cell& south = oldGrid.at(i, j + 1);
+                Cell& east = oldGrid.at(i + 1, j);
+                Cell& west = oldGrid.at(i - 1, j);
+                //make left hand just horizonatal component same for the right hand
+                float leftHandLaplace = (east.density - (2.0f * currentCell.density) + west.density) / (grid.dx * grid.dx);
+                float rightHandLaplace = (south.density - (2.0f * currentCell.density) + north.density) / (grid.dy * grid.dy);
+                float laplace = (leftHandLaplace + rightHandLaplace) * viscoity;
+                currentCell.density = laplace;
+                currentCell.pressure = currentCell.density / (grid.dx * grid.dy);
+            }
+        }
+    }
+}
+
+void FluidSystem::project(){
+    for (int i = 1; i < grid.N + 1; ++i) {
+        for (int j = 1; j < grid.N + 1; ++j) {
+            // compute the gradient between each neighbors pressure
+            Cell& currentCell = grid.at(i, j);
+            Cell& north = oldGrid.at(i, j - 1);
+            Cell& south = oldGrid.at(i, j + 1);
+            Cell& east = oldGrid.at(i + 1, j);
+            Cell& west = oldGrid.at(i - 1, j);
+            vec2 southGrad = vec2(0.0f, currentCell.pressure - south.pressure);
+            vec2 northGrad = vec2(0.0f, currentCell.pressure - north.pressure);
+            vec2 eastGrad = vec2(currentCell.pressure - east.pressure, 0.0f);
+            vec2 westGrad = vec2(currentCell.pressure - west.pressure, 0.0f);
+            vec2 avgGrad = (southGrad + northGrad + eastGrad + westGrad) / 4.0f;
+            currentCell.velocity = currentCell.velocity - avgGrad;
+        }
+
+    }
+}
