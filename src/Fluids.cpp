@@ -112,8 +112,8 @@ void FluidSystem::advection(){
             vec2 particleCell = grid.cellToParticle(i, j);
             vec2 backwardStepParticle = particleCell - dt * currentCell.velocity;
             Cell iCell = interpolate(backwardStepParticle);
-            currentCell.divergence = iCell.divergence;
-            currentCell.pressure = iCell.pressure;
+//            currentCell.divergence = iCell.divergence;
+//            currentCell.pressure = iCell.pressure;
             currentCell.velocity = iCell.velocity;
             currentCell.density = iCell.density;
         }
