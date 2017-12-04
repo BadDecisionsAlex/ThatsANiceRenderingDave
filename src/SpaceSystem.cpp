@@ -14,14 +14,15 @@
 void SpaceSystem::setup() {
     //Add particles
     for (int c = 0; c < NUMBER_OF_PARTICLES; ++c) {
-        int x = rand() % 1000;
-        int y = rand() % 1000;
+        int x = rand() % 1000 + 500;
+        int y = rand() % 1000 + 500;
         
         float dx = (rand() % 1000) / 500.0 - 1;
         float dy = (rand() % 1000) / 500.0 - 1;
         
         MassParticle particle = MassParticle(vec3(x, y, 0));
         particle.velocity = vec3(0, 0, 0);
+        particle.mass = rand() % 15 + 15;
         
         particles.push_back(particle);
     }
@@ -37,6 +38,7 @@ void SpaceSystem::getPointsForScreen(vector<vec4>& points, vector<vec4>& velocit
     for (MassParticle& p : particles) {
         vec4 point = toScreen(p.p, count);
         vec4 velocity = vec4(p.velocity, 1.0);
+        velocity[2] = p.mass;
         points.push_back(point);
         indices.push_back(uvec1(count));
         velocities.push_back(velocity);
