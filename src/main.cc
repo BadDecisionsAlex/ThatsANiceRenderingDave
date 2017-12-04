@@ -33,22 +33,18 @@ int main(int argc, char* argv[])
     GLFWwindow* window = openGL.setup();
     GUI gui(window);
 
-    // create particle systems
-//    SpaceSystem* rootSystem = new SpaceSystem();
-//    rootSystem->width = window_width;
-//    rootSystem->height = window_height;
-//    rootSystem->setup();
-//
-//    rootSystem->prepareDraw();
-
-    FluidSystem* f = new FluidSystem(100, 10, 10, (1.0f/ 60.0f));
+    FluidSystem* rootSystem = new FluidSystem(100, 10, 10, (1.0f/ 60.0f));
+    rootSystem->width = window_width;
+    rootSystem->height = window_height;
+    rootSystem->setup();
+    rootSystem->prepareDraw();
 
 	while (openGL.drawBool()) {
         openGL.beforeDraw();
-        // Step our systems
-//        rootSystem->step();
-        // call system the draw functions
-//        rootSystem->draw();
+
+        rootSystem->step();
+        rootSystem->draw();
+
         openGL.afterDraw();
 	}
     openGL.destroy();
