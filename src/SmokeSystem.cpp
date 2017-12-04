@@ -9,22 +9,25 @@
 #include "SmokeSystem.h"
 #include "Shaders.h"
 
-#define NUMBER_OF_PARTICLES 750.0
+#define NUMBER_OF_PARTICLES 500.0
+#define EMITTER true
 
 void SmokeSystem::setup() {
     //Add particles
-    for (int c = 0; c < NUMBER_OF_PARTICLES; ++c) {
-        int x = rand() % 500 + 750;
-        int y = rand() % 500 + 750;
-        
-        float dx = (rand() % 1000) / 500.0 - 1;
-        float dy = (rand() % 1000) / 500.0 - 1;
-        
-        MassParticle particle = MassParticle(vec3(x, y, 0));
-        particle.velocity = vec3(0, 0, 0);
-        particle.mass = rand() % 15 + 15;
-        
-        particles.push_back(particle);
+    if (!EMITTER) {
+        for (int c = 0; c < NUMBER_OF_PARTICLES; ++c) {
+            int x = rand() % 500 + 750;
+            int y = rand() % 500 + 750;
+            
+            float dx = (rand() % 1000) / 500.0 - 1;
+            float dy = (rand() % 1000) / 500.0 - 1;
+            
+            MassParticle particle = MassParticle(vec3(x, y, 0));
+            particle.velocity = vec3(0, 0, 0);
+            particle.mass = rand() % 15 + 15;
+            
+            particles.push_back(particle);
+        }
     }
     
     getPointsForScreen(points, velocities, indices);
@@ -53,13 +56,44 @@ void SmokeSystem::getPointsForScreen(vector<vec4>& points, vector<vec4>& velocit
 vec4 SmokeSystem::toScreen(const vec3& point, int id) {
 //    float ndcX = ((2.0f * point.x) / float(width * 2)) - 1.0f;
 //    float ndcY = ((2.0f * point.y) / float(height * 2)) - 1.0f;
-    float z = -id / (NUMBER_OF_PARTICLES + 1);
+    float z = -id / (float(particles.size() + 1));
     return vec4(point.x, point.y, z, 1.0);
 }
 
 void SmokeSystem::step() {
     
-    stepCount += 1;
+    if (EMITTER) {
+        vector<int> toRemove;
+        for (int x = 0; x < particles.size(); ++x) {
+            MassParticle& p = particles[x];
+            p.age += 1;
+            
+            if (p.age >= p.life) {
+                toRemove.push_back(x);
+            }
+        }
+        
+        for (int x = toRemove.size() - 1; x >= 0; --x) {
+            int index = toRemove[x];
+            particles.erase(particles.begin() + index);
+        }
+        
+        for (int x = 0; x < 5; ++x) {
+            float dx = (rand() % 8) - 4;
+            float dy = (rand() % 10) + 10;
+            
+            MassParticle newParticle(center);
+            newParticle.mass = rand() % 15 + 15;
+            newParticle.velocity = vec3(dx, dy, 0);
+            newParticle.life = rand() % 150 + 50;
+            particles.push_back(newParticle);
+        }
+        
+        prepareDraw();
+    }
+    
+    
+    stepCount += 3;
     if (stepCount >= 360) {
         stepCount = 0;
     }
@@ -72,12 +106,14 @@ void SmokeSystem::step() {
     glm::mat3 m(c1, c2, c3);
 
     vec3 direction(20, 0, 0);
-    center = vec3(1000, 1000, 0) + (m * direction);
+    center = vec3(1000, 500, 0) + (m * direction);
     
     for (MassParticle& p : particles) {
-        vec3 direction = glm::normalize(center - p.p);
-        direction *= ((5.333 / 600.0) * 9.807);
-        p.velocity += direction;
+        if (center != p.p) {
+            vec3 grav = glm::normalize(center - p.p);
+            grav *= ((5.333 / 600.0) * 9.807);
+            p.velocity += grav;
+        }
         
         p.p += p.velocity;
     }

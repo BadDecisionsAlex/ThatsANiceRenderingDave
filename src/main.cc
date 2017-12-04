@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
 //    starterParticles.push_back(VerletParticle(100, 100));
 //    GravitySystem* rootSystem = new GravitySystem(starterParticles);
     
-    SpaceSystem* rootSystem = new SpaceSystem();
+    SmokeSystem* rootSystem = new SmokeSystem();
     rootSystem->width = window_width;
     rootSystem->height = window_height;
     rootSystem->setup();
@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
 		glViewport(0, 0, window_width, window_height);
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glEnable(GL_DEPTH_TEST);
-        //glEnable(GL_MULTISAMPLE);
+        glEnable(GL_MULTISAMPLE);
         glEnable(GL_BLEND);
         glEnable(GL_CULL_FACE);
         glEnable(GL_PROGRAM_POINT_SIZE);

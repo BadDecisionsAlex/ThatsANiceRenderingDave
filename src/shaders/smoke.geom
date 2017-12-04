@@ -29,6 +29,10 @@ void addPoint(vec4 point, int depth) {
         color = vec4(0.5, 0.5, 0.6, alpha);
     }
     
+    //TURN ON FOR FIRE
+    float up = 1 - max(0.0, velocity[0][1]);
+    color = vec4(up, 0.3, 0.0, alpha);
+    
     int point_size =  2 * int((size + 2) * (1.0 / depth));
     
     gl_Position = p;

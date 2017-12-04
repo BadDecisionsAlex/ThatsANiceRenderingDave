@@ -15,6 +15,9 @@ struct MassParticle: AbstractParticle {
     vec3 velocity;
     int mass = 1;
     
+    int age = 0;
+    int life = 300;
+    
     MassParticle(vec3 position) {
         p = position;
     };
