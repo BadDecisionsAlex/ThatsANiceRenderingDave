@@ -28,6 +28,7 @@
 #include "GravitySystem.h"
 
 #include "SpaceSystem.h"
+#include "SmokeSystem.h"
 #include "MassParticle.h"
 
 using std::vector;

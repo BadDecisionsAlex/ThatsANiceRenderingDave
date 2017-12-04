@@ -18,3 +18,15 @@ const char* particle_geometry_shader =
 const char* particle_fragment_shader =
 #include "shaders/particle.frag"
 ;
+
+const char* smoke_vertex_shader =
+#include "shaders/smoke.vert"
+;
+
+const char* smoke_geometry_shader =
+#include "shaders/smoke.geom"
+;
+
+const char* smoke_fragment_shader =
+#include "shaders/smoke.frag"
+;
