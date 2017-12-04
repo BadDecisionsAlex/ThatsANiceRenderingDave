@@ -8,7 +8,9 @@
 #include <glm/glm.hpp>
 #include "ParticleSystem.h"
 #include <vector>
-
+#include <iomanip>
+#include <sstream>
+#include <iostream>
 
 using glm::vec2;
 using glm::uvec1;
@@ -34,11 +36,13 @@ struct Grid{
     vector<Cell> grid;
 
     Cell& at( int r, int c ) { return grid[ r * N + c ]; }
+    const Cell& at( int r, int c ) const { return grid[ r * N + c]; }
     vec2 cellToParticle(int i, int j);
     iterator begin() {return grid.begin();}
     const_iterator begin() const {return grid.begin();}
     iterator end() {return grid.end();}
     const_iterator end() const {return grid.end();}
+
 };
 
 class FluidSystem : public ParticleSystem {

@@ -2,11 +2,45 @@
 // Created by Joshua Cristol on 12/2/17.
 //
 
+#ifndef FLUIDS_CPP
+#define FLUIDS_CPP
+
 #include <glm/gtx/string_cast.hpp>
 #include "Fluids.h"
 #include <functional>
-using std::function;
 #include "Shaders.h"
+using std::function;
+
+std::ostream& operator<<( std::ostream& os, const Grid& g ){
+    int spacing = 3;
+    std::ostringstream ss;
+    for(int r=0; r<g.N+2; ++r){
+        for(int c=0; c<g.N+2; ++c){
+            if(c==0||c==g.N+1)
+                ss << std::setfill('.');
+            else if(c==1 && r != 0 && r != g.N+1)
+                ss << std::setfill(' ');
+            ss << std::setw(spacing);
+            // CHANGE THE PRINTED VALUE HERE.
+            // DONT FORGET TO ADJUST SPACING!
+            ss << int(g.at(r,c).density);
+        }
+        ss << '\n';
+        if( r == g.N+1 )
+            continue;
+        for(int n=2; n<spacing; ++n)
+            ss << std::setw(spacing) << "" << std::setfill(' ') << std::setw(spacing * g.N) << "" << std::setfill('.') <<  std::setw(spacing+1) << '\n';
+    }
+    return os << ss.str();
+}
+
+std::ostream& operator<<( std::ostream& os, const vec2& v ){
+    std::ostringstream ss;
+    ss << std::setfill(' ') << '(' << std::setw(4);
+    ss << v.x << ", " << std::setw(4) << v.y << ')';
+    return os << ss.str();
+}
+
 
 Grid::Grid(int grid_size, int dx, int dy) {
     this->N = grid_size;
@@ -22,8 +56,9 @@ Grid::Grid(int grid_size, int dx, int dy) {
 }
 
 vec2 Grid::cellToParticle(int i, int j){
-    return vec2(float(i) * (dx / 2.0f), float(j) * (dy / 2.0f));
+    return vec2(float(i) * dx + 0.5f, float(j) * dy + 0.5f);
 }
+
 
 Cell FluidSystem::imaginationHelper(Cell& a, Cell& b, Cell& c, Cell& d, float rA, float rB, float rC, float rD){
     Cell imaginationCell;
@@ -35,8 +70,10 @@ Cell FluidSystem::imaginationHelper(Cell& a, Cell& b, Cell& c, Cell& d, float rA
 }
 
 Cell FluidSystem::interpolate(vec2 position){
-    int cellX = (position.x / oldGrid.dx) + 1;
-    int cellY = (position.y / oldGrid.dy) + 1;
+    std::cout << "Interpolaing\n\t(x,y) : (" << position.x << ", " << position.y << ")\n" << std::flush; 
+    int cellX = int(position.x / oldGrid.dx) + 1;
+    int cellY = int(position.y / oldGrid.dy) + 1;
+    std::cout << "\tCell(x,y) : (" << cellX << ", " << cellY << ")\t" << std::flush; 
     Cell& residentCell = oldGrid.at(cellX, cellY);
     Cell& north = oldGrid.at(cellX, cellY - 1);
     Cell& south = oldGrid.at(cellX, cellY + 1);
@@ -48,7 +85,8 @@ Cell FluidSystem::interpolate(vec2 position){
     Cell& southEast = oldGrid.at(cellX + 1, cellY + 1);
     //interpolate from this cells position to the other ones find ratios basically
     float distResidentCell = glm::distance(residentCell.particle, position);
-    if(distResidentCell == 0.0f){
+    std::cout << "dist : " << distResidentCell << std::endl;
+    if(distResidentCell <= 0.00001f){
         return residentCell;
     }
     // position is (right or horizontally inline)  and (below or vertically inline) the middle bottom right quad
@@ -103,11 +141,18 @@ Cell FluidSystem::interpolate(vec2 position){
 }
 
 void FluidSystem::advectVelocity(){
+    std::cout << "Advect Velocity\n";
     for (int i = 1; i < grid.N + 1; ++i) {
         for (int j = 1; j < grid.N + 1; ++j) {
             Cell& currentCell = grid.at(i, j);
+            std::cout << "\tCurrentCell(x,y) : (" << i << ", " << j << ")\n" << std::flush; 
             vec2 particleCell = grid.cellToParticle(i, j);
-            vec2 backwardStepParticle = particleCell - dt * currentCell.velocity;
+            std::cout << "\tParticleCell(x,y) : (" << particleCell.x << ", " << particleCell.y << ")\n" << std::flush; 
+            vec2& vel = currentCell.velocity;
+            std::cout << "\tdt : " << dt << std::endl;
+            std::cout << "\tcurrentCell.velocity(x,y) : (" << vel.x << ", " << vel.y << ")\n" << std::flush;
+            vec2 backwardStepParticle = particleCell - ( dt * currentCell.velocity );
+            std::cout << "\tBackStepParticle(x,y) : (" << backwardStepParticle.x << ", " << backwardStepParticle.y << ")\n" << std::flush; 
             Cell iCell = interpolate(backwardStepParticle);
             currentCell.velocity = iCell.velocity;
         }
@@ -127,23 +172,31 @@ void FluidSystem::advectDensity(){
 }
 
 void FluidSystem::diffuseVelocity(){
+    std::stringstream ss;
+    ss << "Diffusing Velocity\n";
     float viscoity = grid.N * grid.N * 0.2;
     for (int k = 0; k < 20; ++k) {
+        ss << "K : " << k << '\n';
         for (int i = 1; i < grid.N + 1; ++i) {
             for (int j = 1; j < grid.N + 1; ++j) {
+                ss << '\t' << '(' << i << ", " << j << ") :\t";
                 Cell& currentCell = grid.at(i, j);
                 Cell& north = oldGrid.at(i, j - 1);
                 Cell& south = oldGrid.at(i, j + 1);
                 Cell& east = oldGrid.at(i + 1, j);
                 Cell& west = oldGrid.at(i - 1, j);
                 //make left hand just horizonatal component same for the right hand
-                vec2 leftHandLaplace = (east.velocity - (2.0f * currentCell.velocity) + west.velocity) / (grid.dx * grid.dx);
-                vec2 rightHandLaplace = (south.velocity - (2.0f * currentCell.velocity) + north.velocity) / (grid.dy * grid.dy);
-                vec2 laplace = (leftHandLaplace + rightHandLaplace) * viscoity;
-                currentCell.velocity = laplace;
+                vec2 leftHandLaplace = ( 1.0f / (grid.dx * grid.dx)) * (east.velocity - (2.0f * currentCell.velocity) + west.velocity);
+                vec2 rightHandLaplace = ( 1.0f / (grid.dy * grid.dy)) * (south.velocity - (2.0f * currentCell.velocity) + north.velocity);
+                vec2 laplace = viscoity * (leftHandLaplace + rightHandLaplace);
+                ss << "Velocity : " << currentCell.velocity;
+                ss << "\tLaplace : " << laplace << std::endl;
+                currentCell.velocity = dt * laplace;
             }
         }
+        fixBoundary<vec2>(FluidSystem::velocity);
     }
+    //std::cout << ss.str();
 }
 
 void FluidSystem::diffuseDensity(){
@@ -189,13 +242,21 @@ void FluidSystem::project(){
 
 template<typename T>
 void FluidSystem::fixBoundary( FluidSystem::flag f ){
-    std::function<T&(Cell&)> accessor;
-    switch(f){
-        case velocity : accessor =      &Cell::velocity;break;
-        case density : accessor =       &Cell::density;break;
-        case divergence : accessor =    &Cell::divergence;break;
-        case pressure : accessor =      &Cell::pressure;break;
+    std::function<vec2&(Cell&)> accessV;
+    std::function<float&(Cell&)> accessF;
+    switch( f ){
+        case velocity : accessV =     ( &Cell::velocity );break;
+        case density : accessF =      ( &Cell::density );break;
+        case divergence : accessF =   ( &Cell::divergence );break;
+        case pressure : accessF =     ( &Cell::pressure );break;
     }
+
+    std::function<T&(Cell&)> accessor; 
+    if( f == velocity )
+        accessor = *reinterpret_cast<std::function<T&(Cell&)>*>( &accessV );
+    else
+        accessor = *reinterpret_cast<std::function<T&(Cell&)>*>( &accessF );
+
     for( int i=1; i<=grid.N; ++i){
        accessor( grid.at( 0, i )) = accessor( grid.at( 1, i ));
        accessor( grid.at( grid.N+1, i )) = accessor( grid.at( grid.N, i ));
@@ -220,6 +281,8 @@ FluidSystem::FluidSystem(int grid_size, int dx, int dy, float time_step) : grid(
                     getPointsForScreen(particles, densities, indices);
                     fluid_pass_input.assign(0, "vertex_position", particles.data(), particles.size(), 4, GL_FLOAT);
                     fluid_pass_input.assign(1, "density", densities.data(), densities.size(), 1, GL_FLOAT);
+                    std::cout << "\n\nGrid : \n" << grid << "\n\n" << std::flush;
+                    std::cout << "OldGrid : \n" << oldGrid << "\n\n" << std::flush;
                 }
 
 void FluidSystem::prepareDraw() {
@@ -273,10 +336,20 @@ void FluidSystem::step() {
     // get force input from ui
     float ui_input_density;
     vec2 ui_input_velocity;
+    std::cout << "STEPPING\nGrid : " << std::endl;
+    std::cout << grid << std::endl;
+    //std::cout << "OldGrid : " << std::endl;
+    //std::cout << oldGrid << std::endl;
+    
+    // Error is in diffuseVelocity
+    // **************************
     diffuseVelocity();
+    // **************************
+    std::cout << "Done Diffusing\nGrid : " << std::endl;
+    std::cout << grid << std::endl;
+    
     project();
     std::copy(grid.begin(), grid.end(), oldGrid.begin());
-    // hey boi its me
     advectVelocity();
     project();
     diffuseDensity();
@@ -295,3 +368,4 @@ void FluidSystem::setup() {
     }
     getPointsForScreen(particles, densities, indices);
 }
+#endif

@@ -16,4 +16,4 @@ if [ ! -e bin/particles ]; then
         exit
     fi
 fi
-./bin/particles
+echo $(./bin/particles)
