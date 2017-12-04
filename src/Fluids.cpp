@@ -187,7 +187,7 @@ void FluidSystem::project(){
 
 // drawing stuff
 
-FluidSystem::FluidSystem(int grid_size, int dx, int dy, float time_step) : grid(Grid(grid_size, dx, dy)), oldGrid(Grid(grid_size, dx, dy)), dt(time_step), fluid_pass(-1, fluid_pass_input, {particle_vertex_shader, particle_geometry_shader, particle_fragment_shader}, {/*uniforms*/}, {"fragment_color"}){
+FluidSystem::FluidSystem(int grid_size, int dx, int dy, float time_step) : grid(Grid(grid_size, dx, dy)), oldGrid(Grid(grid_size, dx, dy)), dt(time_step), fluid_pass(-1, fluid_pass_input, {particle_vertex_shader, fluid_geometry_shader, particle_fragment_shader}, {/*uniforms*/}, {"fragment_color"}){
                     getPointsForScreen(particles, densities, indices);
                     fluid_pass_input.assign(0, "vertex_position", particles.data(), particles.size(), 4, GL_FLOAT);
                     fluid_pass_input.assign(1, "density", densities.data(), densities.size(), 1, GL_FLOAT);
@@ -199,7 +199,7 @@ void FluidSystem::prepareDraw() {
                                fluid_pass_input,
                                {
                                        particle_vertex_shader,
-                                       particle_geometry_shader,
+                                       fluid_geometry_shader,
                                        particle_fragment_shader
                                },
                                { /* uniforms */ },
