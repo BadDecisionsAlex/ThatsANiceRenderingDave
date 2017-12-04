@@ -17,15 +17,12 @@ Grid::Grid(int grid_size, int dx, int dy) {
         for (int j = 1; j < N + 1; ++j) {
             Cell& c = this->at(i, j);
             c.particle = cellToParticle(i, j);
-            float x = c.particle.x;
-            float y = c.particle.y;
-            int i = 0;
         }
     }
 }
 
 vec2 Grid::cellToParticle(int i, int j){
-    return vec2(i * (dx / 2.0f), j * (dy / 2.0f));
+    return vec2(float(i) * (dx / 2.0f), float(j) * (dy / 2.0f));
 }
 
 Cell FluidSystem::imaginationHelper(Cell& a, Cell& b, Cell& c, Cell& d, float rA, float rB, float rC, float rD){
@@ -279,6 +276,7 @@ void FluidSystem::step() {
     diffuseVelocity();
     project();
     std::copy(grid.begin(), grid.end(), oldGrid.begin());
+    // hey boi its me
     advectVelocity();
     project();
     diffuseDensity();
