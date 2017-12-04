@@ -11,8 +11,16 @@ const char* particle_vertex_shader =
 #include "shaders/particle.vert"
 ;
 
+const char* fluid_vertex_shader =
+#include "shaders/fluid.vert"
+;
+
 const char* particle_geometry_shader =
 #include "shaders/particle.geom"
+;
+
+const char* fluid_geometry_shader =
+#include "shaders/fluid.geom"
 ;
 
 const char* particle_fragment_shader =

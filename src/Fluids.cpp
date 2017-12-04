@@ -2,9 +2,11 @@
 // Created by Joshua Cristol on 12/2/17.
 //
 
+#include <glm/gtx/string_cast.hpp>
 #include "Fluids.h"
 #include <functional>
 using std::function;
+#include "Shaders.h"
 
 Grid::Grid(int grid_size, int dx, int dy) {
     this->N = grid_size;
@@ -15,6 +17,9 @@ Grid::Grid(int grid_size, int dx, int dy) {
         for (int j = 1; j < N + 1; ++j) {
             Cell& c = this->at(i, j);
             c.particle = cellToParticle(i, j);
+            float x = c.particle.x;
+            float y = c.particle.y;
+            int i = 0;
         }
     }
 }
@@ -98,21 +103,6 @@ Cell FluidSystem::interpolate(vec2 position){
         float ratioResident = distResidentCell / sum;
         return imaginationHelper(west, northWest, north, residentCell, ratioWest, ratioNorthWest, ratioNorth, ratioResident);
     }
-}
-
-void FluidSystem::step() {
-    //copy the current array into the old array
-    std::copy(grid.begin(), grid.end(), oldGrid.begin());
-    // get force input from ui
-    float ui_input_density;
-    vec2 ui_input_velocity;
-    diffuseVelocity();
-    project();
-    std::copy(grid.begin(), grid.end(), oldGrid.begin());
-    advectVelocity();
-    project();
-    diffuseDensity();
-    advectDensity();
 }
 
 void FluidSystem::advectVelocity(){
@@ -200,7 +190,6 @@ void FluidSystem::project(){
     }
 }
 
-// pass in flag{ velocity, density, pressure, divergence }
 template<typename T>
 void FluidSystem::fixBoundary( FluidSystem::flag f ){
     std::function<T&(Cell&)> accessor;
@@ -208,7 +197,7 @@ void FluidSystem::fixBoundary( FluidSystem::flag f ){
         case velocity : accessor =      &Cell::velocity;break;
         case density : accessor =       &Cell::density;break;
         case divergence : accessor =    &Cell::divergence;break;
-        case pressure : accessor =      &Cell::pressure;break; 
+        case pressure : accessor =      &Cell::pressure;break;
     }
     for( int i=1; i<=grid.N; ++i){
        accessor( grid.at( 0, i )) = accessor( grid.at( 1, i ));
@@ -228,3 +217,83 @@ void FluidSystem::fixBoundary( FluidSystem::flag f ){
    accessor( grid.at( grid.N+1, grid.N+1 )) = 0.5f * ( accessor( grid.at( grid.N, grid.N+1 )) + accessor( grid.at( grid.N+1, grid.N )));
 }
 
+// drawing stuff
+
+FluidSystem::FluidSystem(int grid_size, int dx, int dy, float time_step) : grid(Grid(grid_size, dx, dy)), oldGrid(Grid(grid_size, dx, dy)), dt(time_step), fluid_pass(-1, fluid_pass_input, {fluid_vertex_shader, fluid_geometry_shader, particle_fragment_shader}, {/*uniforms*/}, {"fragment_color"}){
+                    getPointsForScreen(particles, densities, indices);
+                    fluid_pass_input.assign(0, "vertex_position", particles.data(), particles.size(), 4, GL_FLOAT);
+                    fluid_pass_input.assign(1, "density", densities.data(), densities.size(), 1, GL_FLOAT);
+                }
+
+void FluidSystem::prepareDraw() {
+    fluid_pass_input.assign_index(indices.data(), indices.size(), 1);
+    fluid_pass = RenderPass(-1,
+                               fluid_pass_input,
+                               {
+                                       fluid_vertex_shader,
+                                       fluid_geometry_shader,
+                                       particle_fragment_shader
+                               },
+                               { /* uniforms */ },
+                               { "fragment_color" }
+    );
+}
+
+void FluidSystem::draw() {
+    getPointsForScreen(particles, densities, indices);
+    fluid_pass.updateVBO(0, particles.data(), particles.size());
+    fluid_pass.updateVBO(1, densities.data(), densities.size());
+    fluid_pass.setup();
+    CHECK_GL_ERROR(glDrawElements(GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0));
+}
+
+void FluidSystem::getPointsForScreen(vector<vec4>& particles, vector<vec1>& densities, vector<uvec1>& indices) {
+    particles.clear();
+    densities.clear();
+    indices.clear();
+    int count = 0;
+    for (int i = 1; i < grid.N + 1; ++i) {
+        for (int j = 1; j < grid.N + 1; ++j) {
+            Cell& c = grid.at(i, j);
+            vec4 particle = toScreen(c.particle);
+            particles.push_back(particle);
+            densities.push_back(vec1(c.density));
+            indices.push_back(uvec1(count));
+            ++count;
+        }
+    }
+}
+
+vec4 FluidSystem::toScreen(const vec2& point) {
+    float ndcX = ((2.0f * point.x) / float(width * 2)) - 1.0f;
+    float ndcY = ((2.0f * point.y) / float(height * 2)) - 1.0f;
+    return vec4(ndcX, ndcY, 0.0, 1.0);
+}
+
+void FluidSystem::step() {
+    //copy the current array into the old array
+    std::copy(grid.begin(), grid.end(), oldGrid.begin());
+    // get force input from ui
+    float ui_input_density;
+    vec2 ui_input_velocity;
+    diffuseVelocity();
+    project();
+    std::copy(grid.begin(), grid.end(), oldGrid.begin());
+    advectVelocity();
+    project();
+    diffuseDensity();
+    advectDensity();
+}
+
+void FluidSystem::setup() {
+    // give things an intial density
+    for (int i = 1; i < grid.N + 1; ++i) {
+        for (int j = 1; j < grid.N + 1; ++j) {
+            Cell& c = grid.at(i, j);
+            // give intial parameters
+            c.density = 10.0f;
+            c.velocity = vec2(0.0f, 0.001f);
+        }
+    }
+    getPointsForScreen(particles, densities, indices);
+}

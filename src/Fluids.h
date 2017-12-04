@@ -1,5 +1,5 @@
 // Comment out the line below to add this bad boy to the compile chain or to see the code with proper color fields.
-// Removed from compile chain until it is complete. 
+// Removed from compile chain until it is complete.
 //#if 0
 
 #ifndef FLUIDS_H
@@ -11,6 +11,8 @@
 
 
 using glm::vec2;
+using glm::uvec1;
+using glm::vec1;
 using std::vector;
 
 // Cell definition
@@ -39,10 +41,18 @@ struct Grid{
     const_iterator end() const {return grid.end();}
 };
 
-class FluidSystem {
+class FluidSystem : public ParticleSystem {
 public:
-    FluidSystem(int grid_size, int dx, int dy, float dt) : grid(Grid(grid_size, dx, dy)), oldGrid(Grid(grid_size, dx, dy)), dt(dt){}
+    FluidSystem(int grid_size, int dx, int dy, float time_step);
+
+    //draw functions
     void step();
+    void setup();
+    void getPointsForScreen(vector<vec4>& particles, vector<vec1>& densities, vector<uvec1>& indices);
+    vec4 toScreen(const vec2& particle);
+
+    void prepareDraw();
+    void draw();
 
 private:
     Grid grid;
@@ -58,6 +68,14 @@ private:
     enum flag{ velocity, density, pressure, divergence };
     template<typename T>
     void fixBoundary( flag f );
+
+    //Rendering (Could be made simpler)
+    RenderDataInput fluid_pass_input;
+    RenderPass fluid_pass;
+
+    vector<vec4> particles;
+    vector<vec1> densities;
+    vector<uvec1> indices;
 };
 
 #endif
