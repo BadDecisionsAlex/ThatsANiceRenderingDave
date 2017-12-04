@@ -3,7 +3,8 @@
 //
 
 #include "Fluids.h"
-
+#include <functional>
+using std::function;
 
 Grid::Grid(int grid_size, int dx, int dy) {
     this->N = grid_size;
@@ -198,3 +199,32 @@ void FluidSystem::project(){
 
     }
 }
+
+// pass in flag{ velocity, density, pressure, divergence }
+template<typename T>
+void FluidSystem::fixBoundary( FluidSystem::flag f ){
+    std::function<T&(Cell&)> accessor;
+    switch(f){
+        case velocity : accessor =      &Cell::velocity;break;
+        case density : accessor =       &Cell::density;break;
+        case divergence : accessor =    &Cell::divergence;break;
+        case pressure : accessor =      &Cell::pressure;break; 
+    }
+    for( int i=1; i<=grid.N; ++i){
+       accessor( grid.at( 0, i )) = accessor( grid.at( 1, i ));
+       accessor( grid.at( grid.N+1, i )) = accessor( grid.at( grid.N, i ));
+       accessor( grid.at( i, 0 )) = accessor( grid.at( i, 1 ));
+       accessor( grid.at( i, grid.N+1 )) = accessor( grid.at( i, grid.N ));
+       if( f == velocity ){
+           accessor( grid.at( 0, i )).x     *= -1.0f;
+           accessor( grid.at( grid.N+1, i )).x   *= -1.0f;
+           accessor( grid.at( i, 0 )).y     *= 1.0f;
+           accessor( grid.at( i, grid.N+1 )).y   *= 1.0f;
+       }
+    }
+   accessor( grid.at( 0, 0 )) = 0.5f * ( accessor( grid.at( 1, 0 )) + accessor( grid.at( 0, 1 )));
+   accessor( grid.at( 0, grid.N+1 )) = 0.5f * ( accessor( grid.at( 1, grid.N+1 )) + accessor( grid.at( 0, grid.N )));
+   accessor( grid.at( grid.N+1, 0 )) = 0.5f * ( accessor( grid.at( grid.N, 0 )) + accessor( grid.at(grid.N+1, 1 )));
+   accessor( grid.at( grid.N+1, grid.N+1 )) = 0.5f * ( accessor( grid.at( grid.N, grid.N+1 )) + accessor( grid.at( grid.N+1, grid.N )));
+}
+

@@ -55,6 +55,9 @@ private:
     void diffuseVelocity();
     void diffuseDensity();
     void project();
+    enum flag{ velocity, density, pressure, divergence };
+    template<typename T>
+    void fixBoundary( flag f );
 };
 
 #endif
