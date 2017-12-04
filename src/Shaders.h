@@ -9,6 +9,7 @@
 #define Shaders_h
 
 extern const char* particle_vertex_shader;
+extern const char* fluid_vertex_shader;
 extern const char* particle_geometry_shader;
 extern const char* fluid_geometry_shader;
 extern const char* particle_fragment_shader;

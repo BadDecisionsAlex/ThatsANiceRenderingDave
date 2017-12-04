@@ -2,6 +2,7 @@
 // Created by Joshua Cristol on 12/2/17.
 //
 
+#include <glm/gtx/string_cast.hpp>
 #include "Fluids.h"
 #include "Shaders.h"
 
@@ -15,6 +16,9 @@ Grid::Grid(int grid_size, int dx, int dy) {
         for (int j = 1; j < N + 1; ++j) {
             Cell& c = this->at(i, j);
             c.particle = cellToParticle(i, j);
+            float x = c.particle.x;
+            float y = c.particle.y;
+            int i = 0;
         }
     }
 }
@@ -187,7 +191,7 @@ void FluidSystem::project(){
 
 // drawing stuff
 
-FluidSystem::FluidSystem(int grid_size, int dx, int dy, float time_step) : grid(Grid(grid_size, dx, dy)), oldGrid(Grid(grid_size, dx, dy)), dt(time_step), fluid_pass(-1, fluid_pass_input, {particle_vertex_shader, fluid_geometry_shader, particle_fragment_shader}, {/*uniforms*/}, {"fragment_color"}){
+FluidSystem::FluidSystem(int grid_size, int dx, int dy, float time_step) : grid(Grid(grid_size, dx, dy)), oldGrid(Grid(grid_size, dx, dy)), dt(time_step), fluid_pass(-1, fluid_pass_input, {fluid_vertex_shader, fluid_geometry_shader, particle_fragment_shader}, {/*uniforms*/}, {"fragment_color"}){
                     getPointsForScreen(particles, densities, indices);
                     fluid_pass_input.assign(0, "vertex_position", particles.data(), particles.size(), 4, GL_FLOAT);
                     fluid_pass_input.assign(1, "density", densities.data(), densities.size(), 1, GL_FLOAT);
@@ -198,7 +202,7 @@ void FluidSystem::prepareDraw() {
     fluid_pass = RenderPass(-1,
                                fluid_pass_input,
                                {
-                                       particle_vertex_shader,
+                                       fluid_vertex_shader,
                                        fluid_geometry_shader,
                                        particle_fragment_shader
                                },
