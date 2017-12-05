@@ -1,5 +1,5 @@
 //
-// Created by Joshua Cristol on 12/2/17.
+// JoShuA CrIsToL wAs HiGh OcTaNe On 12/2/17.
 //
 
 #ifndef FLUIDS_CPP
@@ -7,28 +7,24 @@
 
 #include <glm/gtx/string_cast.hpp>
 #include "Fluids.h"
-#include <functional>
 #include <queue>
+#include <string>
 #include "Shaders.h"
 using std::function;
 
-// ***********
-// Print Vec2
-// ***********
+// *****
+// Cell
+// *****
 
-std::ostream& operator<<( std::ostream& os, const vec2& v ){
-    std::ostringstream ss;
-    ss << std::setfill(' ') << '(' << std::setw(4);
-    ss << v.x << ", " << std::setw(4) << v.y << ')';
-    return os << ss.str();
-}
+ivec2 Cell::coord() const { return Grid::iToCo(i); }
+vec2 Cell::pos() const { return Grid::iToPos(i); }
 
 // *****
 // Grid
 // *****
 
 // Set Grid::printSpacing (int)     and     Cell::printVar (Accessor)   to change output.
-std::ostream& operator<<( std::ostream& os, const Grid& g ){
+std::ostream& operator<<( std::ostream& os, Grid& g ){
     std::ostringstream ss;
     for( int r=0; r<g.N+2; ++r ){
         for( int c=0; c<g.N+2; ++c ){
@@ -36,15 +32,15 @@ std::ostream& operator<<( std::ostream& os, const Grid& g ){
                 ss << std::setfill('.');
             else if(c==1 && r != 0 && r != g.N+1)
                 ss << std::setfill(' ');
-            ss << std::setw( printSpacing );
-            ss << Cell::printVar( grid.at(r,c) );
+            ss << std::setw( Grid::printSpacing );
+            ss << std::to_string( Cell::printVar( g.at(r,c) ));
         }
         ss << '\n';
         if( r == g.N+1 )
             continue;
-        for( int n=2; n<printSpacing; ++n )
-            ss << std::setw( printSpacing ) << "" << std::setfill(' ') << std::setw( printSpacing * g.N )
-                << "" << std::setfill('.') <<  std::setw( printSpacing+1 ) << '\n';
+        for( int n=2; n < Grid::printSpacing; ++n )
+            ss << std::setw( Grid::printSpacing ) << "" << std::setfill(' ') << std::setw( Grid::printSpacing * g.N )
+                << "" << std::setfill('.') <<  std::setw( Grid::printSpacing + 1 ) << '\n';
     }
     return os << ss.str();
 }
@@ -53,15 +49,34 @@ std::ostream& operator<<( std::ostream& os, const Grid& g ){
 // ************
 // FluidSystem
 // ************
-Cell FluidSystem::interpolate(vec2 position) {
+
+void FluidSystem::update( Accessor var ){
+    for(int r=0; r < Grid::N+2; ++r)
+        for(int c=0; c < Grid::N+2; ++c)
+            var(oldGrid.at(r,c)) = var(grid.at(r,c));
+}
+
+void FluidSystem::swap( Accessor var ){
+    float t;
+    for(int r=0; r < Grid::N+2; ++r)
+        for(int c=0; c < Grid::N+2; ++c){
+            t = var(grid.at(r,c));
+            var(oldGrid.at(r,t)) = var(grid.at(r,c));
+            var(grid.at(r,t)) = t;
+        }
+}
+
+void FluidSystem::interpolate( vec2 pos, Accessor var ){
+
+}
+
+Cell FluidSystem::interpolate(vec2 position, Accessor var) {
     // given a position find the resident cell first
-//    std::cout << "Interpolaing\n\t(x,y) : (" << position.x << ", " << position.y << ")\n" << std::flush;
     int cellX = int(position.x / oldGrid.dx) + 1;
     int cellY = int(position.y / oldGrid.dy) + 1;
-//    std::cout << "\tCell(x,y) : (" << cellX << ", " << cellY << ")\t" << std::flush;
     Cell& homeCell = grid.at(cellX, cellY);
     homeCell.dist = glm::distance(homeCell.particle, position);
-    if (homeCell.dist == 0.0f){
+    if (homeCell.dist < 0.5f){
         return homeCell;
     }
     // all this garbo is to find our 4 nearest neighbor cells
@@ -333,4 +348,16 @@ void FluidSystem::setup() {
     }
     getPointsForScreen(particles, densities, indices);
 }
+
+// ***********
+// Print Vec2
+// ***********
+
+std::ostream& operator<<( std::ostream& os, const vec2& v ){
+    std::ostringstream ss;
+    ss << std::setfill(' ') << '(' << std::setw(4);
+    ss << v.x << ", " << std::setw(4) << v.y << ')';
+    return os << ss.str();
+}
+
 #endif
