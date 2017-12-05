@@ -78,12 +78,12 @@ int main(int argc, char* argv[])
     
     vector<ParticleSystem*> systems;
     
-//    SpaceSystem* particleSystem = new SpaceSystem();
-//    particleSystem->width = window_width;
-//    particleSystem->height = window_height;
-//    particleSystem->setup();
-//    particleSystem->prepareDraw();
-//    systems.push_back(particleSystem);
+    SpaceSystem* particleSystem = new SpaceSystem();
+    particleSystem->width = window_width;
+    particleSystem->height = window_height;
+    particleSystem->setup();
+    particleSystem->prepareDraw();
+    systems.push_back(particleSystem);
     
     SmokeSystem* rootSystem = new SmokeSystem();
     rootSystem->width = window_width * 2;
