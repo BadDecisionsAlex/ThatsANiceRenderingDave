@@ -140,44 +140,29 @@ void FluidSystem::project(){
     fixBoundary( velocityY );
 }
 
-template<typename T>
-void FluidSystem::fixBoundary( FluidSystem::flag f ){
-    std::function<vec2&(Cell&)> accessV;
-    std::function<float&(Cell&)> accessF;
-    switch( f ){
-        case velocity : accessV =     ( &Cell::velocity );break;
-        case density : accessF =      ( &Cell::density );break;
-        case divergence : accessF =   ( &Cell::divergence );break;
-        case pressure : accessF =     ( &Cell::pressure );break;
-    }
-
-    std::function<T&(Cell&)> accessor;
-    if( f == velocity )
-        accessor = *reinterpret_cast<std::function<T&(Cell&)>*>( &accessV );
-    else
-        accessor = *reinterpret_cast<std::function<T&(Cell&)>*>( &accessF );
-
-    for( int i=1; i<=grid.N; ++i){
-       accessor( grid.at( 0, i )) = accessor( grid.at( 1, i ));
-       accessor( grid.at( grid.N+1, i )) = accessor( grid.at( grid.N, i ));
-       accessor( grid.at( i, 0 )) = accessor( grid.at( i, 1 ));
-       accessor( grid.at( i, grid.N+1 )) = accessor( grid.at( i, grid.N ));
-       if( f == velocity ){
-           accessor( grid.at( 0, i )).x     *= -1.0f;
-           accessor( grid.at( grid.N+1, i )).x   *= -1.0f;
-           accessor( grid.at( i, 0 )).y     *= 1.0f;
-           accessor( grid.at( i, grid.N+1 )).y   *= 1.0f;
+void FluidSystem::fixBoundary( Accessor accessor, Grid& src ){
+    for( int i=1; i<=Grid::N; ++i){
+       accessor( src.at( 0, i )) = accessor( src.at( 1, i ));
+       accessor( src.at( Grid::N+1, i )) = accessor( src.at( Grid::N, i ));
+       accessor( src.at( i, 0 )) = accessor( src.at( i, 1 ));
+       accessor( src.at( i, Grid::N+1 )) = accessor( src.at( i, Grid::N ));
+       if( accessor == velocityY ){
+           accessor( src.at( 0, i ))            *= -1.0f;
+           accessor( src.at( src::N+1, i ))     *= -1.0f;
+       }else if( accessor == velocityX ){
+           accessor( src.at( i, 0 ))            *= 1.0f;
+           accessor( src.at( i, Grid::N+1 ))    *= 1.0f;
        }
     }
-   accessor( grid.at( 0, 0 )) = 0.5f * ( accessor( grid.at( 1, 0 )) + accessor( grid.at( 0, 1 )));
-   accessor( grid.at( 0, grid.N+1 )) = 0.5f * ( accessor( grid.at( 1, grid.N+1 )) + accessor( grid.at( 0, grid.N )));
-   accessor( grid.at( grid.N+1, 0 )) = 0.5f * ( accessor( grid.at( grid.N, 0 )) + accessor( grid.at(grid.N+1, 1 )));
-   accessor( grid.at( grid.N+1, grid.N+1 )) = 0.5f * ( accessor( grid.at( grid.N, grid.N+1 )) + accessor( grid.at( grid.N+1, grid.N )));
+   accessor( src.at( 0, 0 )) = 0.5f * ( accessor( src.at( 1, 0 )) + accessor( src.at( 0, 1 )));
+   accessor( src.at( 0, Grid::N+1 )) = 0.5f * ( accessor( src.at( 1, src.N+1 )) + accessor( src.at( 0, Grid::N )));
+   accessor( src.at( Grid::N+1, 0 )) = 0.5f * ( accessor( src.at( Grid::N, 0 )) + accessor( src.at(Grid::N+1, 1 )));
+   accessor( src.at( Grid::N+1, Grid::N+1 )) = 0.5f * ( accessor( src.at( Grid::N, Grid::N+1 )) + accessor( src.at( Grid::N+1, Grid::N )));
 }
 
 // drawing stuff
 
-FluidSystem::FluidSystem(int grid_size = 50, int dx_ = 10, int dy_ = 10, float time_step = (1.0f/60f), ) : grid(Grid(grid_size, dx, dy)), oldGrid(Grid(grid_size, dx, dy)), dt(time_step), diffusion(diff_), viscosity(vics_), fluid_pass(-1, fluid_pass_input, {fluid_vertex_shader, fluid_geometry_shader, particle_fragment_shader}, {/*uniforms*/}, {"fragment_color"}){
+FluidSystem::FluidSystem(int grid_size, int dx_, int dy_, float time_step, float diff_, float visc_ ) : grid(Grid(grid_size, dx, dy)), oldGrid(Grid(grid_size, dx, dy)), dt(time_step), diffusion(diff_), viscosity(visc_), fluid_pass(-1, fluid_pass_input, {fluid_vertex_shader, fluid_geometry_shader, particle_fragment_shader}, {/*uniforms*/}, {"fragment_color"}){
                     getPointsForScreen(particles, densities, indices);
                     fluid_pass_input.assign(0, "vertex_position", particles.data(), particles.size(), 4, GL_FLOAT);
                     fluid_pass_input.assign(1, "density", densities.data(), densities.size(), 1, GL_FLOAT);
@@ -209,16 +194,10 @@ void FluidSystem::getPointsForScreen(vector<vec4>& particles, vector<vec1>& dens
     particles.clear();
     densities.clear();
     indices.clear();
-    int count = 0;
-    for (int i = 1; i < grid.N + 1; ++i) {
-        for (int j = 1; j < grid.N + 1; ++j) {
-            Cell& c = grid.at(i, j);
-            vec4 particle = toScreen(c.particle);
-            particles.push_back(particle);
-            densities.push_back(vec1(c.density));
-            indices.push_back(uvec1(count));
-            ++count;
-        }
+    for (Cell& c : grid) {
+        particles.push_back( toScreen(iToPos(c.i) ));
+        densities.push_back(vec1(c.d));
+        indices.push_back(uvec1(c.i));
     }
 }
 
