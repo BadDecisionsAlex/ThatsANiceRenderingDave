@@ -17,7 +17,8 @@
 #include "GravitySystem.h"
 #include "SpaceSystem.h"
 #include "OpenGLUtil.h"
-#include "Fluids.h"
+#include "SmokeSystem.h"
+#include "MassParticle.h"
 
 using std::vector;
 using glm::vec2;
@@ -33,8 +34,7 @@ int main(int argc, char* argv[])
     GLFWwindow* window = openGL.setup();
     GUI gui(window);
 
-    FluidSystem* rootSystem = new FluidSystem();
-    
+    SmokeSystem* rootSystem = new SmokeSystem();
     rootSystem->width = window_width;
     rootSystem->height = window_height;
     rootSystem->setup();
