@@ -79,8 +79,8 @@ int main(int argc, char* argv[])
     vector<ParticleSystem*> systems;
     
     SpaceSystem* particleSystem = new SpaceSystem();
-    particleSystem->width = window_width;
-    particleSystem->height = window_height;
+    particleSystem->width = window_width * 8;
+    particleSystem->height = window_height * 8;
     particleSystem->setup();
     particleSystem->prepareDraw();
     systems.push_back(particleSystem);
