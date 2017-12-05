@@ -56,167 +56,71 @@ void FluidSystem::update( Accessor var ){
             var(oldGrid.at(r,c)) = var(grid.at(r,c));
 }
 
-void FluidSystem::swap( Accessor var ){
+void FluidSystem::swap( Accessor varA, Accessor varB, Grid& srcA, Grid& srcB ){
     float t;
     for(int r=0; r < Grid::N+2; ++r)
         for(int c=0; c < Grid::N+2; ++c){
-            t = var(grid.at(r,c));
-            var(oldGrid.at(r,t)) = var(grid.at(r,c));
-            var(grid.at(r,t)) = t;
+            t = varA(srcA.at(r,c));
+            varB(srcB.at(r,t)) = varA(srcA.at(r,c));
+            varA(srcA.at(r,t)) = t;
         }
 }
 
-void FluidSystem::interpolate( vec2 pos, Accessor var ){
-
+void linearSolver( Accessor varA, Access varB, Grid& srcA, Grid& srcB, float scalarNumerator, float scalarDenominator ){
+   for( int k=0; k<20; ++c ){
+        for( int r=1; r < Grid::N+1; ++r ){
+            for( int c=1; c < Grid::N+1; ++c ){
+                varA(srcA.at(r,c)) = ( varB(srcB.at(r,c)) + scalarNumerator * ( varA(srcA.at(r-1,c)) + 
+                            varA(srcA.at(r+1,c)) + varA(srcA.at(r,c-1)) + varA(srcA.at(r,c+1)) )) / scalarDenominator;
+            }}
+        fixBoundary( varA, srcA );}
 }
 
-Cell FluidSystem::interpolate(vec2 position, Accessor var) {
-    // given a position find the resident cell first
-    int cellX = int(position.x / oldGrid.dx) + 1;
-    int cellY = int(position.y / oldGrid.dy) + 1;
-    Cell& homeCell = grid.at(cellX, cellY);
-    homeCell.dist = glm::distance(homeCell.particle, position);
-    if (homeCell.dist < 0.5f){
-        return homeCell;
-    }
-    // all this garbo is to find our 4 nearest neighbor cells
-    struct LessThanByDistance{
-        bool operator()(const Cell& lhs, const Cell& rhs) const{
-            return lhs.dist > rhs.dist;
-        }
-    };
-    std::priority_queue<Cell, std::vector<Cell>, LessThanByDistance> neighbors;
-    for (int i = -1; i <= 1; ++i) {
-       for(int j = -1; j <= 1; ++j) {
-           if(!(i == 0 && j == 0)){
-               Cell& c = grid.at(cellX + i, cellY + j);
-               c.dist = glm::distance(c.particle, position);
-               neighbors.push(c);
-           }
-       }
-    }
-    neighbors.push(homeCell);
-    Cell square[4];
-    for (int k = 0; k < 4; ++k) {
-        square[k] = neighbors.top();
-        neighbors.pop();
-    }
-    // end of garbo
-    // this grabo is to determine what center points are on a unit square
-    // sort by x values
-    for (int l = 0; l < 3; ++l) {
-        for (int i = 0; i < 3; ++i) {
-           if(square[i].particle.x > square[i+1].particle.y)
-               std::swap(square[i], square[i + 1]);
-        }
-    }
-    //fix y values
-    if(square[0].particle.y > square[1].particle.y)
-        std::swap(square[0], square[1]);
-    // look at https://en.wikipedia.org/wiki/Bilinear_interpolation 0 1 2 3 (q11, q12, q21, q22)
-    // we are putting the position of the advected particle in a unit square
-    vec2 q11 = square[0].particle;
-    position = position - q11;
-    position.x = position.x / grid.dx;
-    position.y = position.y / grid.dy;
-    Cell c;
-    // iterppolate whatever you want here velocity pressure etc.
-    c.density = square[0].density * (1 - position.x) * (1 - position.y) + square[1].density * (1 - position.x) * position.y + square[2].density * position.x * (1 - position.y) + square[3].density * position.x * position.y;
-    return c;
+void FluidSystem::diffuse( Accessor varA, Accessor varB, Grid& srcA, Grid& srcB ){
+    float scalarNumerator = dt * diffusion * Grid::N * Grid::N;
+    linearSolver( varA, varB, srcA, srcB, scalarNumberator, (1.0f + 4.0f * scalarNumerator) );
 }
 
-void FluidSystem::advectVelocity(){
-    std::cout << "Advect Velocity\n";
-    for (int i = 1; i < grid.N + 1; ++i) {
-        for (int j = 1; j < grid.N + 1; ++j) {
-            Cell& currentCell = grid.at(i, j);
-            vec2 particleCell = grid.cellToParticle(i, j);
-            vec2& vel = currentCell.velocity;
-            vec2 backwardStepParticle = particleCell - ( dt * currentCell.velocity );
-            Cell iCell = interpolate(backwardStepParticle);
-            currentCell.velocity = iCell.velocity;
+void FluidSystem::advect( Accessor varA, Accessor varB, Grid& srcA, Grid& srcB ){
+    float dt0 = dt * Grid::N;
+    for( int r=1; r < Grid::N+1; ++r ){
+        for( int c=1; c < Grid::N+1; ++c ){
+            Cell& currentCell = srcA.at(r,c);
+            vec2 backStep = currentCell.centerPosition() - vec2( dt * currentCell.vx, dt * currentCell.vy );
+            
+            // check bounds
+            float upper = Grid::N + 0.5f;
+            if( backStep.x < 0.5f ) backStep[0] = 0.5f;
+            if( backStep.y < 0.5f ) backStep[1] = 0.5f;
+            if( backStep.x >= upper ) backStep[0] = upper;
+            if( backStep.y >= upper ) backStep[1] = uppper;
+            
+            ivec2 backCoord = grid.positionToCoordinates( backstep );     
+            int br = backCords[0];
+            int bc = backCoord[1];    
+            float weightWest = float(backCoord.x) - bc;
+            float weightEast = 1.0f - weightWest;
+            float weightNorth = float(backCoord.y) - br;
+            float weightSouth = 1.0f - weightNorth;
+            
+            varA(srcA.at(r,c)) = weightEast * ( weightSouth * varB(srcB(br, bc)) + weightNorth * varB(srcB(br, bc+1)) )
+                              + weightWest * ( weightSouth * varB(srcB(br+1, bc)) + weightNorth * varB(srcB(br+1, bc+1)));
         }
     }
-}
-
-void FluidSystem::advectDensity(){
-    for (int i = 1; i < grid.N + 1; ++i) {
-        for (int j = 1; j < grid.N + 1; ++j) {
-            Cell& currentCell = grid.at(i, j);
-            vec2 particleCell = grid.cellToParticle(i, j);
-            vec2 backwardStepParticle = particleCell - dt * currentCell.velocity;
-            Cell iCell = interpolate(backwardStepParticle);
-            currentCell.density= iCell.density;
-        }
-    }
-}
-
-void FluidSystem::diffuseVelocity(){
-    std::stringstream ss;
-    ss << "Diffusing Velocity\n";
-    float viscoity = grid.N * grid.N * 0.2;
-    for (int k = 0; k < 20; ++k) {
-        ss << "K : " << k << '\n';
-        for (int i = 1; i < grid.N + 1; ++i) {
-            for (int j = 1; j < grid.N + 1; ++j) {
-                ss << '\t' << '(' << i << ", " << j << ") :\t";
-                Cell& currentCell = grid.at(i, j);
-                Cell& north = oldGrid.at(i, j - 1);
-                Cell& south = oldGrid.at(i, j + 1);
-                Cell& east = oldGrid.at(i + 1, j);
-                Cell& west = oldGrid.at(i - 1, j);
-                //make left hand just horizonatal component same for the right hand
-                vec2 leftHandLaplace = ( 1.0f / (grid.dx * grid.dx)) * (east.velocity - (2.0f * currentCell.velocity) + west.velocity);
-                vec2 rightHandLaplace = ( 1.0f / (grid.dy * grid.dy)) * (south.velocity - (2.0f * currentCell.velocity) + north.velocity);
-                vec2 laplace = viscoity * (leftHandLaplace + rightHandLaplace);
-                ss << "Velocity : " << currentCell.velocity;
-                ss << "\tLaplace : " << laplace << std::endl;
-                currentCell.velocity = dt * laplace;
-            }
-        }
-        fixBoundary<vec2>(FluidSystem::velocity);
-    }
-    //std::cout << ss.str();
-}
-
-void FluidSystem::diffuseDensity(){
-    float viscoity = grid.N * grid.N * 0.2;
-    for (int k = 0; k < 20; ++k) {
-        for (int i = 1; i < grid.N + 1; ++i) {
-            for (int j = 1; j < grid.N + 1; ++j) {
-                Cell& currentCell = grid.at(i, j);
-                Cell& north = oldGrid.at(i, j - 1);
-                Cell& south = oldGrid.at(i, j + 1);
-                Cell& east = oldGrid.at(i + 1, j);
-                Cell& west = oldGrid.at(i - 1, j);
-                //make left hand just horizonatal component same for the right hand
-                float leftHandLaplace = (east.density - (2.0f * currentCell.density) + west.density) / (grid.dx * grid.dx);
-                float rightHandLaplace = (south.density - (2.0f * currentCell.density) + north.density) / (grid.dy * grid.dy);
-                float laplace = (leftHandLaplace + rightHandLaplace) * viscoity;
-                currentCell.density = laplace;
-                currentCell.pressure = currentCell.density / (grid.dx * grid.dy);
-            }
-        }
-    }
+    fixBoundary( varA, srcA );
 }
 
 void FluidSystem::project(){
-    for (int i = 1; i < grid.N + 1; ++i) {
-        for (int j = 1; j < grid.N + 1; ++j) {
+    for (int r = 1; r < grid.N + 1; ++r) {
+        for (int c = 1; c < grid.N + 1; ++c) {
             // compute the gradient between each neighbors pressure
-            Cell& currentCell = grid.at(i, j);
-            Cell& north = oldGrid.at(i, j - 1);
-            Cell& south = oldGrid.at(i, j + 1);
-            Cell& east = oldGrid.at(i + 1, j);
-            Cell& west = oldGrid.at(i - 1, j);
-            vec2 southGrad = vec2(0.0f, currentCell.pressure - south.pressure);
-            vec2 northGrad = vec2(0.0f, currentCell.pressure - north.pressure);
-            vec2 eastGrad = vec2(currentCell.pressure - east.pressure, 0.0f);
-            vec2 westGrad = vec2(currentCell.pressure - west.pressure, 0.0f);
-            vec2 avgGrad = (southGrad + northGrad + eastGrad + westGrad) / 4.0f;
-            currentCell.velocity = currentCell.velocity - avgGrad;
+            Cell& currentCell = grid.at(r, c);
+            currentCell.div = -0.5f * Grid::N * (grid.at(r+1,c).vx - grid.at(r-1).vx + grid.at(r,c+1).vy - grid.at(r,c-1).vy) / Grid::N;
+            currentCell.p = 0.0f;
         }
-
+    fixBoundary( divergence );
+    fixBoundary( pressure );
+    linearSolver( pressure, )
     }
 }
 
@@ -257,12 +161,10 @@ void FluidSystem::fixBoundary( FluidSystem::flag f ){
 
 // drawing stuff
 
-FluidSystem::FluidSystem(int grid_size, int dx, int dy, float time_step) : grid(Grid(grid_size, dx, dy)), oldGrid(Grid(grid_size, dx, dy)), dt(time_step), fluid_pass(-1, fluid_pass_input, {fluid_vertex_shader, fluid_geometry_shader, particle_fragment_shader}, {/*uniforms*/}, {"fragment_color"}){
+FluidSystem::FluidSystem(int grid_size = 50, int dx_ = 10, int dy_ = 10, float time_step = (1.0f/60f), ) : grid(Grid(grid_size, dx, dy)), oldGrid(Grid(grid_size, dx, dy)), dt(time_step), diffusion(diff_), viscosity(vics_), fluid_pass(-1, fluid_pass_input, {fluid_vertex_shader, fluid_geometry_shader, particle_fragment_shader}, {/*uniforms*/}, {"fragment_color"}){
                     getPointsForScreen(particles, densities, indices);
                     fluid_pass_input.assign(0, "vertex_position", particles.data(), particles.size(), 4, GL_FLOAT);
                     fluid_pass_input.assign(1, "density", densities.data(), densities.size(), 1, GL_FLOAT);
-                    std::cout << "\n\nGrid : \n" << grid << "\n\n" << std::flush;
-                    std::cout << "OldGrid : \n" << oldGrid << "\n\n" << std::flush;
                 }
 
 void FluidSystem::prepareDraw() {

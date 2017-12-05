@@ -41,7 +41,8 @@ struct Cell {
     float den;              // density
     float p;                // pressure
     float div;              // divergence
-    float dist;
+    // To avoid additional memory slots these values may become unstable inside of an operation function.
+    // However they will always be stable at the end of step.
 
     // Class Variables
     // change printvar to change which value we print by << operator
@@ -113,6 +114,10 @@ struct Grid{
     Grid( int n_ = 50, float dx_ = 10, float dy_ = 10 ) : grid(vector<Cell>( (N+2) * (N+2) )) { N=n_; dx=dx_; dy=dy_; printSpacing=3; }
 
     // Functions
+    //
+    // Remember Coords are stored (row, column) and Positions are stored (x, y)
+    // it is very easy to confuse the horizontal and vertical mapping conversion!
+    //
     Cell& at( int r, int c ) { return grid[ r * N + c ]; }
     const Cell& at( int r, int c ) const { return grid[ r * N + c]; }
     static ivec2 iToCo( int i ) { return ivec2( i / N, i % N); }
@@ -120,14 +125,14 @@ struct Grid{
     static int coToI( int r, int c ) { return r * N + c; }
     static int coToI( ivec2 v )  { return coToI( v.x, v.y ); }
     #define coordinatesToIndex(...) { coToI(__VA_ARGS__); }
-    static vec2 iToPos( int i ) { return vec2( float( i / N ) * dx + 0.5f, float( i % N ) * dy + 0.5f ); }
+    static vec2 iToPos( int i ) { return vec2( float( i % N ) * dx + 0.5f, float( i / N ) * dy + 0.5f ); }
     static vec2 coToPos( int r, int c ) { return vec2( float(r) * dx + 0.5f, float(c) * dy + 0.5f ); }
-    static vec2 coToPos( vec2 v ) { return coToPos( v.x, v.y ); }
+    static vec2 coToPos( ivec2 v ) { return coToPos( v.y, v.x ); }
     #define cellToParticle(...) { coToPos(__VA_ARGS__); }
-    static int posToI( float x, float y ) { return int(x/dx) * N + int(y/dy); }
+    static int posToI( float x, float y ) { return int(y/dy) * N + int(x/dx); }
     static int posToI( vec2 v ){return posToI( v.x, v.y );}
     #define positionToIndex(...) { posToI(__VA_ARGS__); }
-    static ivec2 posToCo( float x, float y ) { return vec2( x/dx,y/dy ); }
+    static ivec2 posToCo( float x, float y ) { return ivec2( y/dy, x/dx ); }
     static ivec2 posToCo( vec2 v ) { return posToCo( v.x, v.y ); }
     #define positionToCoordinates(...) { posToCo(__VA_ARGS__); }
 
@@ -141,7 +146,7 @@ struct Grid{
 
 class FluidSystem : public ParticleSystem {
 public:
-    FluidSystem(int grid_size, int dx_, int dy_, float time_step);
+    FluidSystem(int grid_size, int dx_, int dy_, float time_step, float diff_, float visc_);
 
     // Draw Functions
     void step();
@@ -152,21 +157,21 @@ public:
     void draw();
 
 private:
-    // Member Variables
+    // Member Variables 
     Grid grid;
     Grid oldGrid;
     float dt;
+    float diffusion;
+    float viscosity;
 
     // Functions
     void advect();
-    void interpolate( vec2 pos, Accessor var );
-    void diffuse( Accessor var );
-    void project( Accessor var );
-    void linearSolver( Accessor, float scalarNumerator, float scalarDenominator );
-    void fixBoundary( Accessor var );
+    void diffuse( Accessor varA, Accessor varB, Grid& srcA, Grid& srcB );
+    void project( Accessor varA, Accessor varB, Grid& srcA, Grid& srcB );
+    void linearSolver( Accessor varA, Accessor varB, Grid& srcA, Grid& srcB, float scalarNumerator, float scalarDenominator );
+    void fixBoundary( Accessor var, Grid& src );
     void update( Accessor var ); // moves a value from grid to oldGrid
-    void swap( Accessor var ) ;
-    Cell imaginationHelper( Cell& a, Cell& b, Cell& c, Cell& d, float rA, float rB, float rC, float rD );
+    void swap( Accessor varA, Accessor varB, Grid& srcA, Grid& srcB ) ;
 
     //Rendering (Could be made simpler)
     RenderDataInput fluid_pass_input;
