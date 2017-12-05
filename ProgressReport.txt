@@ -1,0 +1,29 @@
+Matt Ruston
+Alex Ameen
+Joshua Cristol
+
+So far we have made fairly good progress. Here is what we each have been working on:
+
+Alex Ameen:
+Created a physics system that handles collision between particles as well as the scene boundaries. Uses verlet particles for handling velocity and collisions.
+Also has been working on writing the physics for a fluid system.
+
+Joshua Cristol:
+Created a grid system that improves the performance of collision detection so that the system can handle more particles. Has also been helping on writing the fluid system.
+
+Matt Ruston:
+Created a simple system where particles are pulled towards a gravitational center. Expanded on that to also create a simple smoke system that makes an effect similar to a cloud. The smoke system can also work as an emitter, and, with some color adjustments in the shader, can look like a simple fire animation.
+
+We have been looking at multiple sources to see how different people have approached making particle systems. I don't have all the sources we have been looking at, but here are some:
+
+
+Tutorials looking at using verlet particles for physics: https://www.youtube.com/watch?v=3HjO_RGIjCU
+
+Particle system implementation: https://github.com/diwi/PixelFlow
+
+Blog with some fluid and smoke simulations: http://prideout.net/blog/?p=58
+
+
+Each of these sources essentially shows different ways of handling a system that manipulates a lot of simple point data structures, and renders them in different ways. Some of the systems use a grid of information instead of actual points to act as averages that represent a lot of points instead of having to actually model them all. This improves performance while still allowing for pretty good fluid effects. In the end, the difficulty for most of these is just tweaking the effects until they behave in a way that looks good.
+
+Our plan to get everything done on time is just to keep working on making effects, and refining the ones we have to run faster, and look better.

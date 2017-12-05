@@ -34,19 +34,44 @@ int main(int argc, char* argv[])
     GLFWwindow* window = openGL.setup();
     GUI gui(window);
 
+    vector<ParticleSystem*> systems;
+
+    SpaceSystem* particleSystem = new SpaceSystem();
+    particleSystem->width = window_width;
+    particleSystem->height = window_height;
+    particleSystem->setup();
+    particleSystem->prepareDraw();
+    systems.push_back(particleSystem);
+
     SmokeSystem* rootSystem = new SmokeSystem();
-    rootSystem->width = window_width;
-    rootSystem->height = window_height;
+    rootSystem->width = window_width * 2;
+    rootSystem->height = window_height * 2;
     rootSystem->setup();
     rootSystem->prepareDraw();
+    systems.push_back(rootSystem);
+    gui.delegates.push_back(rootSystem);
+    
+    // **************
+    //
+    // ANIMATION LOOP
+    //
+    // **************
+
+    std::default_random_engine generator;
+    std::normal_distribution<float> distribution( 250, 60 );
+    long counter = 1;
 
 	while (openGL.drawBool()) {
         openGL.beforeDraw();
 
-        rootSystem->step();
-        rootSystem->draw();
+        for (ParticleSystem* system : systems) {
+            //Step our systems
+            system->step();
 
-        openGL.afterDraw();
+            //TODO: Draw here
+            system->draw();
+        }
+    openGL.afterDraw();
 	}
     openGL.destroy();
 }

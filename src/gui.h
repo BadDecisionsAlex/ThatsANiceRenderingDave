@@ -4,6 +4,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <GLFW/glfw3.h>
+#include "GUIDelegate.h"
+#include <vector>
 
 class GUI {
 public:
@@ -17,6 +19,8 @@ public:
 	static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	static void MousePosCallback(GLFWwindow* window, double mouse_x, double mouse_y);
 	static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+    
+    std::vector<GUIDelegate *> delegates;
     
 private:
 	GLFWwindow* window_;
