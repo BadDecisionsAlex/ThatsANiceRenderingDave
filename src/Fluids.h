@@ -173,6 +173,7 @@ private:
     void interpolate( Accessor var );
     void diffuse( Accessor var );
     void project( Accessor var );
+    void linearSolver( Accessor, float scalar );
     void fixBoundary( Accessor var );
     void update( Accessor var ) { oldGrid.var = grid.var; } // moves a value from grid to oldGrid
     void swap( Accessor var ) { float& t = oldGrid.var; oldGrid.var = grid.var; grid.var = t; };
