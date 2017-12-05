@@ -37,7 +37,7 @@ using glm::vec3;
 using glm::vec4;
 using glm::uvec1;
 
-int window_width = 1000, window_height = 1000;
+int window_width = 700, window_height = 700;
 const std::string window_title = "Particles";
 
 // FIXME: Add more shaders here.
@@ -75,19 +75,23 @@ int main(int argc, char* argv[])
 {
 	GLFWwindow *window = init_glefw();
     GUI gui(window);
-
-    //Setup gravity system
-//    vector<VerletParticle> starterParticles;
-//    starterParticles.push_back(VerletParticle(100, 100));
-//    GravitySystem* rootSystem = new GravitySystem(starterParticles);
+    
+    vector<ParticleSystem*> systems;
+    
+//    SpaceSystem* particleSystem = new SpaceSystem();
+//    particleSystem->width = window_width;
+//    particleSystem->height = window_height;
+//    particleSystem->setup();
+//    particleSystem->prepareDraw();
+//    systems.push_back(particleSystem);
     
     SmokeSystem* rootSystem = new SmokeSystem();
-    rootSystem->width = window_width;
-    rootSystem->height = window_height;
+    rootSystem->width = window_width * 2;
+    rootSystem->height = window_height * 2;
     rootSystem->setup();
-    
-    //Do initial prepare
     rootSystem->prepareDraw();
+    systems.push_back(rootSystem);
+    gui.delegates.push_back(rootSystem);
     
     // **************
     //
@@ -116,22 +120,15 @@ int main(int argc, char* argv[])
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glCullFace(GL_BACK);
         
-        //Step our systems
-        rootSystem->step();
-
-        // Make our updates to physics and scene.
-//        ++counter;
-//        if (counter % 5 == 0) {
-//            VerletParticle newParticle(distribution(generator), distribution(generator));
-//            rootSystem->particles.push_back(newParticle);
-//
-//            //prepare after changes
-//            rootSystem->prepareDraw();
-//        }
-
-        //TODO: Draw here
-        rootSystem->draw();
-
+        
+        for (ParticleSystem* system : systems) {
+            //Step our systems
+            system->step();
+            
+            //TODO: Draw here
+            system->draw();
+        }
+        
 		// Poll and swap.
 		glfwPollEvents();
 		glfwSwapBuffers(window);

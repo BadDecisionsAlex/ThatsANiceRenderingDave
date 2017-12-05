@@ -24,8 +24,22 @@ public:
     void prepareDraw();
     void draw();
     
+    void keyWasPressed(int keyCode) {
+        
+    }
+    
+    void mouseDragged(float x, float y) {
+        mouse = vec3(x * 2, y * 2, 0);
+    }
+    
+    void mouseStateChange(bool dragging) {
+        isDragging = dragging;
+    }
+    
 private:
     vec3 center;
+    vec3 mouse;
+    bool isDragging = false;
     int stepCount = 0;
     
     //Rendering (Could be made simpler)

@@ -1,6 +1,6 @@
 R"zzz(#version 330 core
 layout (points) in;
-layout (points, max_vertices = 100) out;
+layout (points, max_vertices = 300) out;
 in vec4 velocity[];
 in float weight[];
 out float alpha;
@@ -10,8 +10,8 @@ float size = 20;
 float half_size;
 
 void addPoint(vec4 point, int depth) {
-    float x = ((2.0f * point[0]) / float(2000)) - 1.0f;
-    float y = ((2.0f * point[1]) / float(2000)) - 1.0f;
+    float x = ((2.0f * point[0]) / float(1400)) - 1.0f;
+    float y = ((2.0f * point[1]) / float(1400)) - 1.0f;
     vec4 p = vec4(x, y, point[2], 1.0);
     
     //max depth = 5
@@ -30,8 +30,8 @@ void addPoint(vec4 point, int depth) {
     }
     
     //TURN ON FOR FIRE
-    float up = 1 - max(0.0, velocity[0][1]);
-    color = vec4(up, 0.3, 0.0, alpha);
+//    float up = 1 - max(0.0, velocity[0][1]);
+//    color = vec4(1.0, 0.3, 0.0, 1);
     
     int point_size =  2 * int((size + 2) * (1.0 / depth));
     

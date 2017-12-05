@@ -10,17 +10,15 @@
 #include "Shaders.h"
 
 #define NUMBER_OF_PARTICLES 500.0
-#define EMITTER true
+#define EMITTER false
 
 void SmokeSystem::setup() {
     //Add particles
     if (!EMITTER) {
         for (int c = 0; c < NUMBER_OF_PARTICLES; ++c) {
-            int x = rand() % 500 + 750;
-            int y = rand() % 500 + 750;
-            
-            float dx = (rand() % 1000) / 500.0 - 1;
-            float dy = (rand() % 1000) / 500.0 - 1;
+            int coverage = 500;
+            int x = rand() % coverage + (width / 2 - coverage / 2);
+            int y = rand() % coverage + (height / 2 - coverage / 2);
             
             MassParticle particle = MassParticle(vec3(x, y, 0));
             particle.velocity = vec3(0, 0, 0);
@@ -54,14 +52,28 @@ void SmokeSystem::getPointsForScreen(vector<vec4>& points, vector<vec4>& velocit
 }
 
 vec4 SmokeSystem::toScreen(const vec3& point, int id) {
-//    float ndcX = ((2.0f * point.x) / float(width * 2)) - 1.0f;
-//    float ndcY = ((2.0f * point.y) / float(height * 2)) - 1.0f;
     float z = -id / (float(particles.size() + 1));
     return vec4(point.x, point.y, z, 1.0);
 }
 
 void SmokeSystem::step() {
     
+    stepCount += 3;
+    if (stepCount >= 360) {
+        stepCount = 0;
+    }
+    
+    float r = (stepCount / 360.0) * (2 * 3.14159);
+    
+    vec3 c1 = vec3(cosf(r), sinf(r), 0);
+    vec3 c2 = vec3(-sinf(r), cosf(r), 0);
+    vec3 c3 = vec3(0, 0, 1);
+    glm::mat3 m(c1, c2, c3);
+    
+    vec3 direction(20, 0, 0);
+    center = vec3(width / 2, height / 2, 0) + (m * direction);
+    
+    //Emit new particles
     if (EMITTER) {
         vector<int> toRemove;
         for (int x = 0; x < particles.size(); ++x) {
@@ -92,28 +104,26 @@ void SmokeSystem::step() {
         prepareDraw();
     }
     
-    
-    stepCount += 3;
-    if (stepCount >= 360) {
-        stepCount = 0;
-    }
-
-    float r = (stepCount / 360.0) * (2 * 3.14159);
-
-    vec3 c1 = vec3(cosf(r), sinf(r), 0);
-    vec3 c2 = vec3(-sinf(r), cosf(r), 0);
-    vec3 c3 = vec3(0, 0, 1);
-    glm::mat3 m(c1, c2, c3);
-
-    vec3 direction(20, 0, 0);
-    center = vec3(1000, 500, 0) + (m * direction);
-    
     for (MassParticle& p : particles) {
         if (center != p.p) {
             vec3 grav = glm::normalize(center - p.p);
             grav *= ((5.333 / 600.0) * 9.807);
             p.velocity += grav;
         }
+        
+        if (isDragging && mouse != p.p) {
+            vec3 m = glm::normalize(mouse - p.p);
+//            float distance = -(5.333 / 600.0) * (fmin(fmax(0, 300 - glm::length(mouse - p.p)), 300)) / 2;
+            
+//            float distance = (glm::length(mouse - p.p) <= 300) ? 150 : 0;
+//            distance *= -(5.33 / 600.0);
+//            p.velocity += m * distance;
+            
+            if (glm::length(mouse - p.p) <= 100) {
+                p.velocity = m * -3.0f;
+            }
+        }
+        
         
         p.p += p.velocity;
     }
