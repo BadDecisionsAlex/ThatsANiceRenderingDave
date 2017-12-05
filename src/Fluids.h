@@ -104,15 +104,15 @@ struct Grid{
     // Remember Coords are stored (row, column) and Positions are stored (x, y)
     // it is very easy to confuse the horizontal and vertical mapping conversion!
     //
-    Cell& at( int r, int c ) { return grid[ r * N + c ]; }
-    const Cell& at( int r, int c ) const { return grid[ r * N + c]; }
-    static ivec2 iToCo( int i ) { return ivec2( i / N, i % N); }
-    static int coToI( int r, int c ) { return r * N + c; }
+    Cell& at( int r, int c ) { return grid[ r * (N+2) + c ]; }
+    const Cell& at( int r, int c ) const { return grid[ r * (N+2) + c]; }
+    static ivec2 iToCo( int i ) { return ivec2( i / (N+2), i % (N+2)); }
+    static int coToI( int r, int c ) { return r * (N+2) + c; }
     static int coToI( ivec2 v )  { return coToI( v.x, v.y ); }
-    static vec2 iToPos( int i ) { return vec2( float( i % N ) * dx + 0.5f, float( i / N ) * dy + 0.5f ); }
+    static vec2 iToPos( int i ) { return vec2( float( i % (N+2) ) * dx + 0.5f, float( i / (N+2) ) * dy + 0.5f ); }
     static vec2 coToPos( int r, int c ) { return vec2( float(r) * dx + 0.5f, float(c) * dy + 0.5f ); }
     static vec2 coToPos( ivec2 v ) { return coToPos( v.y, v.x ); }
-    static int posToI( float x, float y ) { return int(y/dy) * N + int(x/dx); }
+    static int posToI( float x, float y ) { return int(y/dy) * (N+2) + int(x/dx); }
     static int posToI( vec2 v ){return posToI( v.x, v.y );}
     static ivec2 posToCo( float x, float y ) { return ivec2( y/dy, x/dx ); }
     static ivec2 posToCo( vec2 v ) { return posToCo( v.x, v.y ); }

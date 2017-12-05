@@ -227,6 +227,12 @@ vec4 FluidSystem::toScreen(const vec2& point) {
 void FluidSystem::step() {
     // get force input from ui
     
+    // Spoofing UI changes here.
+    for(Cell& c : oldGrid)
+        c.den += 1.0f;
+    for(Cell& c : oldGrid)
+        c.vx += 0.1f;
+    
     // Step Velocity
     add( velocityX, velocityX, grid, oldGrid );
     add( velocityY, velocityX, grid, oldGrid );
@@ -248,17 +254,18 @@ void FluidSystem::step() {
     swap( density, density, oldGrid, grid );
     advect( density, grid, 0  );
 
+    //Grid::printVar = velocityY;
     std::cout << grid << std::endl;
 }
 
 void FluidSystem::setup() {
     // give things an intial density
-    for (int r = 1; r < grid.N + 1; ++r ) {
-        for (int c = 1; c < grid.N + 1; ++c ) {
+    for (int r = 0; r < grid.N + 2; ++r ) {
+        for (int c = 0; c < grid.N + 2; ++c ) {
             Cell& currentCell = grid.at(r, c);
             currentCell.i = Grid::coToI(r,c);
             currentCell.vx = 0.0f;
-            currentCell.vy = 0.001f;
+            currentCell.vy = 1.0f;
         }
     }
     getPointsForScreen(particles, densities, indices);
