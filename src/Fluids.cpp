@@ -8,6 +8,7 @@
 #include <glm/gtx/string_cast.hpp>
 #include "Fluids.h"
 #include <functional>
+#include <queue>
 #include "Shaders.h"
 using std::function;
 
@@ -42,7 +43,7 @@ std::ostream& operator<<( std::ostream& os, const Grid& g ){
         if( r == g.N+1 )
             continue;
         for( int n=2; n<printSpacing; ++n )
-            ss << std::setw( printSpacing ) << "" << std::setfill(' ') << std::setw( printSpacing * g.N ) 
+            ss << std::setw( printSpacing ) << "" << std::setfill(' ') << std::setw( printSpacing * g.N )
                 << "" << std::setfill('.') <<  std::setw( printSpacing+1 ) << '\n';
     }
     return os << ss.str();
@@ -51,6 +52,62 @@ std::ostream& operator<<( std::ostream& os, const Grid& g ){
 // ************
 // FluidSystem
 // ************
+Cell FluidSystem::interpolate(vec2 position) {
+    // given a position find the resident cell first
+//    std::cout << "Interpolaing\n\t(x,y) : (" << position.x << ", " << position.y << ")\n" << std::flush;
+    int cellX = int(position.x / oldGrid.dx) + 1;
+    int cellY = int(position.y / oldGrid.dy) + 1;
+//    std::cout << "\tCell(x,y) : (" << cellX << ", " << cellY << ")\t" << std::flush;
+    Cell& homeCell = grid.at(cellX, cellY);
+    homeCell.dist = glm::distance(homeCell.particle, position);
+    if (homeCell.dist == 0.0f){
+        return homeCell;
+    }
+    // all this garbo is to find our 4 nearest neighbor cells
+    struct LessThanByDistance{
+        bool operator()(const Cell& lhs, const Cell& rhs) const{
+            return lhs.dist > rhs.dist;
+        }
+    };
+    std::priority_queue<Cell, std::vector<Cell>, LessThanByDistance> neighbors;
+    for (int i = -1; i <= 1; ++i) {
+       for(int j = -1; j <= 1; ++j) {
+           if(!(i == 0 && j == 0)){
+               Cell& c = grid.at(cellX + i, cellY + j);
+               c.dist = glm::distance(c.particle, position);
+               neighbors.push(c);
+           }
+       }
+    }
+    neighbors.push(homeCell);
+    Cell square[4];
+    for (int k = 0; k < 4; ++k) {
+        square[k] = neighbors.top();
+        neighbors.pop();
+    }
+    // end of garbo
+    // this grabo is to determine what center points are on a unit square
+    // sort by x values
+    for (int l = 0; l < 3; ++l) {
+        for (int i = 0; i < 3; ++i) {
+           if(square[i].particle.x > square[i+1].particle.y)
+               std::swap(square[i], square[i + 1]);
+        }
+    }
+    //fix y values
+    if(square[0].particle.y > square[1].particle.y)
+        std::swap(square[0], square[1]);
+    // look at https://en.wikipedia.org/wiki/Bilinear_interpolation 0 1 2 3 (q11, q12, q21, q22)
+    // we are putting the position of the advected particle in a unit square
+    vec2 q11 = square[0].particle;
+    position = position - q11;
+    position.x = position.x / grid.dx;
+    position.y = position.y / grid.dy;
+    Cell c;
+    // iterppolate whatever you want here velocity pressure etc.
+    c.density = square[0].density * (1 - position.x) * (1 - position.y) + square[1].density * (1 - position.x) * position.y + square[2].density * position.x * (1 - position.y) + square[3].density * position.x * position.y;
+    return c;
+}
 
 void FluidSystem::advectVelocity(){
     std::cout << "Advect Velocity\n";
@@ -158,7 +215,7 @@ void FluidSystem::fixBoundary( FluidSystem::flag f ){
         case pressure : accessF =     ( &Cell::pressure );break;
     }
 
-    std::function<T&(Cell&)> accessor; 
+    std::function<T&(Cell&)> accessor;
     if( f == velocity )
         accessor = *reinterpret_cast<std::function<T&(Cell&)>*>( &accessV );
     else
@@ -247,14 +304,14 @@ void FluidSystem::step() {
     std::cout << grid << std::endl;
     //std::cout << "OldGrid : " << std::endl;
     //std::cout << oldGrid << std::endl;
-    
+
     // Error is in diffuseVelocity
     // **************************
     diffuseVelocity();
     // **************************
     std::cout << "Done Diffusing\nGrid : " << std::endl;
     std::cout << grid << std::endl;
-    
+
     project();
     std::copy(grid.begin(), grid.end(), oldGrid.begin());
     advectVelocity();
