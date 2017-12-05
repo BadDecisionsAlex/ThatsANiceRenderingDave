@@ -24,6 +24,7 @@ struct Cell {
     float pressure = 0.0;
     float divergence = 0.0;
     vec2 particle;
+    float dist;
 };
 typedef  vector<Cell>::iterator iterator;
 typedef  vector<Cell>::const_iterator const_iterator;

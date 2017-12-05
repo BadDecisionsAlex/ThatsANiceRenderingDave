@@ -8,6 +8,7 @@
 #include <glm/gtx/string_cast.hpp>
 #include "Fluids.h"
 #include <functional>
+#include <queue>
 #include "Shaders.h"
 using std::function;
 
@@ -69,75 +70,63 @@ Cell FluidSystem::imaginationHelper(Cell& a, Cell& b, Cell& c, Cell& d, float rA
     return imaginationCell;
 }
 
-Cell FluidSystem::interpolate(vec2 position){
-    std::cout << "Interpolaing\n\t(x,y) : (" << position.x << ", " << position.y << ")\n" << std::flush; 
+
+// write a new interpolate that uses a nearest neighbors algorithm
+Cell FluidSystem::interpolate(vec2 position) {
+    // given a position find the resident cell first
+//    std::cout << "Interpolaing\n\t(x,y) : (" << position.x << ", " << position.y << ")\n" << std::flush;
     int cellX = int(position.x / oldGrid.dx) + 1;
     int cellY = int(position.y / oldGrid.dy) + 1;
-    std::cout << "\tCell(x,y) : (" << cellX << ", " << cellY << ")\t" << std::flush; 
-    Cell& residentCell = oldGrid.at(cellX, cellY);
-    Cell& north = oldGrid.at(cellX, cellY - 1);
-    Cell& south = oldGrid.at(cellX, cellY + 1);
-    Cell& east = oldGrid.at(cellX + 1, cellY);
-    Cell& west = oldGrid.at(cellX - 1, cellY);
-    Cell& northWest = oldGrid.at(cellX - 1, cellY - 1);
-    Cell& northEast = oldGrid.at(cellX + 1, cellY - 1);
-    Cell& southWest = oldGrid.at(cellX - 1, cellY + 1);
-    Cell& southEast = oldGrid.at(cellX + 1, cellY + 1);
-    //interpolate from this cells position to the other ones find ratios basically
-    float distResidentCell = glm::distance(residentCell.particle, position);
-    std::cout << "dist : " << distResidentCell << std::endl;
-    if(distResidentCell <= 0.00001f){
-        return residentCell;
+//    std::cout << "\tCell(x,y) : (" << cellX << ", " << cellY << ")\t" << std::flush;
+    Cell& homeCell = grid.at(cellX, cellY);
+    homeCell.dist = glm::distance(homeCell.particle, position);
+    if (homeCell.dist == 0.0f){
+        return homeCell;
     }
-    // position is (right or horizontally inline)  and (below or vertically inline) the middle bottom right quad
-    Cell imaginationCell;
-    if(position.x >= cellX && position.y >= cellY){
-        float distEast = glm::distance(east.particle, position);
-        float distSouthEast = glm::distance(southEast.particle, position);
-        float distSouth = glm::distance(south.particle, position);
-        float sum = distEast + distSouthEast + distSouth + distResidentCell;
-        float ratioEast = distEast / sum;
-        float ratioSouthEast = distSouthEast / sum;
-        float ratioSouth = distSouth / sum;
-        float ratioResident = distResidentCell / sum;
-        return imaginationHelper(east, southEast, south, residentCell, ratioEast, ratioSouthEast, ratioSouth, ratioResident);
+    // all this garbo is to find our 4 nearest neighbor cells
+    struct LessThanByDistance{
+        bool operator()(const Cell& lhs, const Cell& rhs) const{
+            return lhs.dist > rhs.dist;
+        }
+    };
+    std::priority_queue<Cell, std::vector<Cell>, LessThanByDistance> neighbors;
+    for (int i = -1; i <= 1; ++i) {
+       for(int j = -1; j <= 1; ++j) {
+           if(!(i == 0 && j == 0)){
+               Cell& c = grid.at(cellX + i, cellY + j);
+               c.dist = glm::distance(c.particle, position);
+               neighbors.push(c);
+           }
+       }
     }
-    // position is (right or horizontally inline)  and (above) the middle top right quad
-    if(position.x >= cellX && position.y < cellY){
-        float distEast = glm::distance(east.particle, position);
-        float distNorthEast = glm::distance(northEast.particle, position);
-        float distNorth = glm::distance(north.particle, position);
-        float sum = distEast + distNorthEast + distNorth + distResidentCell;
-        float ratioEast = distEast / sum;
-        float ratioNorthEast = distNorthEast / sum;
-        float ratioNorth = distNorth / sum;
-        float ratioResident = distResidentCell / sum;
-        return imaginationHelper(east, northEast, north, residentCell, ratioEast, ratioNorthEast, ratioNorth, ratioResident);
+    neighbors.push(homeCell);
+    Cell square[4];
+    for (int k = 0; k < 4; ++k) {
+        square[k] = neighbors.top();
+        neighbors.pop();
     }
-    // position is (left)  and (below or vertically inline) the middle bottom left quad
-    if(position.x < cellX && position.y >= cellY){
-        float distWest = glm::distance(west.particle, position);
-        float distSouthWest = glm::distance(southWest.particle, position);
-        float distSouth = glm::distance(south.particle, position);
-        float sum = distWest + distSouthWest + distSouth + distResidentCell;
-        float ratioWest = distWest / sum;
-        float ratioSouthWest = distSouthWest / sum;
-        float ratioSouth = distSouth / sum;
-        float ratioResident = distResidentCell / sum;
-        return imaginationHelper(west, southWest, south, residentCell, ratioWest, ratioSouthWest, ratioSouth, ratioResident);
+    // end of garbo
+    // this grabo is to determine what center points are on a unit square
+    // sort by x values
+    for (int l = 0; l < 3; ++l) {
+        for (int i = 0; i < 3; ++i) {
+           if(square[i].particle.x > square[i+1].particle.y)
+               std::swap(square[i], square[i + 1]);
+        }
     }
-    // position is (left)  and (above) the middle top left quad
-    if(position.x < cellX && position.y < cellY){
-        float distWest = glm::distance(west.particle, position);
-        float distNorthWest = glm::distance(northWest.particle, position);
-        float distNorth = glm::distance(north.particle, position);
-        float sum = distWest + distNorthWest + distNorth + distResidentCell;
-        float ratioWest = distWest / sum;
-        float ratioNorthWest = distNorthWest / sum;
-        float ratioNorth = distNorth / sum;
-        float ratioResident = distResidentCell / sum;
-        return imaginationHelper(west, northWest, north, residentCell, ratioWest, ratioNorthWest, ratioNorth, ratioResident);
-    }
+    //fix y values
+    if(square[0].particle.y > square[1].particle.y)
+        std::swap(square[0], square[1]);
+    // look at https://en.wikipedia.org/wiki/Bilinear_interpolation 0 1 2 3 (q11, q12, q21, q22)
+    // we are putting the position of the advected particle in a unit square
+    vec2 q11 = square[0].particle;
+    position = position - q11;
+    position.x = position.x / grid.dx;
+    position.y = position.y / grid.dy;
+    Cell c;
+    // iterppolate whatever you want here velocity pressure etc.
+    c.density = square[0].density * (1 - position.x) * (1 - position.y) + square[1].density * (1 - position.x) * position.y + square[2].density * position.x * (1 - position.y) + square[3].density * position.x * position.y;
+    return c;
 }
 
 void FluidSystem::advectVelocity(){
