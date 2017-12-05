@@ -39,8 +39,6 @@ struct Cell {
     float vx;               // velocity in horizontal, X axis
     float vy;               // velocity in vertical, Y axis
     float den;              // density
-    float p;                // pressure
-    float div;              // divergence
     // To avoid additional memory slots these values may become unstable inside of an operation function.
     // However they will always be stable at the end of step.
 
@@ -48,7 +46,7 @@ struct Cell {
     // change printvar to change which value we print by << operator
     static Accessor printVar;
 
-    Cell( int i_ = 0, float vx_ = 0.0f, float vy_ = 0.0f, float den_ = 10.0f, float p_ = 0.0f, float div_ = 0.0f ) : i(i_), vx(vx_), vy(vy_), den(den_), p(p_), div(div_){}
+    Cell( int i_ = 0, float vx_ = 0.0f, float vy_ = 0.0f, float den_ = 10.0f ) : i(i_), vx(vx_), vy(vy_), den(den_){}
 
     // Functions
     ivec2 coord() const;
@@ -83,14 +81,14 @@ struct Cell {
 // ---------
 
 Accessor _vx( &Cell::vx );              // _vx
-const Accessor& velocityX(_vx);        // velocityX
+const Accessor& velocityX(_vx);         // velocityX
 Accessor _vy( &Cell::vy );              // _vy
 const Accessor& velocityY(_vy);         // velocityY
 Accessor _den( &Cell::den );            // _den
 const Accessor& density(_den);          // density
-Accessor _p( &Cell::p );                // _p
+Accessor _p( &Cell::vx );               // _p           //!// Lives temporarilty in .vx always pairs with oldGrid
 const Accessor& pressure(_p);           // pressure
-Accessor _div( &Cell::div );            // _div
+Accessor _div( &Cell::vy );             // _div         //!// Lives temporarilty in .vy always pairs with oldGrid
 const Accessor& divergence(_div);       // divergence
 
 // *****
@@ -165,12 +163,21 @@ private:
     float viscosity;
 
     // Functions
-    void advect();
-    void diffuse( Accessor varA, Accessor varB, Grid& srcA, Grid& srcB );
-    void project( Accessor varA, Accessor varB, Grid& srcA, Grid& srcB );
+    
+    // mixes the value of var in src to var in "grid"
+    void advect( Accessor var, Grid& src );
+    // mixes varB into varA applying scalar
+    void diffuse( Accessor varA, Accessor varB, float scalar );
+    // corrects divergence in flows
+    void project();
+    // Helper for Diffuse and Project : applies a linear interpolation between neighboring cells from srcB.varB to srcA.varB using two scalars.
     void linearSolver( Accessor varA, Accessor varB, Grid& srcA, Grid& srcB, float scalarNumerator, float scalarDenominator );
+    // Applies var from the body to the boundary cells of src
     void fixBoundary( Accessor var, Grid& src );
-    void update( Accessor var ); // moves a value from grid to oldGrid
+    // applies force/scalar from srcB to varA in srcA and applies dt
+    void add( Accessor varA, Accessor varB, Grid& srcA, Grid& srcB );
+    // moves a value from grid to oldGrid
+    void update( Accessor var );
     void swap( Accessor varA, Accessor varB, Grid& srcA, Grid& srcB ) ;
 
     //Rendering (Could be made simpler)
