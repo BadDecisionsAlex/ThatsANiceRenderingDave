@@ -11,28 +11,9 @@
 #include "Shaders.h"
 using std::function;
 
-std::ostream& operator<<( std::ostream& os, const Grid& g ){
-    int spacing = 3;
-    std::ostringstream ss;
-    for(int r=0; r<g.N+2; ++r){
-        for(int c=0; c<g.N+2; ++c){
-            if(c==0||c==g.N+1)
-                ss << std::setfill('.');
-            else if(c==1 && r != 0 && r != g.N+1)
-                ss << std::setfill(' ');
-            ss << std::setw(spacing);
-            // CHANGE THE PRINTED VALUE HERE.
-            // DONT FORGET TO ADJUST SPACING!
-            ss << int(g.at(r,c).density);
-        }
-        ss << '\n';
-        if( r == g.N+1 )
-            continue;
-        for(int n=2; n<spacing; ++n)
-            ss << std::setw(spacing) << "" << std::setfill(' ') << std::setw(spacing * g.N) << "" << std::setfill('.') <<  std::setw(spacing+1) << '\n';
-    }
-    return os << ss.str();
-}
+// ***********
+// Print Vec2
+// ***********
 
 std::ostream& operator<<( std::ostream& os, const vec2& v ){
     std::ostringstream ss;
@@ -41,24 +22,35 @@ std::ostream& operator<<( std::ostream& os, const vec2& v ){
     return os << ss.str();
 }
 
+// *****
+// Grid
+// *****
 
-Grid::Grid(int grid_size, int dx, int dy) {
-    this->N = grid_size;
-    this->dx = dx;
-    this->dy = dy;
-    this->grid = vector<Cell>((N + 2) * (N + 2));
-    for (int i = 1; i < N + 1; ++i) {
-        for (int j = 1; j < N + 1; ++j) {
-            Cell& c = this->at(i, j);
-            c.particle = cellToParticle(i, j);
+// Set Grid::printSpacing (int)     and     Cell::printVar (Accessor)   to change output.
+std::ostream& operator<<( std::ostream& os, const Grid& g ){
+    std::ostringstream ss;
+    for( int r=0; r<g.N+2; ++r ){
+        for( int c=0; c<g.N+2; ++c ){
+            if(c==0||c==g.N+1)
+                ss << std::setfill('.');
+            else if(c==1 && r != 0 && r != g.N+1)
+                ss << std::setfill(' ');
+            ss << std::setw( printSpacing );
+            ss << Cell::printVar( grid.at(r,c) );
         }
+        ss << '\n';
+        if( r == g.N+1 )
+            continue;
+        for( int n=2; n<printSpacing; ++n )
+            ss << std::setw( printSpacing ) << "" << std::setfill(' ') << std::setw( printSpacing * g.N ) 
+                << "" << std::setfill('.') <<  std::setw( printSpacing+1 ) << '\n';
     }
+    return os << ss.str();
 }
 
-vec2 Grid::cellToParticle(int i, int j){
-    return vec2(float(i) * dx + 0.5f, float(j) * dy + 0.5f);
-}
-
+// ************
+// FluidSystem
+// ************
 
 Cell FluidSystem::imaginationHelper(Cell& a, Cell& b, Cell& c, Cell& d, float rA, float rB, float rC, float rD){
     Cell imaginationCell;
@@ -145,14 +137,9 @@ void FluidSystem::advectVelocity(){
     for (int i = 1; i < grid.N + 1; ++i) {
         for (int j = 1; j < grid.N + 1; ++j) {
             Cell& currentCell = grid.at(i, j);
-            std::cout << "\tCurrentCell(x,y) : (" << i << ", " << j << ")\n" << std::flush; 
             vec2 particleCell = grid.cellToParticle(i, j);
-            std::cout << "\tParticleCell(x,y) : (" << particleCell.x << ", " << particleCell.y << ")\n" << std::flush; 
             vec2& vel = currentCell.velocity;
-            std::cout << "\tdt : " << dt << std::endl;
-            std::cout << "\tcurrentCell.velocity(x,y) : (" << vel.x << ", " << vel.y << ")\n" << std::flush;
             vec2 backwardStepParticle = particleCell - ( dt * currentCell.velocity );
-            std::cout << "\tBackStepParticle(x,y) : (" << backwardStepParticle.x << ", " << backwardStepParticle.y << ")\n" << std::flush; 
             Cell iCell = interpolate(backwardStepParticle);
             currentCell.velocity = iCell.velocity;
         }
