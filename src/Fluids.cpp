@@ -44,9 +44,9 @@ std::ostream& operator<<( std::ostream& os, Grid& g ){
     std::ostringstream ss;
     for( int r=0; r<g.N+2; ++r ){
         for( int c=0; c<g.N+2; ++c ){
-            if(c==0||c==g.N+1)
+            if(c==1||c==g.N)
                 ss << std::setfill('.');
-            else if(c==1 && r != 0 && r != g.N+1)
+            else if(c==1 && r != 0 && r != 1 && r != g.N && r != g.N+1)
                 ss << std::setfill(' ');
             ss << std::setw( Grid::printSpacing );
             ss << std::to_string( int( Cell::printVar( g.at(r,c) )));
@@ -55,7 +55,7 @@ std::ostream& operator<<( std::ostream& os, Grid& g ){
         if( r == g.N+1 )
             continue;
         for( int n=2; n < Grid::printSpacing; ++n )
-            ss << std::setw( Grid::printSpacing ) << "" << std::setfill(' ') << std::setw( Grid::printSpacing * g.N )
+            ss << std::setw( Grid::printSpacing+1 ) << "" << std::setfill( r == 0 || r == g.N ? '.': ' ') << std::setw( Grid::printSpacing * g.N-1)
                 << "" << std::setfill('.') <<  std::setw( Grid::printSpacing + 1 ) << '\n';
     }
     return os << ss.str();
@@ -228,10 +228,11 @@ void FluidSystem::step() {
     // get force input from ui
     
     // Spoofing UI changes here.
-    for(Cell& c : oldGrid)
-        c.den += 1.0f;
-    for(Cell& c : oldGrid)
-        c.vx += 0.1f;
+    //for(Cell& c : oldGrid)
+    //    c.den += 1.0f;
+    //for(Cell& c : oldGrid)
+    //    c.vx += 0.1f;
+    oldGrid.at(5,5).den += 5.0f;
     
     // Step Velocity
     add( velocityX, velocityX, grid, oldGrid );
