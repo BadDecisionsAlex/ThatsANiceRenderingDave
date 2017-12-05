@@ -31,7 +31,7 @@ using Accessor = std::function<float&(Cell&)>;
 // *****
 
 struct Cell {
-    
+
     // Member Variables
     int i;                  // index, used to calculate grid coords and position
     float vx;               // velocity in horizontal, X axis
@@ -39,20 +39,21 @@ struct Cell {
     float den;              // density
     float p;                // pressure
     float div;              // divergence
-    
+    float dist;
+
     // Class Variables
     // change printvar to change which value we print by << operator
     static Accessor printVar;
-    
+
     Cell( int i_ = 0, float vx_ = 0.0f, float vy_ = 0.0f, float den_ = 10.0f, float p_ = 0.0f, float div_ = 0.0f ) : i(i_), vx(vx_), vy(vy_), den(den_), p(p_), div(div_){}
 
     // Functions
     ostream& operator<< ( ostream& os, const Cell& cell );
     ivec2 rc const;
-    FAlias rowCol = rc; 
+    FAlias rowCol = rc;
     vec2 pos() const { return grid::iToPos(i); }
     #define centerPosition() pos()
-    
+
 };
 
 // *********
@@ -73,13 +74,13 @@ struct Cell {
 // or
 // ** // density( my_cell ) = 5;
 //
-// This may seem trivial but this will be incedibly useful for making many of our functions act 
+// This may seem trivial but this will be incedibly useful for making many of our functions act
 // on different sets of member variables in our grids without rewriting redundant functions.
 //
 // For instance lets say we want to update a set of member variables between grid and oldGrid.
 // simply call :
 // ** // FluidSystem::update( FluidSystem&, density );
-// or  
+// or
 // ** // my_fluid_system.update( density );
 // or from within a FluidSystem simply :
 // ** // update( density );
@@ -109,7 +110,7 @@ typedef  vector<Cell>::iterator iterator;
 typedef  vector<Cell>::const_iterator const_iterator;
 
 struct Grid{
-    
+
     // Member Variables
     vector<Cell> grid;
 
@@ -118,16 +119,16 @@ struct Grid{
     static float dx;
     static float dy;
     static int printSpacing = 3;
-    
+
     Grid::Grid(int n_ = 50, float dx_ = 10, float dy_ = 10) : N(n_), dx(dx_), dy(dy_), grid(vector<Cell>( (N+2) * (N+2) )) {}
-    
+
     // Functions
     Cell& at( int r, int c ) { return grid[ r * N + c ]; }
     const Cell& at( int r, int c ) const { return grid[ r * N + c]; }
     static ivec2 iToCo( int i ) const { return ivec2( i / N, i % N); }
     #define indexToCoordinates(x) iToCo(x)
     static int coToI( int r, int c ) const { return r * N + c; }
-    static int coToI( ivec2 v ) const { return coToI( v.x, v.y ); } 
+    static int coToI( ivec2 v ) const { return coToI( v.x, v.y ); }
     #define coordinatesToIndex(...) { coToI(__VA_ARGS__); }
     static vec2 iToPos( int i ) const { return vec2( float( i / N ) * dx + 0.5f, float( i % N ) * dy + 0.5f ); }
     static vec2 coToPos( int r, int c ) const { return vec2( float(r) * dx + 0.5f, float(c) * dy + 0.5f ); }
