@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
     GLFWwindow* window = openGL.setup();
     GUI gui(window);
 
-    FluidSystem* rootSystem = new FluidSystem(10, 2, 2, (1.0f/ 60.0f));
+    FluidSystem* rootSystem = new FluidSystem();
     
     rootSystem->width = window_width;
     rootSystem->height = window_height;

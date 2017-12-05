@@ -51,7 +51,6 @@ struct Cell {
     // Functions
     ivec2 coord() const;
     vec2 pos() const;
-    #define centerPosition() pos()
 
 };
 
@@ -80,17 +79,6 @@ struct Cell {
 // Reminder :  Accessor = std::function<float&(Cell&)>;
 // ---------
 
-Accessor _vx( &Cell::vx );              // _vx
-const Accessor& velocityX(_vx);         // velocityX
-Accessor _vy( &Cell::vy );              // _vy
-const Accessor& velocityY(_vy);         // velocityY
-Accessor _den( &Cell::den );            // _den
-const Accessor& density(_den);          // density
-Accessor _p( &Cell::vx );               // _p           //!// Lives temporarilty in .vx always pairs with oldGrid
-const Accessor& pressure(_p);           // pressure
-Accessor _div( &Cell::vy );             // _div         //!// Lives temporarilty in .vy always pairs with oldGrid
-const Accessor& divergence(_div);       // divergence
-
 // *****
 // GRID
 // *****
@@ -109,7 +97,7 @@ struct Grid{
     static float dy;
     static int printSpacing; // default is 3
 
-    Grid( int n_ = 50, float dx_ = 10, float dy_ = 10 ) : grid(vector<Cell>( (N+2) * (N+2) )) { N=n_; dx=dx_; dy=dy_; printSpacing=3; }
+    Grid( int n_ = 10, float dx_ = 10, float dy_ = 10 ) : grid(vector<Cell>( (n_+2) * (n_+2) )) { N=n_; dx=dx_; dy=dy_; printSpacing=3; }
 
     // Functions
     //
@@ -119,20 +107,15 @@ struct Grid{
     Cell& at( int r, int c ) { return grid[ r * N + c ]; }
     const Cell& at( int r, int c ) const { return grid[ r * N + c]; }
     static ivec2 iToCo( int i ) { return ivec2( i / N, i % N); }
-    #define indexToCoordinates(x) iToCo(x)
     static int coToI( int r, int c ) { return r * N + c; }
     static int coToI( ivec2 v )  { return coToI( v.x, v.y ); }
-    #define coordinatesToIndex(...) { coToI(__VA_ARGS__); }
     static vec2 iToPos( int i ) { return vec2( float( i % N ) * dx + 0.5f, float( i / N ) * dy + 0.5f ); }
     static vec2 coToPos( int r, int c ) { return vec2( float(r) * dx + 0.5f, float(c) * dy + 0.5f ); }
     static vec2 coToPos( ivec2 v ) { return coToPos( v.y, v.x ); }
-    #define cellToParticle(...) { coToPos(__VA_ARGS__); }
     static int posToI( float x, float y ) { return int(y/dy) * N + int(x/dx); }
     static int posToI( vec2 v ){return posToI( v.x, v.y );}
-    #define positionToIndex(...) { posToI(__VA_ARGS__); }
     static ivec2 posToCo( float x, float y ) { return ivec2( y/dy, x/dx ); }
     static ivec2 posToCo( vec2 v ) { return posToCo( v.x, v.y ); }
-    #define positionToCoordinates(...) { posToCo(__VA_ARGS__); }
 
     // STL Compliance
     iterator begin() {return grid.begin();}
@@ -144,7 +127,7 @@ struct Grid{
 
 class FluidSystem : public ParticleSystem {
 public:
-    FluidSystem(int grid_size=50, int dx_=10, int dy_=10, float time_step=(1.0f/60.0f), float diff_=0.5f, float visc_=0.5f );
+    FluidSystem(int grid_size=10, int dx_=10, int dy_=10, float time_step=(1.0f/60.0f), float diff_=0.5f, float visc_=0.5f );
 
     // Draw Functions
     void step();
@@ -165,15 +148,15 @@ private:
     // Functions
     
     // mixes the value of var in src to var in "grid"
-    void advect( Accessor var, Grid& src );
+    void advect( Accessor var, Grid& src, short f );
     // mixes varB into varA applying scalar
-    void diffuse( Accessor varA, Accessor varB, float scalar );
+    void diffuse( Accessor varA, Accessor varB, float scalar, short f );
     // corrects divergence in flows
     void project();
     // Helper for Diffuse and Project : applies a linear interpolation between neighboring cells from srcB.varB to srcA.varB using two scalars.
-    void linearSolver( Accessor varA, Accessor varB, Grid& srcA, Grid& srcB, float scalarNumerator, float scalarDenominator );
+    void linearSolver( Accessor varA, Accessor varB, Grid& srcA, Grid& srcB, float scalarNumerator, float scalarDenominator, short f );
     // Applies var from the body to the boundary cells of src
-    void fixBoundary( Accessor var, Grid& src );
+    void fixBoundary( Accessor var, Grid& src, short f );
     // applies force/scalar from srcB to varA in srcA and applies dt
     void add( Accessor varA, Accessor varB, Grid& srcA, Grid& srcB );
     // moves a value from grid to oldGrid
