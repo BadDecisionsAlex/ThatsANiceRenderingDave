@@ -36,21 +36,29 @@ int main(int argc, char* argv[])
 
     vector<ParticleSystem*> systems;
 
-    SpaceSystem* particleSystem = new SpaceSystem();
-    particleSystem->width = window_width;
-    particleSystem->height = window_height;
-    particleSystem->setup();
-    particleSystem->prepareDraw();
-    systems.push_back(particleSystem);
+    vector<VerletParticle> ps;
+    ps.push_back(VerletParticle(0.0f,0.0f));
+    GravitySystem* gravitySystem = new GravitySystem(ps);
+    gravitySystem->width = window_width;
+    gravitySystem->height = window_height;
+    gravitySystem->prepareDraw();
+    systems.push_back(gravitySystem);
 
-    SmokeSystem* rootSystem = new SmokeSystem();
-    rootSystem->width = window_width * 2;
-    rootSystem->height = window_height * 2;
-    rootSystem->setup();
-    rootSystem->prepareDraw();
-    systems.push_back(rootSystem);
-    gui.delegates.push_back(rootSystem);
-    
+//    SpaceSystem* particleSystem = new SpaceSystem();
+//    particleSystem->width = window_width;
+//    particleSystem->height = window_height;
+//    particleSystem->setup();
+//    particleSystem->prepareDraw();
+//    systems.push_back(particleSystem);
+//
+//    SmokeSystem* rootSystem = new SmokeSystem();
+//    rootSystem->width = window_width * 2;
+//    rootSystem->height = window_height * 2;
+//    rootSystem->setup();
+//    rootSystem->prepareDraw();
+//    systems.push_back(rootSystem);
+//    gui.delegates.push_back(rootSystem);
+
     // **************
     //
     // ANIMATION LOOP
