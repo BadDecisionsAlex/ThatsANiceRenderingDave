@@ -73,22 +73,26 @@ void FluidSystem::update( Accessor var ){
 }
 
 void FluidSystem::swap( Accessor varA, Accessor varB, Grid& srcA, Grid& srcB ){
-    float t;
+    std::cout << "Swap" << std::endl;
+    float a,b;
     for(int r=0; r < Grid::N+2; ++r)
         for(int c=0; c < Grid::N+2; ++c){
-            t = varA(srcA.at(r,c));
-            varB(srcB.at(r,t)) = varA(srcA.at(r,c));
-            varA(srcA.at(r,t)) = t;
+            a = varA(srcA.at(r,c));
+            b = varB(srcB.at(r,c));
+            varB(srcB.at(r,c)) = a;
+            varA(srcA.at(r,c)) = b;
         }
 }
 
 void FluidSystem::add( Accessor varA, Accessor varB, Grid& srcA, Grid& srcB ){
+    std::cout << "Add." << std::endl;
     for(int r=0; r < Grid::N+2; ++r )
         for(int c=0; c < Grid::N+2; ++c)
             varA( srcA.at(r,c) ) += dt * varB( srcB.at(r,c) );
 }
 
 void FluidSystem::linearSolver( Accessor varA, Accessor varB, Grid& srcA, Grid& srcB, float scalarNumerator, float scalarDenominator, short f ){
+    std::cout << "Linear Solver." << std::endl;
    for( int k=0; k<20; ++k ){
         for( int r=1; r < Grid::N+1; ++r ){
             for( int c=1; c < Grid::N+1; ++c ){
@@ -99,17 +103,18 @@ void FluidSystem::linearSolver( Accessor varA, Accessor varB, Grid& srcA, Grid& 
 }
 
 void FluidSystem::diffuse( Accessor varA, Accessor varB, float scalar, short f ){
+    std::cout << "Diffuse." << std::endl;
     float scalarNumerator = dt * scalar * Grid::N * Grid::N;
     linearSolver( varA, varB, grid, oldGrid, scalarNumerator, (1.0f + 4.0f * scalarNumerator), f );
 }
 
 void FluidSystem::advect( Accessor var, Grid& src, short f ){
+    std::cout << "Advect." << std::endl;
     float dt0 = dt * Grid::N;
     for( int r=1; r < Grid::N+1; ++r ){
         for( int c=1; c < Grid::N+1; ++c ){
             Cell& currentCell = src.at(r,c);
-            vec2 backStep = currentCell.pos() - vec2( dt * currentCell.vx, dt * currentCell.vy );
-            
+            vec2 backStep = vec2( float(r) * Grid::dy - dt * currentCell.vx, float(c) * Grid::dx - dt * currentCell.vy );
             // check bounds
             float upper = Grid::N + 0.5f;
             if( backStep.x < 0.5f ) backStep[0] = 0.5f;
@@ -132,6 +137,7 @@ void FluidSystem::advect( Accessor var, Grid& src, short f ){
 }
 
 void FluidSystem::project(){
+    std::cout << "Project." << std::endl;
     for (int r=1; r < Grid::N+1; ++r) {
         for (int c=1; c < Grid::N+1; ++c) {
             // compute the gradient between each neighbors pressure
@@ -139,11 +145,11 @@ void FluidSystem::project(){
             // we no longer need those old positions at this point and this will allow us to use 2 fewer floats for each Cell.
             
             Cell& oldCell = grid.at(r, c);
-            oldCell.vx = -0.5f * Grid::N * (grid.at(r+1,c).vx - grid.at(r-1,c).vx + grid.at(r,c+1).vy - grid.at(r,c-1).vy) / Grid::N;
+            oldCell.vx = -0.5f * (grid.at(r+1,c).vx - grid.at(r-1,c).vx + grid.at(r,c+1).vy - grid.at(r,c-1).vy) / Grid::N;
             oldCell.vy = 0.0f;
             }}
-    fixBoundary( divergence, grid, 0 );
-    fixBoundary( pressure, grid, 0 );
+    fixBoundary( divergence, oldGrid, 0 );
+    fixBoundary( pressure, oldGrid, 0 );
     // dont forget we are temporarily occupying oldGrid.vx & .vy here
     linearSolver( pressure, divergence, oldGrid, oldGrid, 1.0f, 4.0f, 0 );
     for( int r=1; r < Grid::N+1; ++r ){
@@ -156,19 +162,19 @@ void FluidSystem::project(){
     fixBoundary( velocityY, grid, 2 );
 }
 
-// Flags, 0 : Normal, 1 : Fix vX, 2 Fix vY
 void FluidSystem::fixBoundary( Accessor accessor, Grid& src, short f ){
+    std::cout << "Fix Boundary." << std::endl;
     for( int i=1; i<=Grid::N; ++i){
        accessor( src.at( 0, i )) = accessor( src.at( 1, i ));
        accessor( src.at( Grid::N+1, i )) = accessor( src.at( Grid::N, i ));
        accessor( src.at( i, 0 )) = accessor( src.at( i, 1 ));
        accessor( src.at( i, Grid::N+1 )) = accessor( src.at( i, Grid::N ));
-       if( f == 2 ){ // vY
+       if( f == 1 ){ // vY
            accessor( src.at( 0, i ))            *= -1.0f;
            accessor( src.at( Grid::N+1, i ))     *= -1.0f;
-       }else if( f == 1 ){ // vX
-           accessor( src.at( i, 0 ))            *= 1.0f;
-           accessor( src.at( i, Grid::N+1 ))    *= 1.0f;
+       }else if( f == 2 ){ // vX
+           accessor( src.at( i, 0 ))            *= -1.0f;
+           accessor( src.at( i, Grid::N+1 ))    *= -1.0f;
        }
     }
    accessor( src.at( 0, 0 )) = 0.5f * ( accessor( src.at( 1, 0 )) + accessor( src.at( 0, 1 )));
@@ -186,6 +192,7 @@ FluidSystem::FluidSystem(int grid_size, int dx_, int dy_, float time_step, float
                 }
 
 void FluidSystem::prepareDraw() {
+    //std::cout << "Prepare Draw." << std::endl;
     fluid_pass_input.assign_index(indices.data(), indices.size(), 1);
     fluid_pass = RenderPass(-1,
                                fluid_pass_input,
@@ -200,6 +207,7 @@ void FluidSystem::prepareDraw() {
 }
 
 void FluidSystem::draw() {
+    //std::cout << "draw." << std::endl;
     getPointsForScreen(particles, densities, indices);
     fluid_pass.updateVBO(0, particles.data(), particles.size());
     fluid_pass.updateVBO(1, densities.data(), densities.size());
@@ -208,6 +216,7 @@ void FluidSystem::draw() {
 }
 
 void FluidSystem::getPointsForScreen(vector<vec4>& particles, vector<vec1>& densities, vector<uvec1>& indices) {
+    std::cout << "getPointsForScreen." << std::endl;
     particles.clear();
     densities.clear();
     indices.clear();
@@ -219,12 +228,17 @@ void FluidSystem::getPointsForScreen(vector<vec4>& particles, vector<vec1>& dens
 }
 
 vec4 FluidSystem::toScreen(const vec2& point) {
-    float ndcX = ((2.0f * point.x) / float(width * 2)) - 1.0f;
-    float ndcY = ((2.0f * point.y) / float(height * 2)) - 1.0f;
+    //std::cout << "ToScreen : (" << point.x << ", " << point.y << ")" << std::flush;
+    float ndcX = ((2.0f * point.x) / float( (Grid::N+2)*Grid::dx)) - 1.0f;
+    float ndcY = ((2.0f * point.y) / float( (Grid::N+2)*Grid::dy)) - 1.0f;
+    //std::cout << "\t\t x : " << ndcX << ",\ty : " << ndcY << std::endl;
     return vec4(ndcX, ndcY, 0.0, 1.0);
 }
 
+static int stepCount = 0;
+
 void FluidSystem::step() {
+    std::cout << "Step: " << stepCount << std::endl;
     // get force input from ui
     
     // Spoofing UI changes here.
@@ -232,15 +246,15 @@ void FluidSystem::step() {
     //    c.den += 1.0f;
     //for(Cell& c : oldGrid)
     //    c.vx += 0.1f;
-    oldGrid.at(5,5).den += 5.0f;
+    oldGrid.at(5,5).vy += 10.0f;
     
     // Step Velocity
     add( velocityX, velocityX, grid, oldGrid );
-    add( velocityY, velocityX, grid, oldGrid );
+    add( velocityY, velocityY, grid, oldGrid );
     swap( velocityX, velocityX, oldGrid, grid );
     diffuse( velocityX, velocityX, viscosity, 1 );
     swap( velocityY, velocityY, oldGrid, grid);
-    diffuse( velocityY, velocityY, viscosity, 1 );
+    diffuse( velocityY, velocityY, viscosity, 2 );
     project();
     swap( velocityX, velocityX, oldGrid, grid );
     swap( velocityY, velocityY, oldGrid, grid );
@@ -255,8 +269,10 @@ void FluidSystem::step() {
     swap( density, density, oldGrid, grid );
     advect( density, grid, 0  );
 
-    //Grid::printVar = velocityY;
+    Cell::printVar = velocityY;
+    std::cout << "Step : " << stepCount << "\n";
     std::cout << grid << std::endl;
+    stepCount++;
 }
 
 void FluidSystem::setup() {
@@ -265,7 +281,7 @@ void FluidSystem::setup() {
         for (int c = 0; c < grid.N + 2; ++c ) {
             Cell& currentCell = grid.at(r, c);
             currentCell.i = Grid::coToI(r,c);
-            currentCell.vx = 0.0f;
+            currentCell.vx = -1.0f;
             currentCell.vy = 1.0f;
         }
     }

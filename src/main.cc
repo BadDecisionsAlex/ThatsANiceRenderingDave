@@ -41,12 +41,13 @@ int main(int argc, char* argv[])
     rootSystem->prepareDraw();
 
 	while (openGL.drawBool()) {
-        openGL.beforeDraw();
+        
+        //openGL.beforeDraw();
 
         rootSystem->step();
-        rootSystem->draw();
+        //rootSystem->draw();
 
-        openGL.afterDraw();
+        //openGL.afterDraw();
 	}
     openGL.destroy();
 }

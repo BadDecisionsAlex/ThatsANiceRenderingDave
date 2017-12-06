@@ -109,8 +109,8 @@ struct Grid{
     static ivec2 iToCo( int i ) { return ivec2( i / (N+2), i % (N+2)); }
     static int coToI( int r, int c ) { return r * (N+2) + c; }
     static int coToI( ivec2 v )  { return coToI( v.x, v.y ); }
-    static vec2 iToPos( int i ) { return vec2( float( i % (N+2) ) * dx + 0.5f, float( i / (N+2) ) * dy + 0.5f ); }
-    static vec2 coToPos( int r, int c ) { return vec2( float(r) * dx + 0.5f, float(c) * dy + 0.5f ); }
+    static vec2 iToPos( int i ) { return vec2( (float( i % (N+2) ) + 0.5f) * dx, (float( i / (N+2)) + 0.5f) * dy ); }
+    static vec2 coToPos( int r, int c ) { return vec2( (float(c) + 0.5f) * dx, (float(c) + 0.5f) * dy); }
     static vec2 coToPos( ivec2 v ) { return coToPos( v.y, v.x ); }
     static int posToI( float x, float y ) { return int(y/dy) * (N+2) + int(x/dx); }
     static int posToI( vec2 v ){return posToI( v.x, v.y );}
