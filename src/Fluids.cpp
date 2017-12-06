@@ -48,8 +48,7 @@ std::ostream& operator<<( std::ostream& os, Grid& g ){
                 ss << std::setfill('.');
             else if(c==1 && r != 0 && r != 1 && r != g.N && r != g.N+1)
                 ss << std::setfill(' ');
-            ss << std::setw( Grid::printSpacing );
-            ss << std::to_string( int( Cell::printVar( g.at(r,c) )));
+            ss << std::setw( Grid::printSpacing ) << std::to_string( int( Cell::printVar( g.at(r,c) )));
         }
         ss << '\n';
         if( r == g.N+1 )
@@ -239,6 +238,7 @@ static int stepCount = 0;
 
 void FluidSystem::step() {
     std::cout << "Step: " << stepCount << std::endl;
+    std::cout << "Density\n" << grid << std::endl;
     // get force input from ui
     
     // Spoofing UI changes here.
@@ -250,28 +250,58 @@ void FluidSystem::step() {
     
     // Step Velocity
     add( velocityX, velocityX, grid, oldGrid );
+    Cell::printVar = velocityX;
+    std::cout << "VelocityX\n" << grid << std::endl;
     add( velocityY, velocityY, grid, oldGrid );
+    Cell::printVar = velocityY;
+    std::cout << "VelocityY\n" << grid << std::endl;
     swap( velocityX, velocityX, oldGrid, grid );
+    Cell::printVar = velocityX;
+    std::cout << "VelocityX\n" << grid << std::endl;
     diffuse( velocityX, velocityX, viscosity, 1 );
+    Cell::printVar = velocityX;
+    std::cout << "VelocityX\n" << grid << std::endl;
     swap( velocityY, velocityY, oldGrid, grid);
+    Cell::printVar = velocityY;
+    std::cout << "VelocityY\n" << grid << std::endl;
     diffuse( velocityY, velocityY, viscosity, 2 );
+    Cell::printVar = velocityY;
+    std::cout << "VelocityY\n" << grid << std::endl;
     project();
+    std::cout << "VelocityY\n" << grid << std::endl;
+    Cell::printVar = velocityX;
+    std::cout << "VelocityX\n" << grid << std::endl;
     swap( velocityX, velocityX, oldGrid, grid );
+    std::cout << "VelocityX\n" << grid << std::endl;
     swap( velocityY, velocityY, oldGrid, grid );
+    Cell::printVar = velocityY;
+    std::cout << "VelocityY\n" << grid << std::endl;
     advect( velocityX, oldGrid, 1 );
+    Cell::printVar = velocityX;
+    std::cout << "VelocityX\n" << grid << std::endl;
     advect( velocityY, oldGrid, 2 );
+    Cell::printVar = velocityY;
+    std::cout << "VelocityY\n" << grid << std::endl;
     project();
+    std::cout << "VelocityY\n" << grid << std::endl;
+    Cell::printVar = velocityX;
+    std::cout << "VelocityX\n" << grid << std::endl;
 
     // Step Density
+    Cell::printVar = density;
     add( density, density, grid, oldGrid );
+    std::cout << "Density\n" << grid << std::endl;
     swap( density, density, oldGrid, grid );
+    std::cout << "Density\n" << grid << std::endl;
     diffuse( density, density, diffusion, 0 );
+    std::cout << "Density\n" << grid << std::endl;
     swap( density, density, oldGrid, grid );
+    std::cout << "Density\n" << grid << std::endl;
     advect( density, grid, 0  );
+    std::cout << "Density\n" << grid << std::endl;
 
-    Cell::printVar = velocityY;
     std::cout << "Step : " << stepCount << "\n";
-    std::cout << grid << std::endl;
+    std::cout << "Density\n" << grid << std::endl;
     stepCount++;
 }
 
