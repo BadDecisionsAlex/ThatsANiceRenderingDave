@@ -23,6 +23,10 @@ const char* fluid_geometry_shader =
 #include "shaders/fluid.geom"
 ;
 
+const char* collision_geometry_shader =
+#include "shaders/collision.geom"
+;
+
 const char* particle_fragment_shader =
 #include "shaders/particle.frag"
 ;

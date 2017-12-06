@@ -36,11 +36,10 @@ int main(int argc, char* argv[])
 
     vector<ParticleSystem*> systems;
 
-    vector<VerletParticle> ps;
-    ps.push_back(VerletParticle(0.0f,0.0f));
-    GravitySystem* gravitySystem = new GravitySystem(ps);
+    GravitySystem* gravitySystem = new GravitySystem();
     gravitySystem->width = window_width;
     gravitySystem->height = window_height;
+    gravitySystem->setup();
     gravitySystem->prepareDraw();
     systems.push_back(gravitySystem);
 
@@ -65,9 +64,6 @@ int main(int argc, char* argv[])
     //
     // **************
 
-    std::default_random_engine generator;
-    std::normal_distribution<float> distribution( 250, 60 );
-    long counter = 1;
 
 	while (openGL.drawBool()) {
         openGL.beforeDraw();
