@@ -7,7 +7,7 @@
 #include <glm/gtx/string_cast.hpp>  // glm::to_string
 
 #define STEP_TIME 1.0f / 600.0f
-#define NUMBER_OF_PARTICLES 2500.0
+#define NUMBER_OF_PARTICLES 1000.0
 
 // To disable debug messages for this file comment out the first line below
 //#define DEBUG_PHYSICS_CPP 0

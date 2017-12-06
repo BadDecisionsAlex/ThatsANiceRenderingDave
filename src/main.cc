@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
 
     vector<ParticleSystem*> systems;
     systems.push_back(new GravitySystem());
-    systems.push_back(new SpaceSystem());
+//    systems.push_back(new SpaceSystem());
     for (ParticleSystem* system : systems){
         system->width = window_width;
         system->height = window_height;
@@ -44,13 +44,13 @@ int main(int argc, char* argv[])
         system->prepareDraw();
     }
 
-    SmokeSystem* rootSystem = new SmokeSystem();
-    rootSystem->width = window_width * 2;
-    rootSystem->height = window_height * 2;
-    rootSystem->setup();
-    rootSystem->prepareDraw();
-    systems.push_back(rootSystem);
-    gui.delegates.push_back(rootSystem);
+//    SmokeSystem* rootSystem = new SmokeSystem();
+//    rootSystem->width = window_width * 2;
+//    rootSystem->height = window_height * 2;
+//    rootSystem->setup();
+//    rootSystem->prepareDraw();
+//    systems.push_back(rootSystem);
+//    gui.delegates.push_back(rootSystem);
 
     // **************
     //
