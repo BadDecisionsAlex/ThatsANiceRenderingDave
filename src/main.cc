@@ -43,20 +43,20 @@ int main(int argc, char* argv[])
     gravitySystem->prepareDraw();
     systems.push_back(gravitySystem);
 
-//    SpaceSystem* particleSystem = new SpaceSystem();
-//    particleSystem->width = window_width;
-//    particleSystem->height = window_height;
-//    particleSystem->setup();
-//    particleSystem->prepareDraw();
-//    systems.push_back(particleSystem);
-//
-//    SmokeSystem* rootSystem = new SmokeSystem();
-//    rootSystem->width = window_width * 2;
-//    rootSystem->height = window_height * 2;
-//    rootSystem->setup();
-//    rootSystem->prepareDraw();
-//    systems.push_back(rootSystem);
-//    gui.delegates.push_back(rootSystem);
+    SpaceSystem* particleSystem = new SpaceSystem();
+    particleSystem->width = window_width;
+    particleSystem->height = window_height;
+    particleSystem->setup();
+    particleSystem->prepareDraw();
+    systems.push_back(particleSystem);
+
+    SmokeSystem* rootSystem = new SmokeSystem();
+    rootSystem->width = window_width * 2;
+    rootSystem->height = window_height * 2;
+    rootSystem->setup();
+    rootSystem->prepareDraw();
+    systems.push_back(rootSystem);
+    gui.delegates.push_back(rootSystem);
 
     // **************
     //
