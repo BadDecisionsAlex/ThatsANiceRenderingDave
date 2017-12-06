@@ -35,20 +35,14 @@ int main(int argc, char* argv[])
     GUI gui(window);
 
     vector<ParticleSystem*> systems;
-
-    GravitySystem* gravitySystem = new GravitySystem();
-    gravitySystem->width = window_width;
-    gravitySystem->height = window_height;
-    gravitySystem->setup();
-    gravitySystem->prepareDraw();
-    systems.push_back(gravitySystem);
-
-    SpaceSystem* particleSystem = new SpaceSystem();
-    particleSystem->width = window_width;
-    particleSystem->height = window_height;
-    particleSystem->setup();
-    particleSystem->prepareDraw();
-    systems.push_back(particleSystem);
+    systems.push_back(new GravitySystem());
+    systems.push_back(new SpaceSystem());
+    for (ParticleSystem* system : systems){
+        system->width = window_width;
+        system->height = window_height;
+        system->setup();
+        system->prepareDraw();
+    }
 
     SmokeSystem* rootSystem = new SmokeSystem();
     rootSystem->width = window_width * 2;
