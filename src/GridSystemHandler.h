@@ -15,7 +15,7 @@
 
 //Im using this to easily switch out the class type.
 //There are certainly better ways to make this abstract
-#define SYSTEM SmokeSystem
+#define SYSTEM SpaceSystem
 
 struct Node {
     int nodeID = 0;
@@ -39,19 +39,19 @@ private:
     
     Node outsideGridNode;
     
-    int nodeSize = 20;
+    int nodeSize = 40;
     int rows = 0;
     int columns = 0;
     vector<vector<Node>> grid;
     
     vec4 toScreen(const vec3& point);
-    void getPointsForScreen(vector<vec4>& points, vector<uvec1>& indices);
+    void getPointsForScreen(vector<vec4>& points, vector<uvec3>& indices);
     
     //Rendering (Could be made simpler)
     RenderDataInput particle_pass_input;
     RenderPass particle_pass;
     vector<vec4> points;
-    vector<uvec1> indices;
+    vector<uvec3> indices;
     
 public:
     

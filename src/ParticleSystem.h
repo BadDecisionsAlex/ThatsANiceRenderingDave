@@ -9,6 +9,7 @@
 #include "GUIDelegate.h"
 
 using glm::uvec1;
+using glm::uvec3;
 using glm::vec2;
 using glm::vec3;
 using glm::vec4;

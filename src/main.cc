@@ -80,24 +80,26 @@ int main(int argc, char* argv[])
     
     vector<ParticleSystem*> systems;
     
-//    SpaceSystem* particleSystem = new SpaceSystem();
-//    particleSystem->width = window_width * 4;
-//    particleSystem->height = window_height * 4;
+    int scale = 4;
+    
+    SpaceSystem* particleSystem = new SpaceSystem();
+    particleSystem->width = window_width * scale;
+    particleSystem->height = window_height * scale;
 //    particleSystem->setup();
 //    particleSystem->prepareDraw();
     
-    SmokeSystem* smokeSystem = new SmokeSystem();
-    smokeSystem->width = window_width * 2;
-    smokeSystem->height = window_height * 2;
+//    SmokeSystem* smokeSystem = new SmokeSystem();
+//    smokeSystem->width = window_width * scale;
+//    smokeSystem->height = window_height * scale;
+//    gui.delegates.push_back(smokeSystem);
     
-    GridSystemHandler* gridHandler = new GridSystemHandler(smokeSystem);
-    gridHandler->width = window_width * 2;
-    gridHandler->height = window_height * 2;
+    GridSystemHandler* gridHandler = new GridSystemHandler(particleSystem);
+    gridHandler->width = window_width * scale;
+    gridHandler->height = window_height * scale;
     gridHandler->setup();
     gridHandler->prepareDraw();
     
     systems.push_back(gridHandler);
-    gui.delegates.push_back(smokeSystem);
     
     // **************
     //
