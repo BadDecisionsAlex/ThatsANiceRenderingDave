@@ -31,6 +31,8 @@
 #include "SmokeSystem.h"
 #include "MassParticle.h"
 
+#include "GridSystemHandler.h"
+
 using std::vector;
 using glm::vec2;
 using glm::vec3;
@@ -78,20 +80,24 @@ int main(int argc, char* argv[])
     
     vector<ParticleSystem*> systems;
     
-    SpaceSystem* particleSystem = new SpaceSystem();
-    particleSystem->width = window_width * 8;
-    particleSystem->height = window_height * 8;
-    particleSystem->setup();
-    particleSystem->prepareDraw();
-    systems.push_back(particleSystem);
+//    SpaceSystem* particleSystem = new SpaceSystem();
+//    particleSystem->width = window_width * 4;
+//    particleSystem->height = window_height * 4;
+//    particleSystem->setup();
+//    particleSystem->prepareDraw();
     
-    SmokeSystem* rootSystem = new SmokeSystem();
-    rootSystem->width = window_width * 2;
-    rootSystem->height = window_height * 2;
-    rootSystem->setup();
-    rootSystem->prepareDraw();
-    systems.push_back(rootSystem);
-    gui.delegates.push_back(rootSystem);
+    SmokeSystem* smokeSystem = new SmokeSystem();
+    smokeSystem->width = window_width * 2;
+    smokeSystem->height = window_height * 2;
+    
+    GridSystemHandler* gridHandler = new GridSystemHandler(smokeSystem);
+    gridHandler->width = window_width * 2;
+    gridHandler->height = window_height * 2;
+    gridHandler->setup();
+    gridHandler->prepareDraw();
+    
+    systems.push_back(gridHandler);
+    gui.delegates.push_back(smokeSystem);
     
     // **************
     //
@@ -135,6 +141,10 @@ int main(int argc, char* argv[])
 	}
 	glfwDestroyWindow(window);
 	glfwTerminate();
+    
+    for (ParticleSystem * system : systems) {
+        free(system);
+    }
 
 	exit(EXIT_SUCCESS);
 }

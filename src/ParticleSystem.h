@@ -28,6 +28,7 @@ struct ParticleSystem: Drawable, GUIDelegate {
     
     void virtual step() = 0;
     void virtual setup() {}
+    
 };
 
 #endif
