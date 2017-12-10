@@ -23,11 +23,10 @@ public:
     
     void prepareDraw();
     void draw();
-    
-private:
+
     vec3 center;
     int stepCount = 0;
-    
+
     //Rendering (Could be made simpler)
     RenderDataInput particle_pass_input;
     RenderPass particle_pass;

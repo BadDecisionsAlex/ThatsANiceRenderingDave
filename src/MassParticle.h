@@ -12,6 +12,7 @@
 #include "AbstractParticle.h"
 
 struct MassParticle: AbstractParticle {
+    vec3 color;
     vec3 velocity;
     int mass = 1;
     
