@@ -47,7 +47,7 @@ struct Cell {
     // change printvar to change which value we print by << operator
     static Accessor printVar;
 
-    Cell( int i_ = 0, float vx_ = 0.0f, float vy_ = 0.0f, float den_ = 0.0f ) : i(i_), vx(vx_), vy(vy_), den(den_){}
+    Cell( int i_ = 0, float vx_ = 0.00001f, float vy_ = 0.00001f, float den_ = 0.00001f ) : i(i_), vx(vx_), vy(vy_), den(den_){}
 
     // Functions
     ivec2 coord() const;

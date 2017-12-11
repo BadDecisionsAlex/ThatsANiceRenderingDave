@@ -246,9 +246,6 @@ void FluidSystem::getPointsForScreen(vector<vec4>& particles, vector<vec4>& velo
         }
     }
     
-//    velocities.push_back( vec4(-0.5, 0.0, 0, 1.0));
-//    velocities.push_back( vec4(0.5, 0.0, 0, 1.0));
-//    vel_indices.push_back( uvec2( 0, 1 ));
 }
 
 vec4 FluidSystem::toScreen(const vec3& point) {
@@ -341,8 +338,13 @@ void FluidSystem::step() {
     }
 
     // Play with values of oldGrid here for "input"
-    oldGrid.at(5,5).den += 10.0f;
-    oldGrid.at(25,25).den += 25.0f;
+    oldGrid.at(5,5).den += 50.0f;
+    oldGrid.at(18,18).den += 150.0f;
+    oldGrid.at(59,59).vy += 100.0f;
+    oldGrid.at(40,40).den -= 200.0f;
+    oldGrid.at(20,20).vx += 200.0f;
+    oldGrid.at(30,20).den += 200.0f;
+    oldGrid.at(60,60).den += 200.0f;
 
     // Step Velocity
     add( velocityX, velocityX, grid, oldGrid );
