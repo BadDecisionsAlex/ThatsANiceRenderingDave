@@ -209,18 +209,21 @@ void FluidSystem::prepareDraw() {
 void FluidSystem::draw() {
     //std::cout << "draw." << std::endl;
     getPointsForScreen(particles, velocities, indices, vel_indices);
-    fluid_pass.updateVBO(0, particles.data(), particles.size());
-    fluid_pass.setup();
-    CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, indices.size()* 3, GL_UNSIGNED_INT, 0));
     velocity_pass.updateVBO(0, velocities.data(), velocities.size());
     velocity_pass.setup();
     CHECK_GL_ERROR(glDrawElements( GL_LINES, vel_indices.size()*2, GL_UNSIGNED_INT, 0));
+    
+    fluid_pass.updateVBO(0, particles.data(), particles.size());
+    fluid_pass.setup();
+    CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, indices.size()* 3, GL_UNSIGNED_INT, 0));
 }
 
 void FluidSystem::getPointsForScreen(vector<vec4>& particles, vector<vec4>& velocities, vector<uvec3>& indices, vector<uvec2>& vel_indices ) {
     //std::cout << "getPointsForScreen." << std::endl;
     particles.clear();
     indices.clear();
+    velocities.clear();
+    vel_indices.clear();
     int i = 0;
     int j =0;
     for (int r=1;r<Grid::N+1;++r) {
@@ -235,7 +238,7 @@ void FluidSystem::getPointsForScreen(vector<vec4>& particles, vector<vec4>& velo
             i+=4;
 
             // Velocity
-            vec2 center = Grid::coToPos(r-1,c-1);
+            vec2 center = Grid::coToPos(r, c);
             velocities.push_back( toScreen( center ));
             velocities.push_back( toScreen( center + vec2( grid.at(r,c).vx, grid.at(r,c).vy )));
             vel_indices.push_back( uvec2( j, j+1 ));
@@ -253,7 +256,7 @@ vec4 FluidSystem::toScreen(const vec3& point) {
 vec4 FluidSystem::toScreen(const vec2& pos){
     float ndcX = ((2.0f * pos.y) / float(Grid::N)) - 1.0f;
     float ndcY = ((2.0f * pos.x) / float(Grid::N)) - 1.0f;
-    return vec4(ndcX, ndcY, 1.0f, 1.0f);
+    return vec4(ndcX, ndcY, 0.0f, 1.0f);
 }
 
 void FluidSystem::printAll(){
