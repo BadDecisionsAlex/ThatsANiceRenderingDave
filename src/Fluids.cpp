@@ -172,21 +172,20 @@ void FluidSystem::fixBoundary( Accessor accessor, Grid& src, short f ){
 
 // drawing stuff
 
-FluidSystem::FluidSystem(int grid_size, int dx_, int dy_, float time_step, float diff_, float visc_ ) : grid(Grid(grid_size, dx_, dy_)), oldGrid(Grid(grid_size, dx_, dy_)), dt(time_step), diffusion(diff_), viscosity(visc_), fluid_pass(-1, fluid_pass_input, {fluid_vertex_shader, fluid_geometry_shader, particle_fragment_shader}, {/*uniforms*/}, {"fragment_color"}){
-                    getPointsForScreen(particles, densities, indices);
+FluidSystem::FluidSystem(int grid_size, int dx_, int dy_, float time_step, float diff_, float visc_ ) : grid(Grid(grid_size, dx_, dy_)), oldGrid(Grid(grid_size, dx_, dy_)), dt(time_step), diffusion(diff_), viscosity(visc_), fluid_pass(-1, fluid_pass_input, {grid_vertex_shader, grid_geometry_shader, grid_fragment_shader}, {/*uniforms*/}, {"fragment_color"}){
+                    getPointsForScreen(particles, indices);
                     fluid_pass_input.assign(0, "vertex_position", particles.data(), particles.size(), 4, GL_FLOAT);
-                    fluid_pass_input.assign(1, "density", densities.data(), densities.size(), 1, GL_FLOAT);
                 }
 
 void FluidSystem::prepareDraw() {
     //std::cout << "Prepare Draw." << std::endl;
-    fluid_pass_input.assign_index(indices.data(), indices.size(), 1);
+    fluid_pass_input.assign_index(indices.data(), indices.size(), 3);
     fluid_pass = RenderPass(-1,
                                fluid_pass_input,
                                {
-                                       fluid_vertex_shader,
-                                       fluid_geometry_shader,
-                                       particle_fragment_shader
+                                       grid_vertex_shader,
+                                       grid_geometry_shader,
+                                       grid_fragment_shader
                                },
                                { /* uniforms */ },
                                { "fragment_color" }
@@ -195,30 +194,34 @@ void FluidSystem::prepareDraw() {
 
 void FluidSystem::draw() {
     //std::cout << "draw." << std::endl;
-    getPointsForScreen(particles, densities, indices);
+    getPointsForScreen(particles, indices);
     fluid_pass.updateVBO(0, particles.data(), particles.size());
-    fluid_pass.updateVBO(1, densities.data(), densities.size());
     fluid_pass.setup();
-    CHECK_GL_ERROR(glDrawElements(GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0));
+    CHECK_GL_ERROR(glDrawElements(GL_TRIANGLES, indices.size()* 3, GL_UNSIGNED_INT, 0));
 }
 
-void FluidSystem::getPointsForScreen(vector<vec4>& particles, vector<vec1>& densities, vector<uvec1>& indices) {
+void FluidSystem::getPointsForScreen(vector<vec4>& particles, vector<uvec3>& indices) {
     //std::cout << "getPointsForScreen." << std::endl;
     particles.clear();
-    densities.clear();
     indices.clear();
-    for (Cell& c : grid) {
-        particles.push_back( toScreen(Grid::iToPos(c.i) ));
-        densities.push_back(vec1(c.den));
-        indices.push_back(uvec1(c.i));
+    int i = 0;
+    for (int r=1;r<Grid::N+1;++r) {
+        for(int c=1;c<Grid::N+1;++c){
+            particles.push_back( toScreen( vec3( float(r-1), float(c-1), grid.at( r, c ).den )));
+            particles.push_back( toScreen( vec3( float(r-1), float(c), grid.at( r, c+1 ).den )));
+            particles.push_back( toScreen( vec3( float(r), float(c-1), grid.at( r+1, c ).den )));
+            particles.push_back( toScreen( vec3( float(r), float(c), grid.at( r+1, c+1 ).den )));
+            indices.push_back(uvec3( i, i+1, i+3 ));
+            indices.push_back(uvec3( i, i+3, i+2 ));
+            i+=4;
+        }
     }
 }
 
-vec4 FluidSystem::toScreen(const vec2& point) {
-
-    float ndcX = ((2.0f * point.x) / float(Grid::N+2)) - 1.0f;
-    float ndcY = ((2.0f * point.y) / float(Grid::N+2)) - 1.0f;
-    return vec4(ndcX, ndcY, 0.0, 1.0);
+vec4 FluidSystem::toScreen(const vec3& point) {
+    float ndcX = ((2.0f * point.y) / float(Grid::N)) - 1.0f;
+    float ndcY = ((2.0f * point.x) / float(Grid::N)) - 1.0f;
+    return vec4(ndcX, ndcY, point.z, 1.0);
 }
 
 void FluidSystem::printAll(){
@@ -279,8 +282,8 @@ static int stepCount = 0;
 
 void FluidSystem::step() {
 
-    if(isDragging && mouse) {
-       // mouse is a vec3 
+    if(isDragging) {
+        std::cout << "Mouse : " << mouse.x << ", " << mouse.y << std::endl;
     }
 
     // Play with values of oldGrid here for "input"
@@ -319,21 +322,13 @@ void FluidSystem::step() {
 }
 
 void FluidSystem::setup() {
-    // give things an intial density
-    for (int r = 1; r < grid.N + 1; ++r ) {
-        for (int c = 1; c < grid.N + 1; ++c ) {
-            Cell& currentCell = grid.at(r, c);
-            // FIXME These are not good initial values for a real one. Just for testing.
-            currentCell.den = 0.0;
-        }
-    }
     fixBoundary(density,grid,0);
     fixBoundary(velocityX,grid,1);
     fixBoundary(velocityY,grid,2);
     fixBoundary(density,oldGrid,0);
     fixBoundary(velocityX,oldGrid,1);
     fixBoundary(velocityY,oldGrid,2);
-    getPointsForScreen(particles, densities, indices);
+    getPointsForScreen(particles, indices);
 }
 
 // ***********

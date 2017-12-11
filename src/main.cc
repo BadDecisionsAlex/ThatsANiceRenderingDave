@@ -22,7 +22,7 @@
 #include "SmokeSystem.h"
 #include "MassParticle.h"
 
-#include "GridSystemHandler.h"
+//#include "GridSystemHandler.h"
 
 using std::vector;
 using glm::vec2;
@@ -52,25 +52,16 @@ int main(int argc, char* argv[])
             0.4f     // viscocity
             );
 
-
-    rootSystem->width = window_width;
-    rootSystem->height = window_height;
-
-    GridSystemHandler *grid = new GridSystemHandler(rootSystem);
-    grid->width = window_width;
-    grid->width = window_width;
-    grid->setup();
-    grid->prepareDraw();
-    
-    //rootSystem->test();
+    rootSystem->width = 1;
+    rootSystem->height = 1;
+    rootSystem->setup();
+    rootSystem->prepareDraw();
+    gui.delegates.push_back(rootSystem);
 
 	while (openGL.drawBool()) {
-        
         openGL.beforeDraw();
-
-        grid->step();
-        grid->draw();
-
+        rootSystem->step();
+        rootSystem->draw();
         openGL.afterDraw();
 	}
     openGL.destroy();

@@ -72,13 +72,9 @@ struct Grid{
     static float dy;
     static int printSpacing; // default is 5
 
-    Grid( int n_ = 10, float dx_ = 10, float dy_ = 10 ) : grid(vector<Cell>(1)) { N=n_; dx=dx_; dy=dy_; printSpacing=7; clear(); }
+    Grid( int n_ = 10, float dx_ = 10, float dy_ = 10 ) : grid(vector<Cell>((n_+2)*(n_+2))) { N=n_; dx=dx_; dy=dy_; printSpacing=7; clear(); }
 
     // Functions
-    //
-    // Remember Coords are stored (row, column) and Positions are stored (x, y)
-    // it is very easy to confuse the horizontal and vertical mapping conversion!
-    //
     void clear(){
         grid = vector<Cell>( (N+2)*(N+2) );
         int i=0;
@@ -87,7 +83,6 @@ struct Grid{
     }
     Cell& at( int r, int c ) { return grid[ r * (N+2) + c ]; }
     const Cell& at( int r, int c ) const { return grid[ r * (N+2) + c]; }
-    //FIXME make these consistent by dependence. This is begging for errors.
     static ivec2 iToCo( int i ) { return ivec2( i / (N+2), i % (N+2)); }
     static int coToI( int r, int c ) { return r * (N+2) + c; }
     static int coToI( ivec2 v )  { return coToI( v.x, v.y ); }
@@ -119,13 +114,12 @@ public:
     void test();
     void step();
     void setup();
-    void getPointsForScreen(vector<vec4>& particles, vector<vec1>& densities, vector<uvec1>& indices);
-    vec4 toScreen(const vec2& particle);
     void prepareDraw();
     void draw();
     void keyWasPressed(int keyCode);
     void mouseDragged(float x, float y) {
-        mouse = vec3(x * 2.0f, y * 2.0f, 0.0f); }
+        mouse = vec3( (x / float(width)) * float(Grid::N+2) , (y / float(height)) * float(Grid::N+2), 0.0f);
+    }
     void mouseStateChange(bool dragging) {
         isDragging = dragging; }
     
@@ -160,12 +154,14 @@ private:
     void update( Accessor var );
     void swap( Accessor varA, Accessor varB, Grid& srcA, Grid& srcB ) ;
 
+    void getPointsForScreen(vector<vec4>& particles, vector<uvec3>& indices);
+    vec4 toScreen(const vec3& particle);
+
     //Rendering (Could be made simpler)
     RenderDataInput fluid_pass_input;
     RenderPass fluid_pass;
     vector<vec4> particles;
-    vector<vec1> densities;
-    vector<uvec1> indices;
+    vector<uvec3> indices;
 };
 
 #endif
