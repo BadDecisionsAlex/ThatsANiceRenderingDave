@@ -123,6 +123,11 @@ public:
     vec4 toScreen(const vec2& particle);
     void prepareDraw();
     void draw();
+    void keyWasPressed(int keyCode);
+    void mouseDragged(float x, float y) {
+        mouse = vec3(x * 2.0f, y * 2.0f, 0.0f); }
+    void mouseStateChange(bool dragging) {
+        isDragging = dragging; }
     
     Grid grid;
 
@@ -132,6 +137,10 @@ private:
     float dt;
     float diffusion;
     float viscosity;
+
+    // For UI
+    vec3 mouse;
+    bool isDragging = false;
 
     // Functions
     

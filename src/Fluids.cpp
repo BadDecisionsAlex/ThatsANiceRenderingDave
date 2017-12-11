@@ -268,21 +268,25 @@ void FluidSystem::print(Accessor var, Grid& src){
 }
 
 void FluidSystem::test(){
-    std::cout << "*************TESTING*************" << std::endl;
-    printAll();
-    std::cout << "******************" << std::endl;
+    // For Unit Testing.
+}
 
-    std::cout << "*************END TESTING*************" << std::endl;
+void FluidSystem::keyWasPressed(int keyCode){
+
 }
 
 static int stepCount = 0;
 
 void FluidSystem::step() {
 
+    if(isDragging && mouse) {
+       // mouse is a vec3 
+    }
+
     // Play with values of oldGrid here for "input"
     oldGrid.at(5,5).den += 10.0f;
-    oldGrid.at(25,25).den += 50.0f;
-    oldGrid.at(24,25).vx += 0.5f;
+    oldGrid.at(25,25).den += 25.0f;
+    oldGrid.at(25,25).vx -= 1.5f;
 
     // Step Velocity
     add( velocityX, velocityX, grid, oldGrid );

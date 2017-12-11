@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
     FluidSystem* rootSystem = new FluidSystem( 
             40,     // N size 
             10, 10, (1.0f/60.0f), // don't touch
-            0.2f,    // diffusion 
+            0.02f,    // diffusion 
             0.4f     // viscocity
             );
 

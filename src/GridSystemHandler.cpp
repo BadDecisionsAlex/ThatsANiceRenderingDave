@@ -53,7 +53,7 @@ void GridSystemHandler::getPointsForScreen(vector<vec4>& points, vector<uvec3>& 
     
     Grid& grid = system->grid;
     int count = 0;
-    nodeSize = float(width) / Grid::N;
+    nodeSize = float(width) / float(Grid::N);
     for (int r = 0; r < Grid::N+2; ++r) {
         for (int c = 0; c < Grid::N+2; ++c) {
             int x = c * nodeSize;
