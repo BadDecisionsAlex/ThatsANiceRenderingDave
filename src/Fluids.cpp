@@ -108,23 +108,23 @@ void FluidSystem::diffuse( Accessor varA, Accessor varB, float scalar, short f )
 
 void FluidSystem::advect( Accessor var, Grid& src, short f ){
     //std::cout << "Advect." << std::endl;
-    float dt0 = dt * Grid::N;
+    float dt0 = dt * float(Grid::N);
     for( int r=1; r < Grid::N+1; ++r ){
         for( int c=1; c < Grid::N+1; ++c ){
-            Cell& currentCell = src.at(r,c);
-            vec2 backStep = vec2( float(r) - dt0 * currentCell.vx, float(c) - dt0 * currentCell.vy );
+            float x = float(r) - dt0 * src.at(r,c).vx; 
+            float y = float(c) - dt0 * src.at(r,c).vy;
             // check bounds
-            float upper = Grid::N + 0.5f;
-            if( backStep.x < 0.5f ) backStep.x = 0.5f;
-            if( backStep.y < 0.5f ) backStep.y = 0.5f;
-            if( backStep.x > upper ) backStep.x = upper;
-            if( backStep.y > upper ) backStep.y = upper;
+            float upper = float(Grid::N) + 0.5f;
+            if( x < 0.5f ) x = 0.5f;
+            if( y < 0.5f ) y = 0.5f;
+            if( x > upper ) x = upper;
+            if( y > upper ) y = upper;
             
-            int br = int(backStep.x);
-            int bc = int(backStep.y);    
-            float weightWest = backStep.x - float(br);
+            int br = int(x);
+            int bc = int(y);    
+            float weightWest = x - float(br);
             float weightEast = 1.0f - weightWest;
-            float weightNorth = backStep.y - float(bc);
+            float weightNorth = y - float(bc);
             float weightSouth = 1.0f - weightNorth;
             
             var(grid.at(r,c)) = weightEast * ( weightSouth * var(oldGrid.at(br, bc)) + weightNorth * var(oldGrid.at(br, bc+1)) ) + weightWest * ( weightSouth * var(oldGrid.at(br+1, bc)) + weightNorth * var(oldGrid.at(br+1, bc+1)));
@@ -134,25 +134,23 @@ void FluidSystem::advect( Accessor var, Grid& src, short f ){
 
 void FluidSystem::project(){
     //std::cout << "Project." << std::endl;
+    float h = 1.0f/float(Grid::N);
     for (int r=1; r < Grid::N+1; ++r) {
         for (int c=1; c < Grid::N+1; ++c) {
             // compute the gradient between each neighbors pressure
             // NOTE: I am using .vx and .vy in oldCell as a cache for pressure data
             // we no longer need those old positions at this point and this will allow us to use 2 fewer floats for each Cell.
-            
-            Cell& oldCell = grid.at(r, c);
-            oldCell.vy = -0.5f * (grid.at(r+1,c).vx - grid.at(r-1,c).vx + grid.at(r,c+1).vy - grid.at(r,c-1).vy) / Grid::N;
-            oldCell.vx = 0.0f;
-            }}
+            oldGrid.at(r,c).vy = -0.5f * h * (grid.at(r+1,c).vx - grid.at(r-1,c).vx + grid.at(r,c+1).vy - grid.at(r,c-1).vy);
+            oldGrid.at(r,c).vx = 0.0f;
+        }}
     fixBoundary( divergence, oldGrid, 0 );
     fixBoundary( pressure, oldGrid, 0 );
     // dont forget we are temporarily occupying oldGrid.vx & .vy here
     linearSolver( pressure, divergence, oldGrid, oldGrid, 1.0f, 4.0f, 0 );
     for( int r=1; r < Grid::N+1; ++r ){
         for( int c=1; c < Grid::N+1; ++c ){
-            Cell& currentCell = grid.at(r,c);
-            currentCell.vx -= -0.5f * Grid::N * ( oldGrid.at(r+1,c).vx - oldGrid.at(r-1,c).vx );
-            currentCell.vy -= -0.5f * Grid::N * ( oldGrid.at(r,c+1).vx - oldGrid.at(r,c-1).vx );
+            grid.at(r,c).vx -= -0.5f * ( oldGrid.at(r+1,c).vx - oldGrid.at(r-1,c).vx )/h;
+            grid.at(r,c).vy -= -0.5f * ( oldGrid.at(r,c+1).vx - oldGrid.at(r,c-1).vx )/h;
         }}
     fixBoundary( velocityX, grid, 1 );
     fixBoundary( velocityY, grid, 2 );
@@ -282,8 +280,9 @@ static int stepCount = 0;
 void FluidSystem::step() {
 
     // Play with values of oldGrid here for "input"
-    oldGrid.at(5,5).den += 100.0f;
-    oldGrid.at(25,25).den += 250.0f;
+    oldGrid.at(5,5).den += 10.0f;
+    oldGrid.at(25,25).den += 50.0f;
+    oldGrid.at(24,25).vx += 0.5f;
 
     // Step Velocity
     add( velocityX, velocityX, grid, oldGrid );
