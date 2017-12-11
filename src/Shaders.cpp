@@ -51,3 +51,15 @@ const char* grid_geometry_shader =
 const char* grid_fragment_shader =
 #include "shaders/grid.frag"
 ;
+
+const char* velocity_vertex_shader = 
+#include "shaders/velfield.vert"
+;
+
+const char* velocity_geometry_shader = 
+#include "shaders/velfield.geom"
+;
+
+const char* velocity_fragment_shader = 
+#include "shaders/velfield.frag"
+;

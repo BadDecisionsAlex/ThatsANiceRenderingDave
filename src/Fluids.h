@@ -16,6 +16,7 @@
 using glm::vec2;
 using glm::ivec2;
 using glm::uvec1;
+using glm::uvec2;
 using glm::vec1;
 using std::vector;
 using std::size_t;
@@ -157,13 +158,18 @@ private:
     void update( Accessor var );
     void swap( Accessor varA, Accessor varB, Grid& srcA, Grid& srcB ) ;
 
-    void getPointsForScreen(vector<vec4>& particles, vector<uvec3>& indices);
+    void getPointsForScreen(vector<vec4>& particles, vector<vec4>& velocities, vector<uvec3>& indices, vector<uvec2>& vel_indices);
     vec4 toScreen(const vec3& particle);
+    vec4 toScreen(const vec2& pos);
 
     //Rendering (Could be made simpler)
     RenderDataInput fluid_pass_input;
+    RenderDataInput velocity_pass_input;
     RenderPass fluid_pass;
+    RenderPass velocity_pass;
     vector<vec4> particles;
+    vector<vec4> velocities;
+    vector<uvec2> vel_indices;
     vector<uvec3> indices;
 };
 
