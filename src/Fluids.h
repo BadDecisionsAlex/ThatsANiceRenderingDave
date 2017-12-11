@@ -46,38 +46,13 @@ struct Cell {
     // change printvar to change which value we print by << operator
     static Accessor printVar;
 
-    Cell( int i_ = 0, float vx_ = 0.0f, float vy_ = 0.0f, float den_ = 10.0f ) : i(i_), vx(vx_), vy(vy_), den(den_){}
+    Cell( int i_ = 0, float vx_ = 0.0f, float vy_ = 0.0f, float den_ = 0.0f ) : i(i_), vx(vx_), vy(vy_), den(den_){}
 
     // Functions
     ivec2 coord() const;
     vec2 pos() const;
 
 };
-
-// *********
-// Accessor
-// *********
-
-// Accessors allow us to easity pass the arguments we wish to change into a function.
-//
-// lets see some examples.
-// normally we can access or change the value member variable den by writing :
-// ** // my_cell.den = 5;
-// Using accessors we will be able to also do this by saying :
-// ** // _den( my_cell ) = 5;
-// or by using the more convenient accessor alias :
-// ** // density( my_cell ) = 5;
-//
-// This may seem trivial but this will be incedibly useful for making many of our functions act
-// on different sets of member variables in our grids without rewriting redundant functions.
-//
-// For instance lets say we want to update a set of member variables between grid and oldGrid.
-// simply call :
-// ** // FluidSystem::update( FluidSystem&, density );
-//
-// ---------
-// Reminder :  Accessor = std::function<float&(Cell&)>;
-// ---------
 
 // *****
 // GRID
@@ -95,26 +70,33 @@ struct Grid{
     static int N;
     static float dx;
     static float dy;
-    static int printSpacing; // default is 3
+    static int printSpacing; // default is 5
 
-    Grid( int n_ = 10, float dx_ = 10, float dy_ = 10 ) : grid(vector<Cell>( (n_+2) * (n_+2) )) { N=n_; dx=dx_; dy=dy_; printSpacing=3; }
+    Grid( int n_ = 10, float dx_ = 10, float dy_ = 10 ) : grid(vector<Cell>(1)) { N=n_; dx=dx_; dy=dy_; printSpacing=7; clear(); }
 
     // Functions
     //
     // Remember Coords are stored (row, column) and Positions are stored (x, y)
     // it is very easy to confuse the horizontal and vertical mapping conversion!
     //
+    void clear(){
+        grid = vector<Cell>( (N+2)*(N+2) );
+        int i=0;
+        for(Cell& c : grid)
+            c.i = i++;
+    }
     Cell& at( int r, int c ) { return grid[ r * (N+2) + c ]; }
     const Cell& at( int r, int c ) const { return grid[ r * (N+2) + c]; }
+    //FIXME make these consistent by dependence. This is begging for errors.
     static ivec2 iToCo( int i ) { return ivec2( i / (N+2), i % (N+2)); }
     static int coToI( int r, int c ) { return r * (N+2) + c; }
     static int coToI( ivec2 v )  { return coToI( v.x, v.y ); }
-    static vec2 iToPos( int i ) { return vec2( (float( i % (N+2) ) + 0.5f) * dx, (float( i / (N+2)) + 0.5f) * dy ); }
-    static vec2 coToPos( int r, int c ) { return vec2( (float(c) + 0.5f) * dx, (float(c) + 0.5f) * dy); }
-    static vec2 coToPos( ivec2 v ) { return coToPos( v.y, v.x ); }
-    static int posToI( float x, float y ) { return int(y/dy) * (N+2) + int(x/dx); }
+    static vec2 iToPos( int i ) { return coToPos(iToCo(i)); }
+    static vec2 coToPos( int r, int c ) { return vec2( (float(r) + 0.5f), (float(c) + 0.5f)); }
+    static vec2 coToPos( ivec2 v ) { return coToPos( v.x, v.y ); }
+    static int posToI( float x, float y ) { return coToI(int(x), int(y)); }
     static int posToI( vec2 v ){return posToI( v.x, v.y );}
-    static ivec2 posToCo( float x, float y ) { return ivec2( y/dy, x/dx ); }
+    static ivec2 posToCo( float x, float y ) { return ivec2( int(x), int(y)); }
     static ivec2 posToCo( vec2 v ) { return posToCo( v.x, v.y ); }
 
     // STL Compliance
@@ -127,9 +109,14 @@ struct Grid{
 
 class FluidSystem : public ParticleSystem {
 public:
-    FluidSystem(int grid_size=10, int dx_=10, int dy_=10, float time_step=(1.0f/60.0f), float diff_=0.5f, float visc_=0.5f );
+    FluidSystem(int grid_size=10, int dx_=10, int dy_=10, float time_step=(1.0f/60.0f), float diff_=0.0001f, float visc_=0.0001f );
 
     // Draw Functions
+    void printAll();
+    void printCurrent();
+    void printOld();
+    void print(Accessor var, Grid& src);
+    void test();
     void step();
     void setup();
     void getPointsForScreen(vector<vec4>& particles, vector<vec1>& densities, vector<uvec1>& indices);

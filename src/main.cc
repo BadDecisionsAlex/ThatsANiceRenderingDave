@@ -39,15 +39,17 @@ int main(int argc, char* argv[])
     rootSystem->height = window_height;
     rootSystem->setup();
     rootSystem->prepareDraw();
+    
+    //rootSystem->test();
 
 	while (openGL.drawBool()) {
         
-        //openGL.beforeDraw();
+        openGL.beforeDraw();
 
         rootSystem->step();
-        //rootSystem->draw();
+        rootSystem->draw();
 
-        //openGL.afterDraw();
+        openGL.afterDraw();
 	}
     openGL.destroy();
 }
