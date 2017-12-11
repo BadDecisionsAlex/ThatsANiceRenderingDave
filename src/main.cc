@@ -30,7 +30,7 @@ using glm::vec3;
 using glm::vec4;
 using glm::uvec1;
 
-int window_width = 1000, window_height = 1000;
+int window_width = 600, window_height = 600;
 
 int main(int argc, char* argv[])
 {
