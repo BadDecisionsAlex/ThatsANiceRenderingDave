@@ -1,8 +1,9 @@
 R"zzz(#version 330 core
 layout (points) in;
-layout (points, max_vertices = 1) out;
+layout (points, max_vertices = 3) out;
 out vec4 color;
 
+float rand(float n){return fract(sin(n) * 43758.5453123);}
 vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
 vec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314 * r;}
 vec3 fade(vec3 t) {return t*t*t*(t*(t*6.0-15.0)+10.0);}
@@ -76,12 +77,39 @@ float cnoise(vec3 P){
 }
 
 void main() {
+    float offset;
+    vec4 point1, point2, point3;
     gl_Position = gl_in[0].gl_Position;
-    gl_PointSize = 2;
+    point1 = gl_Position;
+    float dispX = (cnoise(vec3(point1.x, point1.y, 1))) + 0.000001;
+    float dispY = (cnoise(vec3(point1.x, point1.y, 2))) + 0.000001;
+    float dispXX = (cnoise(vec3(point1.x + dispX, point1.y + dispY, 1))) + 0.000001;
+    float dispYY = (cnoise(vec3(point1.x + dispX, point1.y + dispY, 2))) + 0.000001;
     float rChannel = cnoise(vec3(gl_Position.x, gl_Position.y, 0)) + 0.6;
     float gChannel = cnoise(vec3(gl_Position.x, gl_Position.y, 1)) + 0.6;
     float bChannel = cnoise(vec3(gl_Position.x, gl_Position.y, 2)) + 0.6;
     color = vec4(rChannel, gChannel, bChannel, 1.0);
+    gl_PointSize = 2;
+    EmitVertex();
+    EndPrimitive();
+
+    offset = 0.4 * cnoise(vec3(gl_Position.x , gl_Position.y, 3));
+    gl_Position = gl_in[0].gl_Position + vec4(offset, offset, 0.0, 0.0);
+    rChannel = cnoise(vec3(gl_Position.x, gl_Position.y, 0)) + 0.6;
+    gChannel = cnoise(vec3(gl_Position.x, gl_Position.y, 1)) + 0.6;
+    bChannel = cnoise(vec3(gl_Position.x, gl_Position.y, 2)) + 0.6;
+    color = vec4(rChannel, gChannel, bChannel, 1.0);
+    gl_PointSize = 2;
+    EmitVertex();
+    EndPrimitive();
+
+    offset *= -1.0;
+    gl_Position = gl_in[0].gl_Position + vec4(offset, offset, 0.0, 0.0);
+    rChannel = cnoise(vec3(gl_Position.x, gl_Position.y, 0)) + 0.6;
+    gChannel = cnoise(vec3(gl_Position.x, gl_Position.y, 1)) + 0.6;
+    bChannel = cnoise(vec3(gl_Position.x, gl_Position.y, 2)) + 0.6;
+    color = vec4(rChannel, gChannel, bChannel, 1.0);
+    gl_PointSize = 2;
     EmitVertex();
     EndPrimitive();
 }
