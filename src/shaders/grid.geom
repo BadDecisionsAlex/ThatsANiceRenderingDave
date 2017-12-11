@@ -16,8 +16,7 @@ void main() {
         
         if (position[2] != 0) {
             float density = position[2];
-            
-            alpha = min(density / 15, 0.9);
+            alpha = min(density / 26, 0.9);
         } else {
             alpha = 0;
         }

@@ -109,7 +109,7 @@ struct Grid{
 
 class FluidSystem : public ParticleSystem {
 public:
-    FluidSystem(int grid_size=10, int dx_=10, int dy_=10, float time_step=(1.0f/60.0f), float diff_=0.0001f, float visc_=0.0001f );
+    FluidSystem(int grid_size=10, int dx_=10, int dy_=10, float time_step=(1.0f/60.0f), float diff_=0.01f, float visc_=0.6f );
 
     // Draw Functions
     void printAll();
