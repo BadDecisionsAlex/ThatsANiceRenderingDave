@@ -281,20 +281,30 @@ void FluidSystem::keyWasPressed(int keyCode){
 
 void FluidSystem::mouseDragged(float x, float y){
     mouse0 = mouse;
-    mouse = vec3( (x / float(width)) * float(Grid::N+2) , (y / float(height)) * float(Grid::N+2), 1.0f);
+    mouse = vec3( (x / float(width)) * float(Grid::N) , (y / float(height)) * float(Grid::N), 1.0f);
+    if( glm::distance(mouse,mouse0) > 5.0f )
+        mouse0 = mouse;
 }
 
 static int stepCount = 0;
 void FluidSystem::step() {
 
-    if( isDragging && mouse_button == GLFW_MOUSE_BUTTON_RIGHT ) {
-        std::cout << "Mouse : " << mouse.x << ", " << mouse.y << std::endl;
+    if( isDragging && mouse_button == GLFW_MOUSE_BUTTON_LEFT ) {
+        //std::cout << "Screen : " << mouse.x << ", " << mouse.y  << "\t";
+        vec2 dir = glm::normalize(vec2(mouse - mouse0));
+        int r = mouse[1];
+        int c = mouse[0];
+        //std::cout << "RC : " << r << ", " << c << "\t";
+        //std::cout << "vx += " << (dir.y * 10.0f * float(Grid::N)) << "\tvy += " << (dir.x * 10.0f * float(Grid::N)) << std::endl;
+        oldGrid.at(r,c).vx += dir.y * 10.0f * float(Grid::N);
+        oldGrid.at(r,c).vy += dir.x * 10.0f * float(Grid::N);
+    } else if( isDragging && mouse_button == GLFW_MOUSE_BUTTON_RIGHT){
+        oldGrid.at(mouse[1],mouse[0]).den += 10.0f * float(Grid::N);
     }
 
     // Play with values of oldGrid here for "input"
     oldGrid.at(5,5).den += 10.0f;
     oldGrid.at(25,25).den += 25.0f;
-    oldGrid.at(25,25).vx -= 1.5f;
 
     // Step Velocity
     add( velocityX, velocityX, grid, oldGrid );
