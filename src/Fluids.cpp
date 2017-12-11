@@ -214,7 +214,6 @@ void FluidSystem::getPointsForScreen(vector<vec4>& particles, vector<vec1>& dens
         densities.push_back(vec1(c.den));
         indices.push_back(uvec1(c.i));
     }
-    std::cout << std::endl;
 }
 
 vec4 FluidSystem::toScreen(const vec2& point) {
