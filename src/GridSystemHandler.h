@@ -12,10 +12,11 @@
 #include "ParticleSystem.h"
 #include "SmokeSystem.h"
 #include "SpaceSystem.h"
+#include "Fluids.h"
 
 //Im using this to easily switch out the class type.
 //There are certainly better ways to make this abstract
-#define SYSTEM SpaceSystem
+#define SYSTEM FluidSystem
 
 struct Node {
     int nodeID = 0;
@@ -67,15 +68,15 @@ public:
     void step() {
         system->step();
         
-        for (MassParticle p : system->particles) {
-            Node& node = nodeForPosition(p.p);
-            vec3 old_p = p.p - p.velocity;
-            Node& oldNode = nodeForPosition(old_p);
-            if (node.nodeID != oldNode.nodeID) {
-                oldNode.removeParticle(p);
-                node.addParticle(p);
-            }
-        }
+//        for (MassParticle p : system->particles) {
+//            Node& node = nodeForPosition(p.p);
+//            vec3 old_p = p.p - p.velocity;
+//            Node& oldNode = nodeForPosition(old_p);
+//            if (node.nodeID != oldNode.nodeID) {
+//                oldNode.removeParticle(p);
+//                node.addParticle(p);
+//            }
+//        }
     }
     
     Node& nodeForPosition(vec3& p) {
@@ -92,27 +93,27 @@ public:
     }
     
     void setup() {
-        outsideGridNode.nodeID = -1;
-        columns = (int)(width / nodeSize) + 1;
-        rows = (int)(height / nodeSize) + 1;
-        
-        int count = 0;
-        for (int r = 0; r < rows; ++r) {
-            vector<Node> column;
-            for (int c = 0; c < columns; ++c) {
-                Node node;
-                node.nodeID = count++;
-                column.push_back(node);
-            }
-            grid.push_back(column);
-        }
+//        outsideGridNode.nodeID = -1;
+//        columns = (int)(width / nodeSize) + 1;
+//        rows = (int)(height / nodeSize) + 1;
+//
+//        int count = 0;
+//        for (int r = 0; r < rows; ++r) {
+//            vector<Node> column;
+//            for (int c = 0; c < columns; ++c) {
+//                Node node;
+//                node.nodeID = count++;
+//                column.push_back(node);
+//            }
+//            grid.push_back(column);
+//        }
         
         system->setup();
         
-        for (MassParticle p : system->particles) {
-            Node& node = nodeForPosition(p.p);
-            node.addParticle(p);
-        }
+//        for (MassParticle p : system->particles) {
+//            Node& node = nodeForPosition(p.p);
+//            node.addParticle(p);
+//        }
         
         getPointsForScreen(points, indices);
     }

@@ -39,12 +39,16 @@ int main(int argc, char* argv[])
     GUI gui(window);
 
     FluidSystem* rootSystem = new FluidSystem();
-    
     rootSystem->width = window_width;
     rootSystem->height = window_height;
-    rootSystem->setup();
-    rootSystem->prepareDraw();
+//    rootSystem->setup();
+//    rootSystem->prepareDraw();
 
+    GridSystemHandler *grid = new GridSystemHandler(rootSystem);
+    grid->width = window_width;
+    grid->width = window_width;
+    grid->setup();
+    grid->prepareDraw();
     
     //rootSystem->test();
 
@@ -52,8 +56,8 @@ int main(int argc, char* argv[])
         
         openGL.beforeDraw();
 
-        rootSystem->step();
-        rootSystem->draw();
+        grid->step();
+        grid->draw();
 
         openGL.afterDraw();
 	}

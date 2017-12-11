@@ -15,9 +15,9 @@ void main() {
         vec4 position = gl_in[n].gl_Position;
         
         if (position[2] != 0) {
-            float density = min(1000, position[2] + 100);
+            float density = position[2];
             
-            alpha = min(density / 1000, 0.9);
+            alpha = min(density / 15, 0.9);
         } else {
             alpha = 0;
         }

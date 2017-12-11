@@ -123,10 +123,11 @@ public:
     vec4 toScreen(const vec2& particle);
     void prepareDraw();
     void draw();
+    
+    Grid grid;
 
 private:
-    // Member Variables 
-    Grid grid;
+    // Member Variables
     Grid oldGrid;
     float dt;
     float diffusion;
