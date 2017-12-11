@@ -76,15 +76,13 @@ float cnoise(vec3 P){
   return 2.2 * n_xyz;
 }
 
+
 void main() {
     float offset;
     vec4 point1, point2, point3;
     gl_Position = gl_in[0].gl_Position;
     point1 = gl_Position;
-    float dispX = (cnoise(vec3(point1.x, point1.y, 1))) + 0.000001;
-    float dispY = (cnoise(vec3(point1.x, point1.y, 2))) + 0.000001;
-    float dispXX = (cnoise(vec3(point1.x + dispX, point1.y + dispY, 1))) + 0.000001;
-    float dispYY = (cnoise(vec3(point1.x + dispX, point1.y + dispY, 2))) + 0.000001;
+    float chaos = 0.05;
     float rChannel = cnoise(vec3(gl_Position.x, gl_Position.y, 0)) + 0.6;
     float gChannel = cnoise(vec3(gl_Position.x, gl_Position.y, 1)) + 0.6;
     float bChannel = cnoise(vec3(gl_Position.x, gl_Position.y, 2)) + 0.6;
@@ -93,7 +91,8 @@ void main() {
     EmitVertex();
     EndPrimitive();
 
-    offset = 0.4 * cnoise(vec3(gl_Position.x , gl_Position.y, 3));
+    offset = chaos * cnoise(vec3(gl_Position.x , gl_Position.y, 3));
+    offset = clamp(offset, 0, 0.2);
     gl_Position = gl_in[0].gl_Position + vec4(offset, offset, 0.0, 0.0);
     rChannel = cnoise(vec3(gl_Position.x, gl_Position.y, 0)) + 0.6;
     gChannel = cnoise(vec3(gl_Position.x, gl_Position.y, 1)) + 0.6;
