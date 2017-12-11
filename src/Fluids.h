@@ -117,12 +117,13 @@ public:
     void prepareDraw();
     void draw();
     void keyWasPressed(int keyCode);
-    void mouseDragged(float x, float y) {
-        mouse = vec3( (x / float(width)) * float(Grid::N+2) , (y / float(height)) * float(Grid::N+2), 0.0f);
-    }
+    void mouseDragged(float x, float y);
     void mouseStateChange(bool dragging) {
         isDragging = dragging; }
-    
+    void mouseButton(int button){
+        mouse_button = button;
+    }
+
     Grid grid;
 
 private:
@@ -134,7 +135,9 @@ private:
 
     // For UI
     vec3 mouse;
+    vec3 mouse0;
     bool isDragging = false;
+    int mouse_button;
 
     // Functions
     

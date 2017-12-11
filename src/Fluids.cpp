@@ -10,6 +10,7 @@
 #include <queue>
 #include <string>
 #include "Shaders.h"
+#include <GLFW/glfw3.h>
 using std::function;
 
 // *******************
@@ -271,18 +272,22 @@ void FluidSystem::print(Accessor var, Grid& src){
 }
 
 void FluidSystem::test(){
-    // For Unit Testing.
+    // For Unit Testing. 
 }
 
 void FluidSystem::keyWasPressed(int keyCode){
 
 }
 
-static int stepCount = 0;
+void FluidSystem::mouseDragged(float x, float y){
+    mouse0 = mouse;
+    mouse = vec3( (x / float(width)) * float(Grid::N+2) , (y / float(height)) * float(Grid::N+2), 1.0f);
+}
 
+static int stepCount = 0;
 void FluidSystem::step() {
 
-    if(isDragging) {
+    if( isDragging && mouse_button == GLFW_MOUSE_BUTTON_RIGHT ) {
         std::cout << "Mouse : " << mouse.x << ", " << mouse.y << std::endl;
     }
 

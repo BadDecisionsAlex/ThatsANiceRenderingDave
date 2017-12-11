@@ -30,7 +30,7 @@ using glm::vec3;
 using glm::vec4;
 using glm::uvec1;
 
-int window_width = 1000, window_height = 1000;
+int window_width = 640, window_height = 640;
 
 int main(int argc, char* argv[])
 {
@@ -46,14 +46,14 @@ int main(int argc, char* argv[])
     // (float) diffusion (0.0f-1.0f) density spread rate.
     // (float) viscocity (0.0f-1.0f) velocity spread rate.
     FluidSystem* rootSystem = new FluidSystem( 
-            40,     // N size 
+            64,     // N size 
             10, 10, (1.0f/60.0f), // don't touch
             0.02f,    // diffusion 
             0.4f     // viscocity
             );
 
-    rootSystem->width = 1;
-    rootSystem->height = 1;
+    rootSystem->width = window_width;
+    rootSystem->height = window_height;
     rootSystem->setup();
     rootSystem->prepareDraw();
     gui.delegates.push_back(rootSystem);
