@@ -176,7 +176,7 @@ void FluidSystem::fixBoundary( Accessor accessor, Grid& src, short f ){
 FluidSystem::FluidSystem(int grid_size, int dx_, int dy_, float time_step, float diff_, float visc_ ) : grid(Grid(grid_size, dx_, dy_)), oldGrid(Grid(grid_size, dx_, dy_)), dt(time_step), diffusion(diff_), viscosity(visc_), fluid_pass(-1, fluid_pass_input, {grid_vertex_shader, grid_geometry_shader, grid_fragment_shader}, {/*uniforms*/}, {"fragment_color"}), velocity_pass(-1, velocity_pass_input, {velocity_vertex_shader, velocity_geometry_shader, velocity_fragment_shader}, {/*uniforms*/}, {"fragment_color"}){
                     getPointsForScreen(particles, velocities, indices, vel_indices);
                     fluid_pass_input.assign(0, "vertex_position", particles.data(), particles.size(), 4, GL_FLOAT);
-                    velocity_pass_input.assign(0, "velocity", velocities.data(), velocities.size(), 2, GL_FLOAT);
+                    velocity_pass_input.assign(0, "velocity", velocities.data(), velocities.size(), 4, GL_FLOAT);
                 }
 
 void FluidSystem::prepareDraw() {
@@ -225,7 +225,7 @@ void FluidSystem::getPointsForScreen(vector<vec4>& particles, vector<vec4>& velo
     velocities.clear();
     vel_indices.clear();
     int i = 0;
-    int j =0;
+    int j = 0;
     for (int r=1;r<Grid::N+1;++r) {
         for(int c=1;c<Grid::N+1;++c){
             // Density
@@ -238,13 +238,17 @@ void FluidSystem::getPointsForScreen(vector<vec4>& particles, vector<vec4>& velo
             i+=4;
 
             // Velocity
-            vec2 center = Grid::coToPos(r, c);
+            vec2 center = Grid::coToPos(r - 1, c - 1);
             velocities.push_back( toScreen( center ));
             velocities.push_back( toScreen( center + vec2( grid.at(r,c).vx, grid.at(r,c).vy )));
             vel_indices.push_back( uvec2( j, j+1 ));
             j+=2;
         }
     }
+    
+//    velocities.push_back( vec4(-0.5, 0.0, 0, 1.0));
+//    velocities.push_back( vec4(0.5, 0.0, 0, 1.0));
+//    vel_indices.push_back( uvec2( 0, 1 ));
 }
 
 vec4 FluidSystem::toScreen(const vec3& point) {
