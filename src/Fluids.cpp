@@ -289,7 +289,7 @@ void FluidSystem::mouseDragged(float x, float y){
 static int stepCount = 0;
 void FluidSystem::step() {
 
-    if( isDragging && mouse_button == GLFW_MOUSE_BUTTON_LEFT ) {
+    if( isDragging && mouse_button == GLFW_MOUSE_BUTTON_LEFT && mouse != mouse0 ) {
         //std::cout << "Screen : " << mouse.x << ", " << mouse.y  << "\t";
         vec2 dir = glm::normalize(vec2(mouse - mouse0));
         int r = mouse[1];
