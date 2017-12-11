@@ -5,16 +5,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
 
-namespace {
-	// Intersect a cylinder with radius 1/2, height 1, with base centered at
-	// (0, 0, 0) and up direction (0, 1, 0).
-	bool IntersectCylinder(const glm::vec3& origin, const glm::vec3& direction,
-			float radius, float height, float* t)
-	{
-		//FIXME perform proper ray-cylinder collision detection
-		return true;
-	}
-}
 
 GUI::GUI(GLFWwindow* window)
 	:window_(window)
@@ -37,6 +27,10 @@ void GUI::keyCallback(int key, int scancode, int action, int mods)
 		glfwSetWindowShouldClose(window_, GL_TRUE);
 		return ;
 	}
+    
+    for (GUIDelegate* delegate : delegates) {
+        delegate->keyWasPressed(action);
+    }
 }
 
 void GUI::mousePosCallback(double mouse_x, double mouse_y)
@@ -49,12 +43,20 @@ void GUI::mousePosCallback(double mouse_x, double mouse_y)
 	float delta_y = current_y_ - last_y_;
 	if (sqrt(delta_x * delta_x + delta_y * delta_y) < 1e-15)
 		return;
+    
+    for (GUIDelegate* delegate : delegates) {
+        delegate->mouseDragged(current_x_, current_y_);
+    }
 }
 
 void GUI::mouseButtonCallback(int button, int action, int mods)
 {
 	drag_state_ = (action == GLFW_PRESS);
 	current_button_ = button;
+    
+    for (GUIDelegate* delegate : delegates) {
+        delegate->mouseStateChange(drag_state_);
+    }
 }
 
 // Delegate to the actual GUI object.

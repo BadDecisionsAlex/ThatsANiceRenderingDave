@@ -34,6 +34,9 @@
 # Open Files
 *.swp
 
+# Tag Files
+*.py
+
 XcodeBuild/
 build/
 .idea

@@ -13,5 +13,10 @@ Scripts ( run them from the root folder or /src ) : </b></br></p>
 "./clean"   cleans out trash files in all subfolders. Feel free to add to the list.</br>
 "./bd"      attempts to compile and build the src.</br>
 "./run"     attempts to run the project. Only rebuilds if there is no executable. This will NOT compile changes.</br>
-"./bdr"     attempts to compile the project and then runs.
+"./bdr"     attempts to compile the project and then runs. </br>
+
+If any of the scripts don't work, the project will compile just like any of the previous ones. </br>
+
+Just run "cmake .." in a build folder, then "make -j8" to compile the project.
+
 </p>

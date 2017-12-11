@@ -19,6 +19,11 @@
 #include "OpenGLUtil.h"
 #include "Fluids.h"
 
+#include "SmokeSystem.h"
+#include "MassParticle.h"
+
+#include "GridSystemHandler.h"
+
 using std::vector;
 using glm::vec2;
 using glm::vec3;
@@ -39,6 +44,7 @@ int main(int argc, char* argv[])
     rootSystem->height = window_height;
     rootSystem->setup();
     rootSystem->prepareDraw();
+
     
     //rootSystem->test();
 

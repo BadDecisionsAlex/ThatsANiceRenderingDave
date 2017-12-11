@@ -14,4 +14,12 @@ extern const char* particle_geometry_shader;
 extern const char* fluid_geometry_shader;
 extern const char* particle_fragment_shader;
 
+extern const char* smoke_vertex_shader;
+extern const char* smoke_geometry_shader;
+extern const char* smoke_fragment_shader;
+
+extern const char* grid_vertex_shader;
+extern const char* grid_geometry_shader;
+extern const char* grid_fragment_shader;
+
 #endif /* Shaders_h */

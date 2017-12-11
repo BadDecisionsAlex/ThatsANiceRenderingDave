@@ -6,8 +6,10 @@
 #include <time.h>               // needed for timing the step
 #include "AbstractParticle.h"   // AbstractParticle
 #include "Drawable.h"
+#include "GUIDelegate.h"
 
 using glm::uvec1;
+using glm::uvec3;
 using glm::vec2;
 using glm::vec3;
 using glm::vec4;
@@ -19,7 +21,7 @@ using std::pair;
 #endif
 
 //TODO: make drawable once that is fixed
-struct ParticleSystem: Drawable {
+struct ParticleSystem: Drawable, GUIDelegate {
     float width, height;
     
     ParticleSystem() : width(1000), height(1000) {}
@@ -27,6 +29,7 @@ struct ParticleSystem: Drawable {
     
     void virtual step() = 0;
     void virtual setup() {}
+    
 };
 
 #endif
