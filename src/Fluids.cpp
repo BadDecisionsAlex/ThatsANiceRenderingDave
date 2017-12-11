@@ -281,7 +281,9 @@ static int stepCount = 0;
 
 void FluidSystem::step() {
 
-    oldGrid.at(5,5).den += 15.0;
+    // Play with values of oldGrid here for "input"
+    oldGrid.at(5,5).den += 100.0f;
+    oldGrid.at(25,25).den += 250.0f;
 
     // Step Velocity
     add( velocityX, velocityX, grid, oldGrid );
@@ -319,7 +321,7 @@ void FluidSystem::setup() {
         for (int c = 1; c < grid.N + 1; ++c ) {
             Cell& currentCell = grid.at(r, c);
             // FIXME These are not good initial values for a real one. Just for testing.
-            currentCell.den = 3.0;
+            currentCell.den = 0.0;
         }
     }
     fixBoundary(density,grid,0);

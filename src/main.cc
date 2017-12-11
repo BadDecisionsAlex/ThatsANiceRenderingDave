@@ -30,19 +30,31 @@ using glm::vec3;
 using glm::vec4;
 using glm::uvec1;
 
-int window_width = 600, window_height = 600;
+int window_width = 1000, window_height = 1000;
 
 int main(int argc, char* argv[])
 {
     OpenGLUtil openGL = OpenGLUtil(window_width, window_height, "Particles");
     GLFWwindow* window = openGL.setup();
     GUI gui(window);
+    
+    // Params in Order : 
+    // (int) Number of Cells (N+2 x N+2) because of border
+    // (int) dx Do Not Change
+    // (int) dy Do Not Change
+    // (float) dt Timestep (1.0f/60.0f) matches 60 fps
+    // (float) diffusion (0.0f-1.0f) density spread rate.
+    // (float) viscocity (0.0f-1.0f) velocity spread rate.
+    FluidSystem* rootSystem = new FluidSystem( 
+            40,     // N size 
+            10, 10, (1.0f/60.0f), // don't touch
+            0.2f,    // diffusion 
+            0.6f     // viscocity
+            );
 
-    FluidSystem* rootSystem = new FluidSystem();
+
     rootSystem->width = window_width;
     rootSystem->height = window_height;
-//    rootSystem->setup();
-//    rootSystem->prepareDraw();
 
     GridSystemHandler *grid = new GridSystemHandler(rootSystem);
     grid->width = window_width;
