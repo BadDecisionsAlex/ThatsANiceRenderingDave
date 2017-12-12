@@ -56,11 +56,6 @@ struct Grid{
 
 
     // Functions
-    void free( float*& x ){
-        delete[] x;
-        x = new float[(N+2)*(N+2)];
-    }
-
     void clear( float*& x){
         for(int i = 0; i < (N+2)*(N+2); ++i)
             x[i] = 0.0f;
@@ -103,6 +98,18 @@ struct Grid{
 
 };
 
+struct Cosa{
+
+    int i;
+    float* mat;
+    float a;
+    Cosa( int i_, float*& mat_, float a_) : i(i_), mat(mat_), a(a_){}
+
+    void step(){
+        mat[i] += a;
+    }
+};
+
 class FluidSystem : public ParticleSystem {
 public:
     FluidSystem(int grid_size=64, float time_step=(1.0f/60.0f), float diff_=0.01f, float visc_=0.6f );
@@ -127,6 +134,9 @@ private:
     float dt;
     float diffusion;
     float viscosity;
+    float force = 10.0f;
+    float amount = 10.0f;
+    vector<Cosa> cosas;
 
     // For UI
     vec3 mouse;
@@ -134,11 +144,14 @@ private:
     bool isDragging = false;
     bool vacuum = false;
     int mouse_button;
+    float* activeColor;
+    // R0 G1 B2
 
     // Functions
     
     // mixes the value of var in src to var in "grid"
     void advect( float*& d, float*& d0, float*& u, float*& v, short f );
+    void advectRGB( float*& dR, float*& dR0, float*& dG, float*& dG0, float*& dB, float*& dB0, float*& u, float*& v, short f );
     // mixes varB into varA applying scalar
     void diffuse( float*& x, float*& x0, float scalar, short f );
     // corrects divergence in flows
@@ -152,7 +165,7 @@ private:
     // moves a value from grid to oldGrid
     
     // Drawing
-    void getPointsForScreen(vector<vec4>& particles, vector<vec4>& velocities, vector<uvec3>& indices, vector<uvec2>& vel_indices);
+    void getPointsForScreen(vector<vec4>& particles, vector<vec3>& color, vector<vec4>& velocities, vector<uvec3>& indices, vector<uvec2>& vel_indices);
     vec4 toScreen(const vec3& particle);
     vec4 toScreen(const vec2& pos);
 
@@ -162,9 +175,11 @@ private:
     RenderPass fluid_pass;
     RenderPass velocity_pass;
     vector<vec4> particles;
+    vector<vec3> color;
     vector<vec4> velocities;
     vector<uvec2> vel_indices;
     vector<uvec3> indices;
 };
+
 
 #endif

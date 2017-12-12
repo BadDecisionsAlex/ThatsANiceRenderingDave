@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
             64,     // N size 
             (1.0f/60.0f), // don't touch
             0.002f,    // diffusion 
-            0.6f     // viscocity
+            0.4f     // viscocity
             );
 
     rootSystem->width = window_width;
