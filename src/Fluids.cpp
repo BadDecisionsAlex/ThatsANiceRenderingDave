@@ -7,115 +7,47 @@
 
 #include <glm/gtx/string_cast.hpp>
 #include "Fluids.h"
-#include <queue>
 #include <string>
 #include "Shaders.h"
 #include <GLFW/glfw3.h>
-using std::function;
-
-// *******************
-// Initialize Statics
-// *******************
-// Set these values in the Grid header's constructor.
-int Grid::N = -1;
-float Grid::dx = -1;
-float Grid::dy = -1;
-int Grid::printSpacing = -1;
-
-// *****
-// Cell
-// *****
-
-ivec2 Cell::coord() const { return Grid::iToCo(i); }
-vec2 Cell::pos() const { return Grid::iToPos(i); }
-Accessor velocityX( &Cell::vx );           // _vx
-Accessor velocityY( &Cell::vy );           // _vy
-Accessor density( &Cell::den );            // _den
-Accessor pressure( &Cell::vx );            // _p           //!// Lives temporarilty in .vx always pairs with oldGrid
-Accessor divergence( &Cell::vy );          // _div         //!// Lives temporarilty in .vy always pairs with oldGrid
-
-Accessor Cell::printVar = density;
-
-// *****
-// Grid
-// *****
-
-// Set Grid::printSpacing (int)     and     Cell::printVar (Accessor)   to change output.
-std::ostream& operator<<( std::ostream& os, Grid& g ){
-    std::ostringstream ss;
-    ss << std::fixed;
-    ss << std::setprecision(1);
-    char b = ' ';
-    char a = ' ';
-    ss << std::setfill(b);
-    for( int r=0; r<g.N+2; ++r ){
-        for( int c=0; c<g.N+2; ++c ){
-            if(c==1||c==g.N)
-                ss << std::setfill(b);
-            else if(c==1 && r != 0 && r != 1 && r != g.N && r != g.N+1)
-                ss << std::setfill(a);
-            ss << std::setw( Grid::printSpacing ) << Cell::printVar( g.at(r,c) );
-        }
-        ss << "\n\n";
-    }
-    return os << ss.str();
-}
-
 
 // ************
 // FluidSystem
 // ************
 
-void FluidSystem::update( Accessor var ){
-    for(int r=0; r < Grid::N+2; ++r)
-        for(int c=0; c < Grid::N+2; ++c)
-            var(oldGrid.at(r,c)) = var(grid.at(r,c));
-}
-
-void FluidSystem::swap( Accessor varA, Accessor varB, Grid& srcA, Grid& srcB ){
-    //std::cout << "Swap." << std::endl;
-    float a,b;
-    for(int r=0; r < Grid::N+2; ++r)
-        for(int c=0; c < Grid::N+2; ++c){
-            a = varA(srcA.at(r,c));
-            b = varB(srcB.at(r,c));
-            varB(srcB.at(r,c)) = a;
-            varA(srcA.at(r,c)) = b;
-        }
-}
-
-void FluidSystem::add( Accessor varA, Accessor varB, Grid& srcA, Grid& srcB ){
+void FluidSystem::add( float*& x, float*& s ){
     //std::cout << "Add." << std::endl;
-    for(int r=0; r < Grid::N+2; ++r )
-        for(int c=0; c < Grid::N+2; ++c)
-            varA( srcA.at(r,c) ) += dt * varB( srcB.at(r,c) );
+    for(int r=0; r < grid.N+2; ++r )
+        for(int c=0; c < grid.N+2; ++c)
+            grid.at(x,r,c) += dt * grid.at(s,r,c);
 }
 
-void FluidSystem::linearSolver( Accessor varA, Accessor varB, Grid& srcA, Grid& srcB, float scalarNumerator, float scalarDenominator, short f ){
+void FluidSystem::linearSolver( float*& x, float*& x0, float scalarNumerator, float scalarDenominator, short f ){
     //std::cout << "Linear Solver." << std::endl;
    for( int k=0; k<20; ++k ){
-        for( int r=1; r < Grid::N+1; ++r ){
-            for( int c=1; c < Grid::N+1; ++c ){
-                varA(srcA.at(r,c)) = ( varB(srcB.at(r,c)) + scalarNumerator * ( varA(srcA.at(r-1,c)) + varA(srcA.at(r+1,c)) + varA(srcA.at(r,c-1)) + varA(srcA.at(r,c+1)) )) / scalarDenominator;
+        for( int r=1; r < grid.N+1; ++r ){
+            for( int c=1; c < grid.N+1; ++c ){
+                grid.at(x,r,c) = ( grid.at(x0,r,c) + scalarNumerator * ( grid.at(x,r-1,c) + grid.at(x,r+1,c) + grid.at(x,r,c-1) + grid.at(x,r,c+1) )) / scalarDenominator;
             }}
-        fixBoundary( varA, srcA, f );}
+        fixBoundary( x, f );}
 }
 
-void FluidSystem::diffuse( Accessor varA, Accessor varB, float scalar, short f ){
+void FluidSystem::diffuse( float*& x, float*& x0,  float scalar, short f ){
     //std::cout << "Diffuse." << std::endl;
-    float scalarNumerator = dt * scalar * Grid::N * Grid::N;
-    linearSolver( varA, varB, grid, oldGrid, scalarNumerator, (1.0f + 4.0f * scalarNumerator), f );
+    float scalarNumerator = dt * scalar * grid.N * grid.N;
+    linearSolver( x, x0, scalarNumerator, (1.0f + 4.0f * scalarNumerator), f );
 }
 
-void FluidSystem::advect( Accessor var, Grid& src, short f ){
+// FIXME make an Advect Colors to optimize the swap of all of our color values at once. 
+void FluidSystem::advect( float*& d, float*& d0, float*& u, float*& v, short f ){
     //std::cout << "Advect." << std::endl;
-    float dt0 = dt * float(Grid::N);
-    for( int r=1; r < Grid::N+1; ++r ){
-        for( int c=1; c < Grid::N+1; ++c ){
-            float x = float(r) - dt0 * src.at(r,c).vx; 
-            float y = float(c) - dt0 * src.at(r,c).vy;
+    float dt0 = dt * float(grid.N);
+    for( int r=1; r < grid.N+1; ++r ){
+        for( int c=1; c < grid.N+1; ++c ){
+            float x = float(r) - dt0 * grid.at(u,r,c); 
+            float y = float(c) - dt0 * grid.at(v,r,c);
             // check bounds
-            float upper = float(Grid::N) + 0.5f;
+            float upper = float(grid.N) + 0.5f;
             if( x < 0.5f ) x = 0.5f;
             if( y < 0.5f ) y = 0.5f;
             if( x > upper ) x = upper;
@@ -128,52 +60,52 @@ void FluidSystem::advect( Accessor var, Grid& src, short f ){
             float weightNorth = y - float(bc);
             float weightSouth = 1.0f - weightNorth;
             
-            var(grid.at(r,c)) = weightEast * ( weightSouth * var(oldGrid.at(br, bc)) + weightNorth * var(oldGrid.at(br, bc+1)) ) + weightWest * ( weightSouth * var(oldGrid.at(br+1, bc)) + weightNorth * var(oldGrid.at(br+1, bc+1)));
+            grid.at(d,r,c) = weightEast * ( weightSouth * grid.at(d0,br, bc) + weightNorth * grid.at(d0,br, bc+1) ) + weightWest * ( weightSouth * grid.at(d0,br+1, bc) + weightNorth * grid.at(d0, br+1, bc+1));
         }}
-    fixBoundary( var, grid, f );
+    fixBoundary( d, f );
 }
 
-void FluidSystem::project(){
+void FluidSystem::project( float*& u, float*& v, float*& p, float*& div ){
     //std::cout << "Project." << std::endl;
-    float h = 1.0f/float(Grid::N);
-    for (int r=1; r < Grid::N+1; ++r) {
-        for (int c=1; c < Grid::N+1; ++c) {
+    float h = 1.0f/float(grid.N);
+    for (int r=1; r < grid.N+1; ++r) {
+        for (int c=1; c < grid.N+1; ++c) {
             // compute the gradient between each neighbors pressure
             // NOTE: I am using .vx and .vy in oldCell as a cache for pressure data
             // we no longer need those old positions at this point and this will allow us to use 2 fewer floats for each Cell.
-            oldGrid.at(r,c).vy = -0.5f * h * (grid.at(r+1,c).vx - grid.at(r-1,c).vx + grid.at(r,c+1).vy - grid.at(r,c-1).vy);
-            oldGrid.at(r,c).vx = 0.0f;
+            grid.at(div,r,c) = -0.5f * h * (grid.at(u,r+1,c) - grid.at(u,r-1,c) + grid.at(v,r,c+1) - grid.at(v,r,c-1));
+            grid.at(p,r,c) = 0.0f;
         }}
-    fixBoundary( divergence, oldGrid, 0 );
-    fixBoundary( pressure, oldGrid, 0 );
+    fixBoundary( div, 0 );
+    fixBoundary( p, 0 );
     // dont forget we are temporarily occupying oldGrid.vx & .vy here
-    linearSolver( pressure, divergence, oldGrid, oldGrid, 1.0f, 4.0f, 0 );
-    for( int r=1; r < Grid::N+1; ++r ){
-        for( int c=1; c < Grid::N+1; ++c ){
-            grid.at(r,c).vx -= -0.5f * ( oldGrid.at(r+1,c).vx - oldGrid.at(r-1,c).vx )/h;
-            grid.at(r,c).vy -= -0.5f * ( oldGrid.at(r,c+1).vx - oldGrid.at(r,c-1).vx )/h;
+    linearSolver( p, div, 1.0f, 4.0f, 0 );
+    for( int r=1; r < grid.N+1; ++r ){
+        for( int c=1; c < grid.N+1; ++c ){
+            grid.at(u,r,c) -= -0.5f * ( grid.at(p,r+1,c) - grid.at(p,r-1,c) )/h;
+            grid.at(v,r,c) -= -0.5f * ( grid.at(p,r,c+1) - grid.at(p,r,c-1) )/h;
         }}
-    fixBoundary( velocityX, grid, 1 );
-    fixBoundary( velocityY, grid, 2 );
+    fixBoundary( u, 1 );
+    fixBoundary( v, 2 );
 }
 
-void FluidSystem::fixBoundary( Accessor accessor, Grid& src, short f ){
+void FluidSystem::fixBoundary( float*& x, short f ){
     //std::cout << "Fix Boundary." << std::endl;
-    for( int i=1; i<=Grid::N; ++i){
-       accessor( src.at( 0, i )) = (f==2? -1.0f : 1.0f) * accessor( src.at( 1, i ));
-       accessor( src.at( Grid::N+1, i )) = (f==2? -1.0f : 1.0f) * accessor( src.at( Grid::N, i ));
-       accessor( src.at( i, 0 )) = (f==1? -1.0f : 1.0f) * accessor( src.at( i, 1 ));
-       accessor( src.at( i, Grid::N+1 )) = (f==1? -1.0f : 1.0f) * accessor( src.at( i, Grid::N ));
+    for( int i=1; i<=grid.N; ++i){
+       grid.at( x, 0, i ) = (f==1? -1.0f : 1.0f) * grid.at( x, 1, i );
+       grid.at( x, grid.N+1, i ) = (f==1? -1.0f : 1.0f) * grid.at( x, grid.N, i );
+       grid.at( x, i, 0 ) = (f==2? -1.0f : 1.0f) * grid.at( x, i, 1 );
+       grid.at( x, i, grid.N+1 ) = (f==2? -1.0f : 1.0f) * grid.at( x, i, grid.N );
     }
-   accessor( src.at( 0, 0 )) = 0.5f * ( accessor( src.at( 1, 0 )) + accessor( src.at( 0, 1 )));
-   accessor( src.at( 0, Grid::N+1 )) = 0.5f * ( accessor( src.at( 1, src.N+1 )) + accessor( src.at( 0, Grid::N )));
-   accessor( src.at( Grid::N+1, 0 )) = 0.5f * ( accessor( src.at( Grid::N, 0 )) + accessor( src.at(Grid::N+1, 1 )));
-   accessor( src.at( Grid::N+1, Grid::N+1 )) = 0.5f * ( accessor( src.at( Grid::N, Grid::N+1 )) + accessor( src.at( Grid::N+1, Grid::N )));
+   grid.at( x, 0, 0 ) = 0.5f * ( grid.at( x, 1, 0 ) + grid.at( x, 0, 1 ));
+   grid.at( x, 0, grid.N+1 ) = 0.5f * ( grid.at( x, 1, grid.N+1 ) + grid.at( x, 0, grid.N ));
+   grid.at( x, grid.N+1, 0 ) = 0.5f * ( grid.at( x, grid.N, 0 ) + grid.at( x, grid.N+1, 1 ));
+   grid.at( x, grid.N+1, grid.N+1 ) = 0.5f * ( grid.at( x, grid.N, grid.N+1 ) + grid.at( x, grid.N+1, grid.N ));
 }
 
 // drawing stuff
 
-FluidSystem::FluidSystem(int grid_size, int dx_, int dy_, float time_step, float diff_, float visc_ ) : grid(Grid(grid_size, dx_, dy_)), oldGrid(Grid(grid_size, dx_, dy_)), dt(time_step), diffusion(diff_), viscosity(visc_), fluid_pass(-1, fluid_pass_input, {grid_vertex_shader, grid_geometry_shader, grid_fragment_shader}, {/*uniforms*/}, {"fragment_color"}), velocity_pass(-1, velocity_pass_input, {velocity_vertex_shader, velocity_geometry_shader, velocity_fragment_shader}, {/*uniforms*/}, {"fragment_color"}){
+FluidSystem::FluidSystem(int grid_size, float time_step, float diff_, float visc_ ) : grid(Grid(grid_size)), dt(time_step), diffusion(diff_), viscosity(visc_), fluid_pass(-1, fluid_pass_input, {grid_vertex_shader, grid_geometry_shader, grid_fragment_shader}, {/*uniforms*/}, {"fragment_color"}), velocity_pass(-1, velocity_pass_input, {velocity_vertex_shader, velocity_geometry_shader, velocity_fragment_shader}, {/*uniforms*/}, {"fragment_color"}){
                     getPointsForScreen(particles, velocities, indices, vel_indices);
                     fluid_pass_input.assign(0, "vertex_position", particles.data(), particles.size(), 4, GL_FLOAT);
                     velocity_pass_input.assign(0, "velocity", velocities.data(), velocities.size(), 4, GL_FLOAT);
@@ -226,21 +158,21 @@ void FluidSystem::getPointsForScreen(vector<vec4>& particles, vector<vec4>& velo
     vel_indices.clear();
     int i = 0;
     int j = 0;
-    for (int r=1;r<Grid::N+1;++r) {
-        for(int c=1;c<Grid::N+1;++c){
+    for ( int r=1; r < grid.N+1; ++r) {
+        for( int c=1; c < grid.N+1; ++c){
             // Density
-            particles.push_back( toScreen( vec3( float(r-1), float(c-1), grid.at( r, c ).den )));
-            particles.push_back( toScreen( vec3( float(r-1), float(c), grid.at( r, c+1 ).den )));
-            particles.push_back( toScreen( vec3( float(r), float(c-1), grid.at( r+1, c ).den )));
-            particles.push_back( toScreen( vec3( float(r), float(c), grid.at( r+1, c+1 ).den )));
+            particles.push_back( toScreen( vec3( float(r-1), float(c-1), grid.at( grid.densR, r, c ) )));
+            particles.push_back( toScreen( vec3( float(r-1), float(c), grid.at( grid.densR, r, c+1 ) )));
+            particles.push_back( toScreen( vec3( float(r), float(c-1), grid.at( grid.densR, r+1, c ) )));
+            particles.push_back( toScreen( vec3( float(r), float(c), grid.at( grid.densR, r+1, c+1 ) )));
             indices.push_back( uvec3( i, i+1, i+3 ));
             indices.push_back( uvec3( i, i+3, i+2 ));
             i+=4;
 
             // Velocity
-            vec2 center = Grid::coToPos(r - 1, c - 1);
+            vec2 center = grid.coToPos(r - 1, c - 1);
             velocities.push_back( toScreen( center ));
-            velocities.push_back( toScreen( center + vec2( grid.at(r,c).vx, grid.at(r,c).vy )));
+            velocities.push_back( toScreen( center + vec2( grid.at( grid.velX, r, c ), grid.at( grid.velY, r, c ) )));
             vel_indices.push_back( uvec2( j, j+1 ));
             j+=2;
         }
@@ -249,65 +181,18 @@ void FluidSystem::getPointsForScreen(vector<vec4>& particles, vector<vec4>& velo
 }
 
 vec4 FluidSystem::toScreen(const vec3& point) {
-    float ndcX = ((2.0f * point.y) / float(Grid::N)) - 1.0f;
-    float ndcY = ((2.0f * point.x) / float(Grid::N)) - 1.0f;
-    return vec4(ndcX, ndcY, point.z, 1.0f);
+    float ndcX = ((2.0f * point.y) / float(grid.N)) - 1.0f;
+    float ndcY = ((2.0f * point.x) / float(grid.N)) - 1.0f;
+    float d = point.z;
+    if( d <= 0.0f )
+        d = 0.00001f;
+    return vec4(ndcX, ndcY, d, 1.0f);
 }
 
 vec4 FluidSystem::toScreen(const vec2& pos){
-    float ndcX = ((2.0f * pos.y) / float(Grid::N)) - 1.0f;
-    float ndcY = ((2.0f * pos.x) / float(Grid::N)) - 1.0f;
+    float ndcX = ((2.0f * pos.y) / float(grid.N)) - 1.0f;
+    float ndcY = ((2.0f * pos.x) / float(grid.N)) - 1.0f;
     return vec4(ndcX, ndcY, 0.0f, 1.0f);
-}
-
-void FluidSystem::printAll(){
-    Accessor temp = Cell::printVar;
-    Cell::printVar = density;
-    std::cout << "Printing all values on both grids:\n";
-    std::cout << "Current Density \"X\"\n" << grid << '\n';
-    std::cout << "Old Density \"X0\"\n" << oldGrid << "\n\n";
-    Cell::printVar = velocityX;
-    std::cout << "Current vX \"U\"\n" << grid << '\n';
-    std::cout << "Old vX \"U0\"\n" << oldGrid << "\n\n";
-    Cell::printVar = velocityY;
-    std::cout << "Current vY \"V\"\n" << grid << '\n';
-    std::cout << "Old vY \"V0\"\n" << oldGrid << '\n' << std::endl;
-    Cell::printVar = temp;
-}
-
-void FluidSystem::printCurrent(){
-    Accessor temp = Cell::printVar;
-    Cell::printVar = density;
-    std::cout << "Printing Current Grid:\n";
-    std::cout << "Current Density \"X\"\n" << grid << '\n';
-    Cell::printVar = velocityX;
-    std::cout << "Current vX \"U\"\n" << grid << '\n';
-    Cell::printVar = velocityY;
-    std::cout << "Current vY \"V\"\n" << grid << '\n';
-    Cell::printVar = temp;
-}
-
-void FluidSystem::printOld(){
-    Accessor temp = Cell::printVar;
-    Cell::printVar = density;
-    std::cout << "Printing Old Grid:\n";
-    std::cout << "Old Density \"X0\"\n" << oldGrid << '\n';
-    Cell::printVar = velocityX;
-    std::cout << "Old vX \"U0\"\n" << oldGrid << '\n';
-    Cell::printVar = velocityY;
-    std::cout << "Old vY \"V0\"\n" << oldGrid << '\n';
-    Cell::printVar = temp;
-}
-
-void FluidSystem::print(Accessor var, Grid& src){
-    Accessor temp = Cell::printVar;
-    Cell::printVar = var;
-    std::cout << src << std::endl;
-    Cell::printVar = temp;
-}
-
-void FluidSystem::test(){
-    // For Unit Testing. 
 }
 
 void FluidSystem::keyWasPressed(int keyCode){
@@ -316,7 +201,7 @@ void FluidSystem::keyWasPressed(int keyCode){
 
 void FluidSystem::mouseDragged(float x, float y){
     mouse0 = mouse;
-    mouse = vec3( (x / float(width)) * float(Grid::N) , (y / float(height)) * float(Grid::N), 1.0f);
+    mouse = vec3( (x / float(width)) * float(grid.N) , (y / float(height)) * float(grid.N), 1.0f);
     if( glm::distance(mouse,mouse0) > 5.0f )
         mouse0 = mouse;
 }
@@ -331,58 +216,62 @@ void FluidSystem::step() {
         int c = mouse[0];
         //std::cout << "RC : " << r << ", " << c << "\t";
         //std::cout << "vx += " << (dir.y * 10.0f * float(Grid::N)) << "\tvy += " << (dir.x * 10.0f * float(Grid::N)) << std::endl;
-        oldGrid.at(r,c).vx += dir.y * 10.0f * float(Grid::N);
-        oldGrid.at(r,c).vy += dir.x * 10.0f * float(Grid::N);
+        grid.at( grid.velX, r, c ) += dir.y * 10.0f * float(grid.N);
+        grid.at( grid.velY, r, c ) += dir.x * 10.0f * float(grid.N);
     } else if( isDragging && mouse_button == GLFW_MOUSE_BUTTON_RIGHT){
-        oldGrid.at(mouse[1],mouse[0]).den += 10.0f * float(Grid::N);
+        grid.at(grid.densR_P, mouse[1],mouse[0]) += 10.0f * float(grid.N);
     }
 
     // Play with values of oldGrid here for "input"
-    oldGrid.at(5,5).den += 50.0f;
-    oldGrid.at(18,18).den += 150.0f;
-    oldGrid.at(59,59).vy += 100.0f;
-    oldGrid.at(40,40).den -= 200.0f;
-    oldGrid.at(20,20).vx += 200.0f;
-    oldGrid.at(30,20).den += 200.0f;
-    oldGrid.at(60,60).den += 200.0f;
+    grid.at(grid.densR_P,5,5) += 1.0f;
+    //grid.at(grid.densR_P,18,18) += 15.0f;
+    //grid.at(grid.velY_P,59,59) += 10.0f;
+    //grid.at(grid.densR_P,40,40) -= 20.0f;
+    //grid.at(grid.velX_P,20,20) += 20.0f;
+    //grid.at(grid.densR_P,30,20) += 20.0f;
+    //grid.at(grid.densR_P,60,60) += 20.0f;
 
     // Step Velocity
-    add( velocityX, velocityX, grid, oldGrid );
-    add( velocityY, velocityY, grid, oldGrid );
+    add( grid.velX, grid.velX_P );
+    add( grid.velY, grid.velY_P );
 
-    swap( velocityX, velocityX, oldGrid, grid );
-    diffuse( velocityX, velocityX, viscosity, 1 );
-    swap( velocityY, velocityY, oldGrid, grid);
-    diffuse( velocityY, velocityY, viscosity, 2 );
+    Grid::swap( grid.velX, grid.velX_P );
+    diffuse( grid.velX, grid.velX_P, viscosity, 1 );
+    Grid::swap( grid.velY, grid.velY_P );
+    diffuse( grid.velY, grid.velY_P, viscosity, 2 );
 
-    project();
-    swap( velocityX, velocityX, oldGrid, grid );
-    swap( velocityY, velocityY, oldGrid, grid );
+    project( grid.velX, grid.velY, grid.velX_P, grid.velY_P );
+    Grid::swap( grid.velX, grid.velX_P );
+    Grid::swap( grid.velY, grid.velY_P );
 
-    advect( velocityX, oldGrid, 1 );
-    advect( velocityY, oldGrid, 2 );
+    advect( grid.velX, grid.velX_P, grid.velX_P, grid.velY_P, 1 );
+    advect( grid.velY, grid.velY_P, grid.velX_P, grid.velY_P, 2 );
 
-    project();
+    project( grid.velX, grid.velY, grid.velX_P, grid.velY_P );
 
     // Step Density
-    add( density, density, grid, oldGrid );
-    swap( density, density, oldGrid, grid );
+    add( grid.densR, grid.densR_P );
+    Grid::swap( grid.densR, grid.densR_P );
 
-    diffuse( density, density, diffusion, 0 );
-    swap( density, density, oldGrid, grid );
+    diffuse( grid.densR, grid.densR_P, diffusion, 0 );
+    Grid::swap( grid.densR, grid.densR_P );
 
-    advect( density, grid, 0  );
+    advect( grid.densR, grid.densR_P, grid.velX, grid.velY, 0  );
     stepCount++;
-    oldGrid.clear();
+    grid.clearOld();
 }
 
 void FluidSystem::setup() {
-    fixBoundary(density,grid,0);
-    fixBoundary(velocityX,grid,1);
-    fixBoundary(velocityY,grid,2);
-    fixBoundary(density,oldGrid,0);
-    fixBoundary(velocityX,oldGrid,1);
-    fixBoundary(velocityY,oldGrid,2);
+    fixBoundary(grid.densR,0);
+    fixBoundary(grid.densG,0);
+    fixBoundary(grid.densB,0);
+    fixBoundary(grid.velX,1);
+    fixBoundary(grid.velY,2);
+    fixBoundary(grid.densR_P,0);
+    fixBoundary(grid.densG_P,0);
+    fixBoundary(grid.densB_P,0);
+    fixBoundary(grid.velX_P,1);
+    fixBoundary(grid.velY_P,2);
     getPointsForScreen(particles, velocities, indices, vel_indices);
 }
 

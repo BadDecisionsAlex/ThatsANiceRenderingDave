@@ -40,14 +40,12 @@ int main(int argc, char* argv[])
     
     // Params in Order : 
     // (int) Number of Cells (N+2 x N+2) because of border
-    // (int) dx Do Not Change
-    // (int) dy Do Not Change
     // (float) dt Timestep (1.0f/60.0f) matches 60 fps
     // (float) diffusion (0.0f-1.0f) density spread rate.
     // (float) viscocity (0.0f-1.0f) velocity spread rate.
     FluidSystem* rootSystem = new FluidSystem( 
             64,     // N size 
-            10, 10, (1.0f/60.0f), // don't touch
+            (1.0f/60.0f), // don't touch
             0.005f,    // diffusion 
             0.2f     // viscocity
             );
