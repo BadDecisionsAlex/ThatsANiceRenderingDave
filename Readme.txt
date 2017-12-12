@@ -25,4 +25,8 @@ This solution is based on Navier Stokes Equations and that paper by Jos Stam
         . : reduces amount of dye added or removed
         / : increases amount of dye added or removed
 
-        1 : adds an emitter at the mouse position with the current dye settings.
+        1 : adds an emitter at the mouse position with the current dye settings
+        UP : adds Vertex emitter pointed up
+        DOWN : adds Vertex emitter pointed down
+        LEFT : adds Vertex emitter pointed left
+        RIGHT : adds Vertex emitter pointed right

@@ -16,6 +16,14 @@ void main() {
             alpha = 0;
         }
         color = vec4( c[n], alpha );
+        
+        // Make this another shader
+        //color = vec4( c[n], 1.0 );
+        //alpha /= 3.0f;
+        //if( alpha != 0 )
+            //color *= ( 1.0f / alpha );
+
+
         position[2] = 0;
         gl_Position = position;
         EmitVertex();

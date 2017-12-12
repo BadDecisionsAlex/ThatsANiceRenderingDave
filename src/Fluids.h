@@ -134,8 +134,8 @@ private:
     float dt;
     float diffusion;
     float viscosity;
-    float force = 10.0f;
-    float amount = 10.0f;
+    float force = 15.0f;
+    float amount = 5.0f;
     vector<Cosa> cosas;
 
     // For UI

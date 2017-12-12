@@ -123,10 +123,10 @@ void FluidSystem::project( float*& u, float*& v, float*& p, float*& div ){
 void FluidSystem::fixBoundary( float*& x, short f ){
     //std::cout << "Fix Boundary." << std::endl;
     for( int i=1; i<=grid.N; ++i){
-       grid.at( x, 0, i ) =         (f==2? -1.0f : 1.0f) * grid.at( x, 1, i );
-       grid.at( x, grid.N+1, i ) =  (f==2? -1.0f : 1.0f) * grid.at( x, grid.N, i );
-       grid.at( x, i, 0 ) =         (f==1? -1.0f : 1.0f) * grid.at( x, i, 1 );
-       grid.at( x, i, grid.N+1 ) =  (f==1? -1.0f : 1.0f) * grid.at( x, i, grid.N );
+       grid.at( x, 0, i ) =         (f==1? -1.0f : 1.0f) * grid.at( x, 1, i );
+       grid.at( x, grid.N+1, i ) =  (f==1? -1.0f : 1.0f) * grid.at( x, grid.N, i );
+       grid.at( x, i, 0 ) =         (f==2? -1.0f : 1.0f) * grid.at( x, i, 1 );
+       grid.at( x, i, grid.N+1 ) =  (f==2? -1.0f : 1.0f) * grid.at( x, i, grid.N );
     }
    grid.at( x, 0, 0 ) = 0.5f * ( grid.at( x, 1, 0 ) + grid.at( x, 0, 1 ));
    grid.at( x, 0, grid.N+1 ) = 0.5f * ( grid.at( x, 1, grid.N+1 ) + grid.at( x, 0, grid.N ));
@@ -244,7 +244,7 @@ vec4 FluidSystem::toScreen(const vec2& pos){
 void FluidSystem::keyWasPressed( int action, int key ){
     //std::cout << " Action : " << action << "\tKey : " << key << std::endl;
     
-    float diffsens = 0.001f;
+    float diffsens = 0.0001f;
     float viscsens = 0.01f;
     float forcesens = 1.0f;
     float amountsens = 1.0f;
@@ -310,7 +310,22 @@ void FluidSystem::keyWasPressed( int action, int key ){
     }else if( action == 1 && key == GLFW_KEY_1 ){
         cosas.push_back( Cosa( grid.coToI(mouse[1]+1, mouse[0])+1,  activeColor, ( vacuum ? -1.0f : 1.0f ) * amount * float(grid.N) ));
         std::cout << "Added Cosa " << cosas.size() << std::endl;
+    }else if( action == 1 && key == GLFW_KEY_UP ){
+        cosas.push_back( Cosa( grid.coToI(mouse[1]+1, mouse[0]+1), grid.velX_P, force ));
+        std::cout << "Added Cosa " << cosas.size() << std::endl;
+    }else if( action == 1 && key == GLFW_KEY_DOWN ){
+        cosas.push_back( Cosa( grid.coToI(mouse[1]+1, mouse[0]+1), grid.velX_P, -force ));
+        std::cout << "Added Cosa " << cosas.size() << std::endl;
+    }else if( action == 1 && key == GLFW_KEY_RIGHT ){
+        cosas.push_back( Cosa( grid.coToI(mouse[1]+1, mouse[0]+1), grid.velY_P, force ));
+        std::cout << "Added Cosa " << cosas.size() << std::endl;
+    }else if( action == 1 && key == GLFW_KEY_LEFT ){
+        cosas.push_back( Cosa( grid.coToI(mouse[1]+1, mouse[0]+1), grid.velY_P, -force ));
+        std::cout << "Added Cosa " << cosas.size() << std::endl;
     }
+
+
+
 }
 
 void FluidSystem::mouseDragged(float x, float y){
