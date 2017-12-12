@@ -269,27 +269,43 @@ void FluidSystem::keyWasPressed( int action, int key ){
         std::cout << "Current Settings - Diffusion : " << diffusion << "\tViscocity : " << viscosity << "\tForce : " << force << "\tAmount : " << amount << std::endl; 
     }else if( action == 1 && key == GLFW_KEY_LEFT_BRACKET){
         viscosity -= viscsens;
-        std::cout << "Viscocity Reduced to : " << viscosity << std::endl;
+        if( viscosity < 0.0f )
+            viscosity = 0.0f;
+        std::cout << "Viscosity Reduced to : " << viscosity << std::endl;
     }else if( action == 1 && key == GLFW_KEY_RIGHT_BRACKET){
         viscosity += viscsens;
-        std::cout << "Viscocity Increased to : " << viscosity << std::endl;
+        if( viscosity > 100.0f )
+            viscosity = 100.0f;
+        std::cout << "Viscosity Increased to : " << viscosity << std::endl;
     }else if( action == 1 && key == GLFW_KEY_MINUS){
         diffusion -= diffsens;
+        if( diffusion < 0.0f )
+            diffusion = 0.0f;
         std::cout << "Diffusion Reduced to : " << diffusion << std::endl;
     }else if( action == 1 && key == GLFW_KEY_EQUAL){
         diffusion += diffsens;
+        if( diffusion > 1.0f )
+            diffusion = 1.0f;
         std::cout << "Diffusion Increased to : " << diffusion << std::endl;
     }else if( action == 1 && key == GLFW_KEY_SEMICOLON){
         force -= forcesens;
+        if( force < 0.0f )
+            force = 0.0f;
         std::cout << "Force Reduced to : " << force << std::endl;
     }else if( action == 1 && key == GLFW_KEY_APOSTROPHE){
         force += forcesens;
+        if( force > 10000.0f )
+            force = 10000.0f;
         std::cout << "Force Increased to : " << force << std::endl;
     }else if( action == 1 && key == GLFW_KEY_PERIOD){
         amount -= amountsens;
+        if( amount < 0.0f )
+            amount = 0.0f;
         std::cout << "Amount Reduced to : " << amount << std::endl;
     }else if( action == 1 && key == GLFW_KEY_SLASH){
         amount += amountsens;
+        if( amount > 10000.0f )
+            amount = 10000.0f;
         std::cout << "Amount Increased to : " << amount << std::endl;
     }else if( action == 1 && key == GLFW_KEY_1 ){
         cosas.push_back( Cosa( grid.coToI(mouse[1]+1, mouse[0])+1,  activeColor, ( vacuum ? -1.0f : 1.0f ) * amount * float(grid.N) ));
