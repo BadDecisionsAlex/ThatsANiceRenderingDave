@@ -46,8 +46,8 @@ int main(int argc, char* argv[])
     FluidSystem* rootSystem = new FluidSystem( 
             64,     // N size 
             (1.0f/60.0f), // don't touch
-            0.005f,    // diffusion 
-            0.2f     // viscocity
+            0.002f,    // diffusion 
+            0.6f     // viscocity
             );
 
     rootSystem->width = window_width;

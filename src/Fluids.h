@@ -112,11 +112,11 @@ public:
     void setup();
     void prepareDraw();
     void draw();
-    void keyWasPressed(int keyCode);
-    void mouseDragged(float x, float y);
-    void mouseStateChange(bool dragging) {
+    void keyWasPressed( int action, int key );
+    void mouseDragged( float x, float y );
+    void mouseStateChange( bool dragging ) {
         isDragging = dragging; }
-    void mouseButton(int button){
+    void mouseButton( int button ){
         mouse_button = button;
     }
 
@@ -132,6 +132,7 @@ private:
     vec3 mouse;
     vec3 mouse0;
     bool isDragging = false;
+    bool vacuum = false;
     int mouse_button;
 
     // Functions

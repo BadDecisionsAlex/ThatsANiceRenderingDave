@@ -92,10 +92,10 @@ void FluidSystem::project( float*& u, float*& v, float*& p, float*& div ){
 void FluidSystem::fixBoundary( float*& x, short f ){
     //std::cout << "Fix Boundary." << std::endl;
     for( int i=1; i<=grid.N; ++i){
-       grid.at( x, 0, i ) = (f==1? -1.0f : 1.0f) * grid.at( x, 1, i );
-       grid.at( x, grid.N+1, i ) = (f==1? -1.0f : 1.0f) * grid.at( x, grid.N, i );
-       grid.at( x, i, 0 ) = (f==2? -1.0f : 1.0f) * grid.at( x, i, 1 );
-       grid.at( x, i, grid.N+1 ) = (f==2? -1.0f : 1.0f) * grid.at( x, i, grid.N );
+       grid.at( x, 0, i ) =         (f==2? -1.0f : 1.0f) * grid.at( x, 1, i );
+       grid.at( x, grid.N+1, i ) =  (f==2? -1.0f : 1.0f) * grid.at( x, grid.N, i );
+       grid.at( x, i, 0 ) =         (f==1? -1.0f : 1.0f) * grid.at( x, i, 1 );
+       grid.at( x, i, grid.N+1 ) =  (f==1? -1.0f : 1.0f) * grid.at( x, i, grid.N );
     }
    grid.at( x, 0, 0 ) = 0.5f * ( grid.at( x, 1, 0 ) + grid.at( x, 0, 1 ));
    grid.at( x, 0, grid.N+1 ) = 0.5f * ( grid.at( x, 1, grid.N+1 ) + grid.at( x, 0, grid.N ));
@@ -195,8 +195,10 @@ vec4 FluidSystem::toScreen(const vec2& pos){
     return vec4(ndcX, ndcY, 0.0f, 1.0f);
 }
 
-void FluidSystem::keyWasPressed(int keyCode){
-
+void FluidSystem::keyWasPressed( int action, int key ){
+    //std::cout << " Action : " << action << "\tKey : " << key << std::endl;
+    if( action == 1 && key == GLFW_KEY_LEFT_CONTROL)
+        vacuum = ! vacuum;
 }
 
 void FluidSystem::mouseDragged(float x, float y){
@@ -210,26 +212,18 @@ static int stepCount = 0;
 void FluidSystem::step() {
 
     if( isDragging && mouse_button == GLFW_MOUSE_BUTTON_LEFT && mouse != mouse0 ) {
-        //std::cout << "Screen : " << mouse.x << ", " << mouse.y  << "\t";
-        vec2 dir = glm::normalize(vec2(mouse - mouse0));
+        vec2 dir = vec2(mouse - mouse0); //glm::normalize(vec2(mouse - mouse0));
         int r = mouse[1];
         int c = mouse[0];
-        //std::cout << "RC : " << r << ", " << c << "\t";
-        //std::cout << "vx += " << (dir.y * 10.0f * float(Grid::N)) << "\tvy += " << (dir.x * 10.0f * float(Grid::N)) << std::endl;
-        grid.at( grid.velX, r, c ) += dir.y * 10.0f * float(grid.N);
-        grid.at( grid.velY, r, c ) += dir.x * 10.0f * float(grid.N);
+        grid.at( grid.velX_P, r, c ) += dir.y * 10.0f * float(grid.N);
+        grid.at( grid.velY_P, r, c ) += dir.x * 10.0f * float(grid.N);
     } else if( isDragging && mouse_button == GLFW_MOUSE_BUTTON_RIGHT){
-        grid.at(grid.densR_P, mouse[1],mouse[0]) += 10.0f * float(grid.N);
+        grid.at(grid.densR_P, mouse[1],mouse[0]) += ( vacuum ? -1.0f : 1.0f ) * (10.0f * float(grid.N));
     }
 
     // Play with values of oldGrid here for "input"
-    grid.at(grid.densR_P,5,5) += 1.0f;
-    //grid.at(grid.densR_P,18,18) += 15.0f;
-    //grid.at(grid.velY_P,59,59) += 10.0f;
-    //grid.at(grid.densR_P,40,40) -= 20.0f;
-    //grid.at(grid.velX_P,20,20) += 20.0f;
-    //grid.at(grid.densR_P,30,20) += 20.0f;
-    //grid.at(grid.densR_P,60,60) += 20.0f;
+    
+
 
     // Step Velocity
     add( grid.velX, grid.velX_P );

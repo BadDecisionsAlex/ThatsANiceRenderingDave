@@ -29,7 +29,7 @@ void GUI::keyCallback(int key, int scancode, int action, int mods)
 	}
     
     for (GUIDelegate* delegate : delegates) {
-        delegate->keyWasPressed(action);
+        delegate->keyWasPressed(action, key);
     }
 }
 
