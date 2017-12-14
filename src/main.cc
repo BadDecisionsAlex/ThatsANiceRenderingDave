@@ -21,6 +21,7 @@
 
 #include "SmokeSystem.h"
 #include "MassParticle.h"
+#include "GridSystemHandler.h"
 
 //#include "GridSystemHandler.h"
 
@@ -56,6 +57,10 @@ int main(int argc, char* argv[])
 
     // systems.push_back(new GravitySystem());
     // systems.push_back(new SmokeSystem());
+    SpaceSystem* s = new SpaceSystem();
+    s->width = window_width;
+    s->height = window_height;
+    systems.push_back(new GridSystemHandler(s));
 
     // standard setup  
     for(ParticleSystem* system : systems){
