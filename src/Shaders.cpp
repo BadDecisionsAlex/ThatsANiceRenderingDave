@@ -47,6 +47,10 @@ const char* fluid_fragment_shader =
 #include "shaders/fluid.frag"
 ;
 
+const char* rainbow_particles_geometry_shader =
+
+#include "shaders/rainbowParticles.geom"
+;
 
 const char* grid_vertex_shader =
 #include "shaders/grid.vert"

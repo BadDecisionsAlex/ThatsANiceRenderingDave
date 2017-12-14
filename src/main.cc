@@ -40,6 +40,8 @@ int main(int argc, char* argv[])
     GUI gui(window);
     vector<ParticleSystem*> systems;
 
+    int scale = 4;
+
     // // Params in Order :
     // // (int) Number of Cells (N+2 x N+2) because of border
     // // (float) dt Timestep (1.0f/60.0f) matches 60 fps
@@ -56,16 +58,20 @@ int main(int argc, char* argv[])
     // systems.push_back(rootSystem);
 
     // systems.push_back(new GravitySystem());
+
     // systems.push_back(new SmokeSystem());
-    SpaceSystem* s = new SpaceSystem();
-    s->width = window_width;
-    s->height = window_height;
-    systems.push_back(new GridSystemHandler(s));
+
+    systems.push_back(new SpaceSystem());
+
+//    SpaceSystem* s = new SpaceSystem();
+//    s->width = window_width * scale;
+//    s->height = window_height * scale;
+//    systems.push_back(new GridSystemHandler(s));
 
     // standard setup  
     for(ParticleSystem* system : systems){
-            system->width = window_width;
-            system->height = window_height;
+            system->width = window_width * scale;
+            system->height = window_height * scale;
             system->setup();
             system->prepareDraw();
     }
