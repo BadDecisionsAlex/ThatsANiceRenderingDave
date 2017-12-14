@@ -9,7 +9,7 @@
 #include "SmokeSystem.h"
 #include "Shaders.h"
 
-#define NUMBER_OF_PARTICLES 60000.0
+#define NUMBER_OF_PARTICLES 500.0
 #define EMITTER false
 
 void SmokeSystem::setup() {
