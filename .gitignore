@@ -42,4 +42,3 @@ build/
 .idea
 third-party/
 cmake-build-debug/
-.vscode/

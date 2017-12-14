@@ -2,9 +2,6 @@ R"zzz(#version 330 core
 layout (triangles) in;
 layout (triangle_strip, max_vertices = 3) out;
 out float alpha;
-out float red;
-out float green;
-out float blue;
 
 float rand(float n){return fract(sin(n) * 43758.5453123);}
 vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
@@ -94,9 +91,6 @@ void main() {
         if (position[2] != 0) {
             float density = min(1000, position[2] + 100);
             alpha = min(density / 1000, 0.9) * cnoise(vec3(position.x * 10000, position.y * 10000, 1)) * 20;
-            red = min(density / 1000, 0.9) * cnoise(vec3(position.x * 10000, position.y * 10000, 2)) * 20;
-            green = min(density / 1000, 0.9) * cnoise(vec3(position.x * 10000, position.y * 10000, 3)) * 20;
-            blue = min(density / 1000, 0.9) * cnoise(vec3(position.x * 10000, position.y * 10000, 4)) * 20;
         } else {
             alpha = 0;
         }
