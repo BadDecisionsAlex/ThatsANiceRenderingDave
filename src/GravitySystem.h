@@ -17,10 +17,11 @@ class GravitySystem : public ParticleSystem {
 public:
     vector<VerletParticle> particles;
     vec3 gForce = DEFAULT_GRAVITY;
-    
-    GravitySystem(const vector<VerletParticle>& _in);
-    
+
+    GravitySystem();
+
     void step();
+    void setup();
     
     //drawing
     void prepareDraw();
@@ -29,6 +30,7 @@ public:
     
 private:
     ParticleGrid grid;
+    int step_count = 0;
     
     //Rendering (Could be made simpler)
     RenderDataInput particle_pass_input;
@@ -43,7 +45,8 @@ private:
     short inBounds( const VerletParticle& _p );
     void fixBounds( VerletParticle& _p, const short& flag );
     void fixBounds( VerletParticle& _p );
-    
+    void addParticle();
+
     glm::vec4 toScreen(const vec3& point);
 };
 

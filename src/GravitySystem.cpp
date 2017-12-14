@@ -2,10 +2,12 @@
 #define PARTICLE_SYSTEM_CPP
 #include "GravitySystem.h"
 #include "Shaders.h"
+#include "SpaceSystem.h"
 #include <iostream>                 // std::cout
 #include <glm/gtx/string_cast.hpp>  // glm::to_string
 
 #define STEP_TIME 1.0f / 600.0f
+#define NUMBER_OF_PARTICLES 1000.0
 
 // To disable debug messages for this file comment out the first line below
 //#define DEBUG_PHYSICS_CPP 0
@@ -23,56 +25,13 @@
 using std::make_pair;
 
 
-//Draw
-
-GravitySystem::GravitySystem(const vector<VerletParticle>& _in) : particles(_in), grid(10.0f, width, height), particle_pass(-1, particle_pass_input, { particle_vertex_shader, particle_geometry_shader, particle_fragment_shader }, { /* uniforms */ }, { "fragment_color" }) {
-    getPointsForScreen(points, indices);
-    particle_pass_input.assign(0, "vertex_position", points.data(), points.size(), 4, GL_FLOAT);
-}
-
-void GravitySystem::getPointsForScreen(vector<vec4>& points, vector<uvec1>& indices) {
-    points.clear();
-    indices.clear();
-    int count = 0;
-    for (VerletParticle& vp : particles) {
-        vec4 point = toScreen(vp.p);
-        points.push_back(point);
-        indices.push_back(uvec1(count));
-        ++count;
-    }
-}
-
-vec4 GravitySystem::toScreen(const vec3& point) {
-    float ndcX = ((2.0f * point.x) / float(width)) - 1.0f;
-    float ndcY = ((2.0f * point.y) / float(height)) - 1.0f;
-    return vec4(ndcX, ndcY, 0.0, 1.0);
-}
-
-void GravitySystem::prepareDraw() {
-    particle_pass_input.assign_index(indices.data(), indices.size(), 1);
-    particle_pass = RenderPass(-1,
-                             particle_pass_input,
-                             {
-                                 particle_vertex_shader,
-                                 particle_geometry_shader,
-                                 particle_fragment_shader
-                             },
-                             { /* uniforms */ },
-                             { "fragment_color" }
-                             );
-}
-
-void GravitySystem::draw() {
-    getPointsForScreen(points, indices);
-    particle_pass.updateVBO(0, points.data(), points.size());
-    particle_pass.setup();
-    CHECK_GL_ERROR(glDrawElements(GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0));
-}
-
 
 // Gravity System
 
 void GravitySystem::step() {
+//    if(step_count % 60 == 0){
+//        addParticle();
+//    }
     clock_t start_time = clock();
     flaggedForCollides.clear();
     // Apply velocity and gravity
@@ -90,14 +49,14 @@ void GravitySystem::step() {
     executeCollisions();
     // Update Particle Data
     for (VerletParticle& vp : particles) {
-//        std::cout << " Updating Data vp.p.y : " << vp.p.y << " vp.tempPos().y : " << vp.tempPos().y << std::endl;
+//        std::cout << " Updating Data oldVelocity.p.y : " << oldVelocity.p.y << " oldVelocity.tempPos().y : " << oldVelocity.tempPos().y << std::endl;
         vp.p = vp.tempPos();
         vp.v0 = vp.v1; //drag
     }
     // Wait till a frame should be updated
     clock_t end_time = clock();
+    ++step_count;
 }
-
 
 void GravitySystem::executeCollisions() {
     //std::cout << "Executing Collisions." << std::endl;
@@ -212,4 +171,80 @@ void GravitySystem::fixBounds( VerletParticle& _p ){
         fixBounds( _p, flag );
 }
 
+//Draw
+
+GravitySystem::GravitySystem() : particle_pass(-1, particle_pass_input, { particle_vertex_shader, collision_geometry_shader, particle_fragment_shader}, {/* uniforms */}, { "fragment_color"}){
+    getPointsForScreen(points, indices);
+    particle_pass_input.assign(0, "vertex_position", points.data(), points.size(), 4, GL_FLOAT);
+}
+
+void GravitySystem::getPointsForScreen(vector<vec4>& points, vector<uvec1>& indices) {
+    points.clear();
+    indices.clear();
+    int count = 0;
+    for (VerletParticle& vp : particles) {
+        vec4 point = toScreen(vp.p);
+        points.push_back(point);
+        indices.push_back(uvec1(count));
+        ++count;
+    }
+}
+
+vec4 GravitySystem::toScreen(const vec3& point) {
+    float ndcX = ((2.0f * point.x) / float(width)) - 1.0f;
+    float ndcY = ((2.0f * point.y) / float(height)) - 1.0f;
+    return vec4(ndcX, ndcY, 0.0, 1.0);
+}
+
+
+void GravitySystem::prepareDraw() {
+    particle_pass_input.assign_index(indices.data(), indices.size(), 1);
+    particle_pass = RenderPass(-1,
+                               particle_pass_input,
+                               {
+                                       particle_vertex_shader,
+                                       collision_geometry_shader,
+                                       particle_fragment_shader
+                               },
+                               { /* uniforms */ },
+                               { "fragment_color" }
+    );
+}
+
+void GravitySystem::draw() {
+    getPointsForScreen(points, indices);
+    particle_pass.updateVBO(0, points.data(), points.size());
+    particle_pass.setup();
+    CHECK_GL_ERROR(glDrawElements(GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0));
+}
+
+void GravitySystem::addParticle(){
+    int x = rand() % 1000;
+    int y = rand() % 1000;
+
+    float dx = (rand() % 1000) / 500.0 - 1;
+    float dy = (rand() % 1000) / 500.0 - 1;
+    VerletParticle particle = VerletParticle(x, y);
+    particles.push_back(particle);
+}
+
+void GravitySystem::setup() {
+    //Add particles
+    for (int c = 0; c < NUMBER_OF_PARTICLES; ++c) {
+        int x = rand() % 1000;
+        int y = rand() % 1000;
+
+        float dx = (rand() % 1000) / 500.0 - 1;
+        float dy = (rand() % 1000) / 500.0 - 1;
+
+        VerletParticle particle = VerletParticle(x, y);
+        int q = 100;
+        int p = 1;
+        particle.v0 = vec3(q,p,0);
+        particles.push_back(particle);
+    }
+    grid = ParticleGrid(10, width, height);
+
+    getPointsForScreen(points, indices);
+}
 #endif
