@@ -90,7 +90,7 @@ void main() {
 
         if (position[2] != 0) {
             float density = min(1000, position[2] + 100);
-            alpha = min(density / 1000, 0.9) * cnoise(vec3(position.x * 10000, position.y * 10000, 1)) * 20;
+            alpha = min(density / 1000, 0.9);// * cnoise(vec3(position.x * 10000, position.y * 10000, 1)) * 20;
         } else {
             alpha = 0;
         }
