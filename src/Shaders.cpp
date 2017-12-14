@@ -43,6 +43,10 @@ const char* smoke_fragment_shader =
 #include "shaders/smoke.frag"
 ;
 
+const char* fluid_fragment_shader = 
+#include "shaders/fluid.frag"
+;
+
 
 const char* grid_vertex_shader =
 #include "shaders/grid.vert"

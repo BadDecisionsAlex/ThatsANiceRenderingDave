@@ -153,9 +153,9 @@ void FluidSystem::prepareDraw() {
     fluid_pass = RenderPass(-1,
                                fluid_pass_input,
                                {
-                                       grid_vertex_shader,
-                                       grid_geometry_shader,
-                                       grid_fragment_shader
+                                       fluid_vertex_shader,
+                                       fluid_geometry_shader,
+                                       fluid_fragment_shader
                                },
                                { /* uniforms */ },
                                { "fragment_color" }

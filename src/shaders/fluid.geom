@@ -1,15 +1,33 @@
 R"zzz(#version 330 core
-layout (points) in;
-layout (points, max_vertices = 2) out;
+layout (triangles) in;
+layout (triangle_strip, max_vertices = 3) out;
+in vec3 c[];
 out vec4 color;
 void main() {
-    vec4 point = gl_in[0].gl_Position;
+    
+    for (int n = 0; n < gl_in.length(); n++) {
+        vec4 position = gl_in[n].gl_Position;
+        float alpha = 0;
+        if (position[2] != 0) {
+            float density = position[2];
+            alpha = min(density, 0.9);
+            alpha = max(alpha, 0.0);
+        } else {
+            alpha = 0;
+        }
+        color = vec4( c[n], alpha );
+        
+        // Make this another shader
+        //color = vec4( c[n], 1.0 );
+        //alpha /= 3.0f;
+        //if( alpha != 0 )
+            //color *= ( 1.0f / alpha );
 
-    color = vec4((point[0] + 1) / 2, (point[1] + 1) / 2, 0.0, 1.0);
 
-    gl_Position = gl_in[0].gl_Position;
-    gl_PointSize = 50;
-    EmitVertex();
+        position[2] = 0;
+        gl_Position = position;
+        EmitVertex();
+    }
     EndPrimitive();
 }
 )zzz"
