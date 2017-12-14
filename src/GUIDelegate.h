@@ -9,17 +9,13 @@
 #define GUIDelegate_h
 
 struct GUIDelegate {
-    virtual void keyWasPressed(int keyCode) {
-        
-    }
+    virtual void keyWasPressed( int action, int key ) {}
     
-    virtual void mouseDragged(float x, float y) {
-        
-    }
+    virtual void mouseDragged(float x, float y) {}
     
-    virtual void mouseStateChange(bool dragging) {
-        
-    }
+    virtual void mouseStateChange(bool dragging) {}
+
+    virtual void mouseButton(int button){}
 };
 
 #endif /* GUIDelegate_h */
