@@ -32,12 +32,18 @@ public:
         isDragging = dragging;
     }
     
+    void mouseButton(int button) {
+        mouse_button = button;
+    }
+    
 private:
     vec3 center;
     vec3 mouse;
+    int mouse_button = 0;
     bool isDragging = false;
     int stepCount = 0;
     bool EMITTER;
+    bool push = true;
     
     //Rendering (Could be made simpler)
     RenderDataInput particle_pass_input;

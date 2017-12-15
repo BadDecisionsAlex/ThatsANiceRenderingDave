@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include "SmokeSystem.h"
 #include "Shaders.h"
+#include <GLFW/glfw3.h>
 
 #define NUMBER_OF_PARTICLES 500.0
 
@@ -105,7 +106,7 @@ void SmokeSystem::step() {
             particles.erase(particles.begin() + index);
         }
         
-        for (int x = 0; x < 5; ++x) {
+        for (int x = 0; x < 2; ++x) {
             float dx = (rand() % 8) - 4;
             float dy = (rand() % 10) + 10;
             
@@ -130,15 +131,11 @@ void SmokeSystem::step() {
             vec3 m = glm::normalize(mouse - p.p);
 //            float distance = -(5.333 / 600.0) * (fmin(fmax(0, 300 - glm::length(mouse - p.p)), 300)) / 2;
             
-//            float distance = (glm::length(mouse - p.p) <= 300) ? 150 : 0;
-//            distance *= -(5.33 / 600.0);
-//            p.velocity += m * distance;
-            
-            if (glm::length(mouse - p.p) <= 100) {
-                p.velocity = m * -3.0f;
-            }
+            float distance = (glm::length(mouse - p.p) <= 200) ? 150 : 0;
+            float force_direction = mouse_button == GLFW_MOUSE_BUTTON_RIGHT ? 1.0 : -1.0;
+            distance *= (5.33 / 600.0) * force_direction;
+            p.velocity += m * distance;
         }
-        
         
         p.p += p.velocity;
     }

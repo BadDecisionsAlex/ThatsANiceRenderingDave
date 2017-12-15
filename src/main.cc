@@ -22,4 +22,5 @@ int main(int argc, char* argv[])
         openGL.afterDraw();
 	}
     openGL.destroy();
+    free(systemHandler);
 }
