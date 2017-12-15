@@ -25,7 +25,7 @@ private:
     
     Node outsideGridNode;
     
-    int nodeSize = 10;
+    int nodeSize = 15;
     int rows = 0;
     int columns = 0;
     vector<vector<Node>> grid;
