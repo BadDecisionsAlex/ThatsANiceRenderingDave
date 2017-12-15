@@ -1,6 +1,6 @@
 SET(pwd ${CMAKE_CURRENT_LIST_DIR})
 
-SET(src "" OpenGLUtil.cpp OpenGLUtil.h Fluids.cpp)
+SET(src "" OpenGLUtil.cpp OpenGLUtil.h Fluids.cpp RainbowSpaceSystem.cpp RainbowSpaceSystem.h)
 AUX_SOURCE_DIRECTORY(${pwd} src)
 add_executable(particles ${src})
 message(STATUS "particles added ${src}")

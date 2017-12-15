@@ -22,6 +22,7 @@
 #include "SmokeSystem.h"
 #include "MassParticle.h"
 #include "GridSystemHandler.h"
+#include "RainbowSpaceSystem.h"
 
 //#include "GridSystemHandler.h"
 
@@ -61,7 +62,9 @@ int main(int argc, char* argv[])
 
 //     systems.push_back(new SmokeSystem());
 
-//    systems.push_back(new SpaceSystem());
+    systems.push_back(new SpaceSystem());
+
+//    systems.push_back(new RainbowSpaceSystem());
 
 //    SpaceSystem* s = new SpaceSystem();
 //    s->width = window_width * scale;
