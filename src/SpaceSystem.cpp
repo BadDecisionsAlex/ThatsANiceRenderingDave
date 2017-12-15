@@ -79,7 +79,7 @@ void SpaceSystem::step() {
 
 //MARK: - Draw
 
-SpaceSystem::SpaceSystem() : particle_pass(-1, particle_pass_input, { particle_vertex_shader, rainbow_particles_geometry_shader, particle_fragment_shader }, { /* uniforms */ }, { "fragment_color" }) {
+SpaceSystem::SpaceSystem() : particle_pass(-1, particle_pass_input, { particle_vertex_shader, particle_geometry_shader, particle_fragment_shader }, { /* uniforms */ }, { "fragment_color" }) {
     getPointsForScreen(points, indices);
     particle_pass_input.assign(0, "vertex_position", points.data(), points.size(), 4, GL_FLOAT);
 }
@@ -90,7 +90,7 @@ void SpaceSystem::prepareDraw() {
                                particle_pass_input,
                                {
                                    particle_vertex_shader,
-                                   rainbow_particles_geometry_shader,
+                                   particle_geometry_shader,
                                    particle_fragment_shader
                                },
                                { /* uniforms */ },

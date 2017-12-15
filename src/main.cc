@@ -57,11 +57,11 @@ int main(int argc, char* argv[])
     // gui.delegates.push_back(rootSystem);
     // systems.push_back(rootSystem);
 
-    // systems.push_back(new GravitySystem());
+//     systems.push_back(new GravitySystem());
 
-    // systems.push_back(new SmokeSystem());
+//     systems.push_back(new SmokeSystem());
 
-    systems.push_back(new SpaceSystem());
+//    systems.push_back(new SpaceSystem());
 
 //    SpaceSystem* s = new SpaceSystem();
 //    s->width = window_width * scale;
@@ -70,8 +70,8 @@ int main(int argc, char* argv[])
 
     // standard setup  
     for(ParticleSystem* system : systems){
-            system->width = window_width * scale;
-            system->height = window_height * scale;
+            system->width = window_width;
+            system->height = window_height;
             system->setup();
             system->prepareDraw();
     }
