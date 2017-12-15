@@ -106,7 +106,7 @@ void SmokeSystem::step() {
             particles.erase(particles.begin() + index);
         }
         
-        for (int x = 0; x < 2; ++x) {
+        for (int x = 0; x < 3; ++x) {
             float dx = (rand() % 8) - 4;
             float dy = (rand() % 10) + 10;
             

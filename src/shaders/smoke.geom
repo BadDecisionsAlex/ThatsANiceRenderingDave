@@ -33,8 +33,8 @@ void addPoint(vec4 point, int depth) {
     
     //TURN ON FOR FIRE
     if (color_id[0] == 1) {
-        float up = 1 - max(0.0, velocity[0][1] / 20.0);
-        color = vec4(up, 0.2, 0.1, alpha);
+        float up = 1 - max(0.0, velocity[0][1]);
+        color = vec4(up, 0.3, 0.0, alpha);
     }
     
     int point_size =  2 * int((size + 2) * (1.0 / depth));

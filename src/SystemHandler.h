@@ -79,7 +79,6 @@ struct SystemHandler: public GUIDelegate {
             }
         }
         
-        
         system->keyWasPressed(action, key);
     }
     
