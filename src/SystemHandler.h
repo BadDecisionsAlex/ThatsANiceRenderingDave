@@ -17,6 +17,7 @@
 #include "SmokeSystem.h"
 #include "GravitySystem.h"
 #include "GridSystemHandler.h"
+#include "PointGridSystemHandler.h"
 
 struct SystemHandler: public GUIDelegate {
     
@@ -68,6 +69,12 @@ struct SystemHandler: public GUIDelegate {
                 SpaceSystem* spaceSystem = new SpaceSystem();
                 system = new GridSystemHandler(spaceSystem);
                 setUpSystem(4);
+                return;
+            } else if (key == GLFW_KEY_8) {
+                free(system);
+                SpaceSystem* spaceSystem = new SpaceSystem();
+                system = new PointGridSystemHandler(spaceSystem);
+                setUpSystem(5);
                 return;
             }
         }

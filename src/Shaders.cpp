@@ -67,6 +67,18 @@ const char* grid_fragment_shader =
 #include "shaders/grid.frag"
 ;
 
+const char* point_grid_vertex_shader =
+#include "shaders/pointGrid.vert"
+;
+
+const char* point_grid_geometry_shader =
+#include "shaders/pointGrid.geom"
+;
+
+const char* point_grid_fragment_shader =
+#include "shaders/pointGrid.frag"
+;
+
 const char* velocity_vertex_shader = 
 #include "shaders/velfield.vert"
 ;

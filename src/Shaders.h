@@ -26,6 +26,10 @@ extern const char* grid_vertex_shader;
 extern const char* grid_geometry_shader;
 extern const char* grid_fragment_shader;
 
+extern const char* point_grid_vertex_shader;
+extern const char* point_grid_geometry_shader;
+extern const char* point_grid_fragment_shader;
+
 extern const char* velocity_vertex_shader;
 extern const char* velocity_geometry_shader;
 extern const char* velocity_fragment_shader;

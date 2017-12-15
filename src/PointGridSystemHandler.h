@@ -1,12 +1,12 @@
 //
-//  GridSystemHandler.h
+//  PointGridSystemHandler.h
 //  Particles
 //
 //  Created by Matthew Ruston on 12/10/17.
 //
 
-#ifndef GridSystemHandler_h
-#define GridSystemHandler_h
+#ifndef PointGridSystemHandler_h
+#define PointGridSystemHandler_h
 
 #include <stdio.h>
 #include "ParticleSystem.h"
@@ -18,32 +18,32 @@
 //There are certainly better ways to make this abstract
 #define SYSTEM SpaceSystem
 
-class GridSystemHandler: public ParticleSystem {
+class PointGridSystemHandler: public ParticleSystem {
 private:
     //TODO: Make a good way to get any type of system's particles
      SYSTEM *system;
     
     Node outsideGridNode;
     
-    int nodeSize = 10;
+    int nodeSize = 40;
     int rows = 0;
     int columns = 0;
     vector<vector<Node>> grid;
     
     vec4 toScreen(const vec3& point);
-    void getPointsForScreen(vector<vec4>& points, vector<uvec3>& indices);
+    void getPointsForScreen(vector<vec4>& points, vector<uvec1>& indices);
     
     //Rendering (Could be made simpler)
     RenderDataInput particle_pass_input;
     RenderPass particle_pass;
     vector<vec4> points;
-    vector<uvec3> indices;
+    vector<uvec1> indices;
     
 public:
     
-    GridSystemHandler(SYSTEM* _system);
+    PointGridSystemHandler(SYSTEM* _system);
     
-    ~GridSystemHandler() {
+    ~PointGridSystemHandler() {
         free(system);
     }
     
