@@ -131,10 +131,16 @@ void SmokeSystem::step() {
             vec3 m = glm::normalize(mouse - p.p);
 //            float distance = -(5.333 / 600.0) * (fmin(fmax(0, 300 - glm::length(mouse - p.p)), 300)) / 2;
             
-            float distance = (glm::length(mouse - p.p) <= 200) ? 150 : 0;
             float force_direction = mouse_button == GLFW_MOUSE_BUTTON_RIGHT ? 1.0 : -1.0;
-            distance *= (5.33 / 600.0) * force_direction;
-            p.velocity += m * distance;
+            if (EMITTER) {
+                float distance = (glm::length(mouse - p.p) <= 200) ? 150 : 0;
+                distance *= (5.33 / 600.0) * force_direction;
+                p.velocity += m * distance;
+            } else {
+                if (glm::length(mouse - p.p) <= 100) {
+                    p.velocity = m * 3.0f * force_direction;
+                }
+            }
         }
         
         p.p += p.velocity;
