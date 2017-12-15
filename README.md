@@ -5,4 +5,5 @@
 3. Add controls to switch to the fire system 
 4. Add other controls for our program
 5. Document these controls in the Readme 
-6. Text me with any questions or concerns.
+6. Make sure our system is running on a linux box not sure how to do this since we both run OSX.
+7. Text me with any questions or concerns.
