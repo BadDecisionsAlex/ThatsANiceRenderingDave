@@ -24,6 +24,8 @@
 #include "GridSystemHandler.h"
 #include "RainbowSpaceSystem.h"
 
+#include "SystemHandler.h"
+
 //#include "GridSystemHandler.h"
 
 using std::vector;
@@ -39,51 +41,15 @@ int main(int argc, char* argv[])
     OpenGLUtil openGL = OpenGLUtil(window_width, window_height, "Particles");
     GLFWwindow* window = openGL.setup();
     GUI gui(window);
-    vector<ParticleSystem*> systems;
-
-    int scale = 4;
-
-    // // Params in Order :
-    // // (int) Number of Cells (N+2 x N+2) because of border
-    // // (float) dt Timestep (1.0f/60.0f) matches 60 fps
-    // // (float) diffusion (0.0f-1.0f) density spread rate.
-    // // (float) viscocity (0.0f-1.0f) velocity spread rate.
-    // FluidSystem* rootSystem = new FluidSystem(
-    //         64,     // N size
-    //         (1.0f/60.0f), // don't touch
-    //         0.0013f,    // diffusion
-    //         0.18f     // viscocity
-    //         );
-
-    // gui.delegates.push_back(rootSystem);
-    // systems.push_back(rootSystem);
-
-//     systems.push_back(new GravitySystem());
-
-//     systems.push_back(new SmokeSystem());
-
-    systems.push_back(new SpaceSystem());
-
-//    systems.push_back(new RainbowSpaceSystem());
-
-//    SpaceSystem* s = new SpaceSystem();
-//    s->width = window_width * scale;
-//    s->height = window_height * scale;
-//    systems.push_back(new GridSystemHandler(s));
-
-    // standard setup  
-    for(ParticleSystem* system : systems){
-            system->width = window_width;
-            system->height = window_height;
-            system->setup();
-            system->prepareDraw();
-    }
+    
+    SystemHandler* systemHandler = new SystemHandler(window_height, window_width);
+    gui.delegate = systemHandler;
+    
 	while (openGL.drawBool()) {
         openGL.beforeDraw();
-        for(ParticleSystem* system : systems){
-            system->step();
-            system->draw();
-        }
+        
+        systemHandler->step();
+        
         openGL.afterDraw();
 	}
     openGL.destroy();

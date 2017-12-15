@@ -307,7 +307,7 @@ void FluidSystem::keyWasPressed( int action, int key ){
         if( amount > 10000.0f )
             amount = 10000.0f;
         std::cout << "Amount Increased to : " << amount << std::endl;
-    }else if( action == 1 && key == GLFW_KEY_1 ){
+    }else if( action == 1 && key == GLFW_KEY_A ){
         cosas.push_back( Cosa( grid.coToI(mouse[1]+1, mouse[0])+1,  activeColor, ( vacuum ? -1.0f : 1.0f ) * amount * float(grid.N) ));
         std::cout << "Added Cosa " << cosas.size() << std::endl;
     }else if( action == 1 && key == GLFW_KEY_UP ){

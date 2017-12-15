@@ -10,10 +10,10 @@
 #include "Shaders.h"
 
 #define NUMBER_OF_PARTICLES 500.0
-#define EMITTER false
 
 void SmokeSystem::setup() {
     //Add particles
+    
     if (!EMITTER) {
         for (int c = 0; c < NUMBER_OF_PARTICLES; ++c) {
             int coverage = 500;
@@ -28,13 +28,14 @@ void SmokeSystem::setup() {
         }
     }
     
-    getPointsForScreen(points, velocities, indices);
+    getPointsForScreen(points, velocities, types, indices);
 }
 
-void SmokeSystem::getPointsForScreen(vector<vec4>& points, vector<vec4>& velocities, vector<uvec1>& indices) {
+void SmokeSystem::getPointsForScreen(vector<vec4>& points, vector<vec4>& velocities, vector<float>& types, vector<uvec1>& indices) {
     points.clear();
     indices.clear();
     velocities.clear();
+    types.clear();
     int count = 0;
     for (MassParticle& p : particles) {
         vec4 point = toScreen(p.p, count);
@@ -43,11 +44,19 @@ void SmokeSystem::getPointsForScreen(vector<vec4>& points, vector<vec4>& velocit
         points.push_back(point);
         indices.push_back(uvec1(count));
         velocities.push_back(velocity);
+        
+        if (EMITTER) {
+            types.push_back(1);
+        } else {
+            types.push_back(0);
+        }
+        
         ++count;
     }
     vec4 point = toScreen(center, count);
     points.push_back(point);
     velocities.push_back(vec4(0, 0, 0, 1));
+    types.push_back(0);
     indices.push_back(uvec1(count));
 }
 
@@ -71,7 +80,13 @@ void SmokeSystem::step() {
     glm::mat3 m(c1, c2, c3);
     
     vec3 direction(20, 0, 0);
-    center = vec3(width / 2, height / 2, 0) + (m * direction);
+    
+    int y_offset = 0;
+    if (EMITTER) {
+        y_offset = 250;
+    }
+    
+    center = vec3(width / 2, height / 2 - y_offset, 0) + (m * direction);
     
     //Emit new particles
     if (EMITTER) {
@@ -132,10 +147,11 @@ void SmokeSystem::step() {
 
 //MARK: - Draw
 
-SmokeSystem::SmokeSystem() : particle_pass(-1, particle_pass_input, { smoke_vertex_shader, smoke_geometry_shader, smoke_fragment_shader }, { /* uniforms */ }, { "fragment_color" }) {
-    getPointsForScreen(points, velocities, indices);
+SmokeSystem::SmokeSystem(bool emitter) : EMITTER(emitter), particle_pass(-1, particle_pass_input, { smoke_vertex_shader, smoke_geometry_shader, smoke_fragment_shader }, { /* uniforms */ }, { "fragment_color" }) {
+    getPointsForScreen(points, velocities, types, indices);
     particle_pass_input.assign(0, "vertex_position", points.data(), points.size(), 4, GL_FLOAT);
     particle_pass_input.assign(1, "point_velocity", velocities.data(), velocities.size(), 4, GL_FLOAT);
+    particle_pass_input.assign(2, "color_type", types.data(), types.size(), 1, GL_FLOAT);
 }
 
 void SmokeSystem::prepareDraw() {
@@ -153,9 +169,10 @@ void SmokeSystem::prepareDraw() {
 }
 
 void SmokeSystem::draw() {
-    getPointsForScreen(points, velocities, indices);
+    getPointsForScreen(points, velocities, types, indices);
     particle_pass.updateVBO(0, points.data(), points.size());
     particle_pass.updateVBO(1, velocities.data(), velocities.size());
+    particle_pass.updateVBO(2, types.data(), types.size());
     particle_pass.setup();
     CHECK_GL_ERROR(glDrawElements(GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0));
 }

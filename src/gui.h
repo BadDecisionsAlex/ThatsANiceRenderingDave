@@ -20,7 +20,7 @@ public:
 	static void MousePosCallback(GLFWwindow* window, double mouse_x, double mouse_y);
 	static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
     
-    std::vector<GUIDelegate *> delegates;
+    GUIDelegate * delegate;
     
 private:
 	GLFWwindow* window_;

@@ -39,7 +39,7 @@ private:
     
     Node outsideGridNode;
     
-    int nodeSize = 40;
+    int nodeSize = 10;
     int rows = 0;
     int columns = 0;
     vector<vector<Node>> grid;
@@ -107,6 +107,8 @@ public:
             grid.push_back(column);
         }
         
+        system->height = height;
+        system->width = width;
         system->setup();
         
         for (MassParticle p : system->particles) {

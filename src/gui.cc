@@ -28,7 +28,7 @@ void GUI::keyCallback(int key, int scancode, int action, int mods)
 		return ;
 	}
     
-    for (GUIDelegate* delegate : delegates) {
+    if (delegate) {
         delegate->keyWasPressed(action, key);
     }
 }
@@ -44,7 +44,7 @@ void GUI::mousePosCallback(double mouse_x, double mouse_y)
 	if (sqrt(delta_x * delta_x + delta_y * delta_y) < 1e-15)
 		return;
     
-    for (GUIDelegate* delegate : delegates) {
+    if (delegate) {
         delegate->mouseDragged(current_x_, current_y_);
     }
 }
@@ -54,7 +54,7 @@ void GUI::mouseButtonCallback(int button, int action, int mods)
 	drag_state_ = (action == GLFW_PRESS);
 	current_button_ = button;
     
-    for (GUIDelegate* delegate : delegates) {
+    if (delegate) {
         delegate->mouseStateChange(drag_state_);
         delegate->mouseButton(button);
     }
