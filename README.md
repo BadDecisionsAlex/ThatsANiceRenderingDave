@@ -1,7 +1,7 @@
 ##### ThatsANiceRenderingDave
 # Particle Systems
 
-#####Authors : Alex Ameen, Matt Ruston, and Joshua Cristol
+##### Authors: Alex Ameen, Matt Ruston, and Joshua Cristol
 
 ### Overview
 
