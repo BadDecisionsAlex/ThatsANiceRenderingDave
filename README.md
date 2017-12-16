@@ -22,7 +22,7 @@ The change that ended up making the system the most interesting was having the c
 
 ### The Rainbow Space System
 
-This system works the same as the Space System, however it uses a different shader which utilizes perlin noise to color the particles based on their location.
+This system works the same as the Space System, however it uses a different shader which utilizes perlin noise to color the particles based on their location. The shader uses a noise function to generate Red, Blue, and Green color values depending on where the particle is in the xy plane of the window. This shader can be extended to almost any of our Particle Systems as an added effect.
 
 ![RainbowSystem](./RainbowSystem.png)
 
