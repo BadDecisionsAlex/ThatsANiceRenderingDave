@@ -13,6 +13,9 @@ This system models simple fluid behaviors by using a grid structure to keep trac
 
 ![FluidSystem](./FluidSystem.png)
 
+Video Demo :
+https://vimeo.com/247574785
+
 ### The Space System
 
 This is a simple system where 100,000 particles are put into a world, and each one is gravitationally attracted to a center point. When we first were making this system, we had a static origin point, which resulted in all the particles simply oscillating back and forth through the center. Giving the particles initial velocities would cause most of the particles to miss the center, and so they would orbit the center instead. Ultimently this effect appeared very similar to the simple oscillation. We also changed the center point to be equal to the average center of mass. This also turned out fairly uneventful, since a distribution of points around the screen end up having a center that almost stays the same as the original center point we were using.
