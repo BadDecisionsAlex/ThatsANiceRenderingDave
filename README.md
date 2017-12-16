@@ -28,7 +28,7 @@ This system works the same as the Space System, however it uses a different shad
 
 ### Collision and Gravity System
 
-This system handles simple collision between particles and the boundries of the screen. To do this we use Verlet particles, which use a previous and current position in order to determine velocity. In order to determine collisions, the system will take a step, check if anything has gone out of bounds or crossed paths, and then adjust. This may result in multiple small steps per step in order to make sure the adjustments are correct and dont cause new conflicts. The gravity of the system is just a constant downward force on all the particles.
+This system handles simple collision between particles and the boundries of the screen. To do this we use Verlet particles, which use a previous and current position in order to determine velocity. In order to determine collisions, the system will take a step, check if anything has gone out of bounds or crossed paths. To test whether a particle is colliding with another particle the collision system uses a spatial data structure to find the particles that it could be colliding with. Using this spatial data structure increases performace of detecting collisions from polynomial to near linear time. The gravity of the system is just a constant downward force on all the particles and can be adjusted with easily with input variables.
 
 ![Collisions](./Collisions.png)
 
