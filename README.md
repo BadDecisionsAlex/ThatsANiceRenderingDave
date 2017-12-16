@@ -24,7 +24,7 @@ The change that ended up making the system the most interesting was having the c
 
 This system works the same as the Space System, however it uses a different shader which utilizes perlin noise to color the particles based on their location.
 
-![Rainbow System](./Rainbow System.png)
+![RainbowSystem](./RainbowSystem.png)
 
 ### Collision and Gravity System
 
