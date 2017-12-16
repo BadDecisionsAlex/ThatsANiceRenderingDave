@@ -2,7 +2,7 @@
 # Particle Systems
 ### Overview
 
-The focus of our project was to model multiple different systems that handle many simple particles in order to achieve interesting effects. We made a couple different systems experimenting with particles, as well as systems that move towards abstracting the particles away by using a grid to model particle density. These grided systems led us to develop a fluid simulation and a smoke system modeled in the grid. Below are all the differnet systems we implemented.  
+The focus of our project was to model multiple different systems that handle many simple particles in order to achieve interesting effects. We made a couple different systems experimenting with particles, as well as systems that move towards abstracting the particles away by using a grid to model particle density. These grided systems led us to develop a fluid simulation and a smoke system modeled in the grid. Below are all the different systems we implemented.  
 
 ### The Fluid System
 
