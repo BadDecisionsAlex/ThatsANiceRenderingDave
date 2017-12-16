@@ -135,3 +135,9 @@ Tutorials looking at using verlet particles for physics: https://www.youtube.com
 Particle system implementation: https://github.com/diwi/PixelFlow
 
 Blog with some fluid and smoke simulations: http://prideout.net/blog/?p=58
+
+GPU Gems article used as inspiration for the fluid system: https://developer.nvidia.com/gpugems/GPUGems/gpugems_ch38.html
+
+Fluid and Smoke paper used in the fluid simulation: https://dl.acm.org/citation.cfm?id=383260
+
+Article used to help implement the paritcle based collison system: https://dl.acm.org/citation.cfm?id=1058147
